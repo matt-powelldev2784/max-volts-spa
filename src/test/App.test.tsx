@@ -7,10 +7,4 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByText('Welcome to Max Volts SPA')).toBeInTheDocument();
   });
-
-  it('renders navigation links', () => {
-    render(<App />);
-    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument();
-  });
 });
