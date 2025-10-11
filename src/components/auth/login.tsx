@@ -1,5 +1,5 @@
-import { supabase } from '../../lib/supabase';
-import useAuth from '../../lib/useAuth';
+import { supabase } from '@/lib/supabase';
+import useAuth from '@/lib/useAuth';
 
 const Login = () => {
   const { user } = useAuth();
