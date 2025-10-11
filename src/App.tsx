@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
 import type { Tables } from './types/database.types';
+import useAuth from './lib/useAuth';
 
 type Client = Tables<'client'>;
 
@@ -52,6 +53,9 @@ const About = () => {
 };
 
 const App = () => {
+  const { user } = useAuth();
+  console.log('user', user);
+
   return (
     <Router>
       <Routes>
