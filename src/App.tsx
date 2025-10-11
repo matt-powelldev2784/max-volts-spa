@@ -13,20 +13,8 @@ import useAuth from './lib/useAuth';
 type Client = Tables<'client'>;
 
 const Login = () => {
-  const [clients, setClients] = useState<Client[]>([]);
-  console.log('clients', clients);
-
   const { user } = useAuth();
   console.log('user', user);
-
-  useEffect(() => {
-    getClients();
-  }, []);
-
-  const getClients = async () => {
-    const { data } = await supabase.from('client').select();
-    if (data) setClients(data);
-  };
 
   const login = async () => {
     await supabase.auth.signInWithOAuth({
@@ -35,7 +23,7 @@ const Login = () => {
     });
   };
 
-  const logOut = async () => {
+  const logout = async () => {
     await supabase.auth.signOut();
   };
 
@@ -49,7 +37,7 @@ const Login = () => {
           Login
         </button>
 
-        <button className="bg-blue-500 text-white px-8 py-2" onClick={logOut}>
+        <button className="bg-blue-500 text-white px-8 py-2" onClick={logout}>
           Log Out
         </button>
       </div>
@@ -58,6 +46,18 @@ const Login = () => {
 };
 
 const Protected = () => {
+  const [clients, setClients] = useState<Client[]>([]);
+  console.log('clients', clients);
+
+  useEffect(() => {
+    getClients();
+  }, []);
+
+  const getClients = async () => {
+    const { data } = await supabase.from('client').select();
+    if (data) setClients(data);
+  };
+
   return (
     <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
       Protected
