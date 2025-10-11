@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+  Navigate,
+} from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
 import type { Tables } from './types/database.types';
@@ -6,9 +12,12 @@ import useAuth from './lib/useAuth';
 
 type Client = Tables<'client'>;
 
-const Home = () => {
+const Login = () => {
   const [clients, setClients] = useState<Client[]>([]);
   console.log('clients', clients);
+
+  const { user } = useAuth();
+  console.log('user', user);
 
   useEffect(() => {
     getClients();
@@ -22,7 +31,7 @@ const Home = () => {
   const login = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/about` },
+      options: { redirectTo: `${window.location.origin}/protected` },
     });
   };
 
@@ -32,7 +41,9 @@ const Home = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-blue-600">Max Volts - DB Test</h1>
+      <h1 className="text-3xl font-bold text-blue-600">
+        {user ? user.email : 'Not Logged In'}
+      </h1>
       <div className="flex gap-8">
         <button className="bg-blue-500 text-white px-8 py-2" onClick={login}>
           Login
@@ -46,21 +57,37 @@ const Home = () => {
   );
 };
 
-const About = () => {
+const Protected = () => {
   return (
-    <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">About</h1>
+    <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
+      Protected
+    </h1>
   );
 };
 
-const App = () => {
-  const { user } = useAuth();
-  console.log('user', user);
+const ProtectedLayouts = () => {
+  const { user, loading } = useAuth();
 
+  if (loading) {
+    return <></>;
+  }
+
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+};
+
+const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/" element={<Login />} />
+
+        <Route element={<ProtectedLayouts />}>
+          <Route path="/protected" element={<Protected />} />
+        </Route>
       </Routes>
     </Router>
   );
