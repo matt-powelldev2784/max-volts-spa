@@ -2,7 +2,14 @@ import { Outlet } from 'react-router-dom';
 import maxVoltsLogo from '@/assets/max_volts_logo.svg';
 import useAuth from '@/lib/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Menu } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { LogOut, Menu } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
@@ -157,20 +164,43 @@ const AvatarIcon = () => {
   };
 
   if (!user) return null;
-  
+
   return (
-    <Avatar className="hidden md:block">
-      <button onClick={logout}>
-        <AvatarImage
-          src={user?.user_metadata?.avatar_url || ''}
-          alt={user?.email || 'User'}
-          referrerPolicy="no-referrer"
-        />
-        <AvatarFallback className="bg-light-black text-white font-medium">
-          {user?.email ? getUserInitials(user?.email) : 'X'}
-        </AvatarFallback>
-      </button>
-    </Avatar>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="hidden md:block rounded-full focus:outline-none focus:ring-2 focus:ring-[--color-mv-orange]">
+          <Avatar>
+            <AvatarImage
+              src={user?.user_metadata?.avatar_url || ''}
+              alt={user?.email || 'User'}
+              referrerPolicy="no-referrer"
+            />
+            <AvatarFallback className="bg-light-black text-white font-medium">
+              {user?.email ? getUserInitials(user?.email) : 'X'}
+            </AvatarFallback>
+          </Avatar>
+        </button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" className="w-56">
+        <div className="px-2 py-2">
+          <p className="text-sm font-medium">
+            {user?.user_metadata?.full_name || 'User'}
+          </p>
+          <p className="text-xs text-muted-foreground">{user?.email}</p>
+        </div>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onClick={logout}
+          className="cursor-pointer text-red-600 focus:text-red-600"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
