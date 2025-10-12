@@ -16,10 +16,10 @@ import { supabase } from '@/lib/supabase';
 const navigationLinks = [
   {
     name: 'View Quotes',
-    href: '/view-jobs',
+    href: '/view-quotes',
     requiresAuth: true,
   },
-  { name: 'Add Quote', href: '/add-job', requiresAuth: true },
+  { name: 'Add Quote', href: '/add-quote', requiresAuth: true },
   {
     name: 'Log Out',
     href: '/auth/sign-out',
@@ -38,11 +38,11 @@ export const NavigationBar = () => {
       >
         {/* Logo */}
         {user && (
-          <a href="/" className="flex items-center gap-2 h-full">
+          <a href="/" className="flex items-center h-full">
             <img
               src={maxVoltsLogo}
               alt="Max Volts Logo"
-              className="h-8 md:h-9 md:block "
+              className="h-8 md:h-10 md:block "
             />
           </a>
         )}
