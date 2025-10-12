@@ -27,7 +27,7 @@ export const NavigationBar = () => {
   return (
     <>
       <nav
-        className={`h-14 md:h-16 flex items-center mx-0 md:mx-4 relative border-b border-gray-300 gap-2 ${user ? 'justify-between px-0 pl-4 md:px-4' : 'justify-center px-4'}`}
+        className={`h-14 md:h-16 flex items-center mx-0 md:mx-4 relative border-b border-gray-300 gap-2 ${user ? 'justify-between px-0 pl-4 md:px-4' : 'justify-center px-2'}`}
       >
         {/* Logo */}
         {user && (
@@ -35,33 +35,26 @@ export const NavigationBar = () => {
             <img
               src={maxVoltsLogo}
               alt="Max Volts Logo"
-              className="h-8 md:h-9 md:block"
+              className="h-8 md:h-9 md:block "
             />
           </a>
         )}
 
         {!user && (
-          <a href="/" className="flex items-center gap-2">
+          <a href="/" className="flex items-center">
             <img
               src={maxVoltsLogo}
               alt="Max Volts Logo"
-              className="h-9 md:h-12"
+              className="h-10 md:h-12"
             />
           </a>
         )}
 
-        {/* Desktop Links */}
+        {/* Desktop Menu */}
         <DesktopMenu />
 
         {/* Mobile Burger Menu */}
         <MobileMenu />
-
-        {/* <a
-          href="/"
-          className="mr-4 md:mr-0 h-8 bg-mv-orange text-white px-4 py-1 rounded"
-        >
-          Sign in
-        </a> */}
       </nav>
 
       <Outlet />
@@ -164,17 +157,19 @@ const AvatarIcon = () => {
   };
 
   if (!user) return null;
-
+  
   return (
-    <Avatar onClick={logout} className="hidden md:block">
-      <AvatarImage
-        src={user?.user_metadata?.avatar_url || ''}
-        alt={user?.email || 'User'}
-        referrerPolicy="no-referrer"
-      />
-      <AvatarFallback className="bg-light-black text-white font-medium">
-        {user?.email ? getUserInitials(user?.email) : 'X'}
-      </AvatarFallback>
+    <Avatar className="hidden md:block">
+      <button onClick={logout}>
+        <AvatarImage
+          src={user?.user_metadata?.avatar_url || ''}
+          alt={user?.email || 'User'}
+          referrerPolicy="no-referrer"
+        />
+        <AvatarFallback className="bg-light-black text-white font-medium">
+          {user?.email ? getUserInitials(user?.email) : 'X'}
+        </AvatarFallback>
+      </button>
     </Avatar>
   );
 };
