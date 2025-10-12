@@ -6,15 +6,16 @@ import {
   Navigate,
 } from 'react-router-dom';
 import useAuth from '@/lib/useAuth';
-import Protected from '@/components/protected/protected';
 import Login from '@/components/auth/login';
 import { NavigationBar } from '@/components/navigation/navigation';
+import ViewQuotes from '@/components/viewQuotes/viewQuotes';
+import AddQuote from '@/components/addQuote/addQuote';
 
 const ProtectedLayouts = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <></>;
+    return <NavigationBar />;
   }
 
   if (!user) {
@@ -34,7 +35,8 @@ const App = () => {
 
         <Route element={<NavigationBar />}>
           <Route element={<ProtectedLayouts />}>
-            <Route path="/protected" element={<Protected />} />
+            <Route path="/view-quotes" element={<ViewQuotes />} />
+            <Route path="/add-quote" element={<AddQuote />} />
           </Route>
         </Route>
       </Routes>
