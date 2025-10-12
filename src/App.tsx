@@ -32,8 +32,10 @@ const App = () => {
           <Route path="/" element={<Login />} />
         </Route>
 
-        <Route element={<ProtectedLayouts />}>
-          <Route path="/protected" element={<Protected />} />
+        <Route element={<NavigationBar />}>
+          <Route element={<ProtectedLayouts />}>
+            <Route path="/protected" element={<Protected />} />
+          </Route>
         </Route>
       </Routes>
     </Router>
