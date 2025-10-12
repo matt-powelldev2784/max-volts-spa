@@ -22,7 +22,7 @@ const navigationLinks = [
   { name: 'Add Quote', href: '/add-quote', requiresAuth: true },
   {
     name: 'Log Out',
-    href: '/auth/sign-out',
+    href: '/auth/signout',
     requiresAuth: false,
     isMobileOnly: true,
   },

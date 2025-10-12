@@ -31,6 +31,14 @@
     font-family: var(--font-family-sans);
     font-size: var(--font-size-base);
   }
+
+  a {
+    cursor: pointer;
+  }
+  
+  button {
+    cursor: pointer;
+  }
 }
 
 @layer utilities {
