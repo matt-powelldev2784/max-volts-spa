@@ -38,11 +38,11 @@ export const NavigationBar = () => {
       >
         {/* Logo */}
         {user && (
-          <a href="/" className="flex items-center gap-2 h-full">
+          <a href="/" className="flex items-center h-full">
             <img
               src={maxVoltsLogo}
               alt="Max Volts Logo"
-              className="h-8 md:h-9 md:block "
+              className="h-8 md:h-10 md:block "
             />
           </a>
         )}
