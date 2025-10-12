@@ -8,6 +8,7 @@ import {
 import useAuth from '@/lib/useAuth';
 import Protected from '@/components/protected/protected';
 import Login from '@/components/auth/login';
+import { NavigationBar } from '@/components/navigation/navigation';
 
 const ProtectedLayouts = () => {
   const { user, loading } = useAuth();
@@ -27,7 +28,9 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route element={<NavigationBar />}>
+          <Route path="/" element={<Login />} />
+        </Route>
 
         <Route element={<ProtectedLayouts />}>
           <Route path="/protected" element={<Protected />} />
