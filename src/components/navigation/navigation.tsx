@@ -16,10 +16,10 @@ import { supabase } from '@/lib/supabase';
 const navigationLinks = [
   {
     name: 'View Quotes',
-    href: '/view-jobs',
+    href: '/view-quotes',
     requiresAuth: true,
   },
-  { name: 'Add Quote', href: '/add-job', requiresAuth: true },
+  { name: 'Add Quote', href: '/add-quote', requiresAuth: true },
   {
     name: 'Log Out',
     href: '/auth/sign-out',
