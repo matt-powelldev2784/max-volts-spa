@@ -9,66 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { CirclePlus, FilePlus, FileText, LogOut, Menu, StretchHorizontal, UserPlus, UserRound } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { menuItems } from './menuItems';
 
-const menuItems = [
-  {
-    name: 'Quote',
-    requiresAuth: true,
-    items: [
-      { name: 'View Quotes', href: '/view-quotes', icon: FileText },
-      { name: 'Add Quote', href: '/add-quote', icon: FilePlus },
-    ],
-  },
-  {
-    name: 'Client',
-    requiresAuth: true,
-    items: [
-      {
-        name: 'View Clients',
-        href: '/view-clients',
-        icon: UserRound,
-      },
-      {
-        name: 'Add Client',
-        href: '/add-client',
-        requiresAuth: true,
-        icon: UserPlus,
-      },
-    ],
-  },
-  {
-    name: 'Product',
-    requiresAuth: true,
-    items: [
-      {
-        name: 'View Products',
-        href: '/view-products',
-        icon: StretchHorizontal,
-      },
-      {
-        name: 'Add Product',
-        href: '/add-product',
-        icon: CirclePlus,
-      },
-    ],
-  },
-  {
-    name: 'Log Out',
-    requiresAuth: false,
-    isMobileOnly: true,
-    singleEntry: true,
-    items: [
-      {
-        name: 'Log Out',
-        href: '/auth/signout',
-        icon: LogOut,
-      },
-    ],
-  },
-];
 
 export const NavigationBar = () => {
   const { user } = useAuth();
