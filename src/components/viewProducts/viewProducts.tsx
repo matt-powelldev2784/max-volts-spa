@@ -17,7 +17,7 @@ const ViewProducts = () => {
     if (data) setProducts(data);
   };
 
-  return <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Products</h1>;
+  return <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">View Products</h1>;
 };
 
 export default ViewProducts;

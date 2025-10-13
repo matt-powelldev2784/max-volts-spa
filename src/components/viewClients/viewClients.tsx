@@ -17,7 +17,7 @@ const ViewClients = () => {
     if (data) setClients(data);
   };
 
-  return <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Protected</h1>;
+  return <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">View Clients</h1>;
 };
 
 export default ViewClients;
