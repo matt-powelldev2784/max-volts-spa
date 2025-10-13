@@ -129,16 +129,7 @@ const DesktopMenu = () => {
             <DropdownMenuContent className="p-2 min-w-max flexRow gap-2">
               {menuItem.items.map((item) => {
                 const Icon = item.icon;
-                return (
-                  <div key={item.name} className="flexRow">
-                    <DropdownMenuItem className="cursor-pointer rounded-md px-3 py-2.5 focus:bg-mv-orange/10 flex-col items-center text-center min-w-max">
-                      <a href={item.href} className="flexCol gap-2">
-                        <Icon className="size-6 text-mv-orange" />
-                        <span className="text-lg">{item.name}</span>
-                      </a>
-                    </DropdownMenuItem>
-                  </div>
-                );
+                return <DesktopMenuItem {...item} key={item.name} Icon={Icon} />;
               })}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -146,6 +137,25 @@ const DesktopMenu = () => {
       })}
 
       <AvatarIcon />
+    </div>
+  );
+};
+
+type MenuItemProps = {
+  name: string;
+  href: string;
+  Icon: React.ElementType;
+};
+
+const DesktopMenuItem = ({ name, href, Icon }: MenuItemProps) => {
+  return (
+    <div className="flexRow">
+      <DropdownMenuItem className="cursor-pointer rounded-md px-3 py-2.5 focus:bg-mv-orange/10 flex-col items-center text-center min-w-max">
+        <a href={href} className="flexCol gap-2">
+          <Icon className="size-6 text-mv-orange" />
+          <span className="text-lg">{name}</span>
+        </a>
+      </DropdownMenuItem>
     </div>
   );
 };
@@ -167,17 +177,7 @@ const MobileMenu = () => {
             <div key={menuItem.name}>
               {menuItem.items.map((item) => {
                 const Icon = item.icon;
-                return (
-                  <DropdownMenuItem
-                    key={item.name}
-                    className="cursor-pointer px-6 py-3 focus:bg-mv-orange/10 rounded-none"
-                  >
-                    <a href={item.href} className="flex items-center gap-3 w-full">
-                      <Icon className="h-5 w-5 text-mv-orange" />
-                      <span className="text-lg text-gray-700">{item.name}</span>
-                    </a>
-                  </DropdownMenuItem>
-                );
+                return <MobileMenuItem {...item} key={item.name} Icon={Icon} />;
               })}
 
               {menuIndex !== menuItems.length - 1 && <DropdownMenuSeparator className="mx-4 bg-neutral-300" />}
@@ -186,6 +186,17 @@ const MobileMenu = () => {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
+  );
+};
+
+const MobileMenuItem = ({ name, href, Icon }: MenuItemProps) => {
+  return (
+    <DropdownMenuItem className="cursor-pointer px-6 py-3 focus:bg-mv-orange/10 rounded-none">
+      <a href={href} className="flex items-center gap-3 w-full">
+        <Icon className="h-5 w-5 text-mv-orange" />
+        <span className="text-lg text-gray-700">{name}</span>
+      </a>
+    </DropdownMenuItem>
   );
 };
 
