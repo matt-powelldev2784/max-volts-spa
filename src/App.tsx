@@ -34,10 +34,12 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        {/************ NOT protected routes {/************/}
         <Route element={<NavigationBar />}>
           <Route path="/" element={<Login />} />
         </Route>
 
+        {/*************** Protected routes ****************/}
         <Route element={<NavigationBar />}>
           <Route element={<ProtectedLayouts />}>
             <Route path="/view-clients" element={<ViewClients />} />
