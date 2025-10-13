@@ -1,18 +1,40 @@
 # Max Volts SPA
 
-A modern React Single Page Application built with the latest tools and best practices.
+Quoting System For Electrical Contractors
 
 ## Tech Stack
+React, React Router, Supabase, React Query, TypeScript, Tailwind CSS, Vite, Vitest, React Testing Library, Prettier, ESLint
 
-- **React 19 RC** - Latest React with new features and improvements
-- **React Router** - Client-side routing
-- **TypeScript** - Type-safe JavaScript
-- **Tailwind CSS** - Utility-first CSS framework
-- **Vite** - Fast build tool and dev server
-- **Vitest** - Fast unit testing framework
-- **React Testing Library** - Simple and complete testing utilities
-- **Prettier** - Code formatting
-- **ESLint** - Code linting
+## Database
+Tables
+- Client
+- Product
+- Quote_Product (Join Table)
+- Quote
+- User (Managed by Supabase Auth)
 
-## 🛠️ Getting Started
+## User Stories
+
+- I want to log in and log out securely.
+
+# Client Management
+- I want to view a list of clients.
+- I want to add, edit, and delete clients.
+
+# Product Management
+- I want to view a list of products.
+- I want to add, edit, and delete products.
+
+# Quote Management
+- I want to create, view, edit, and delete quotes.
+- I want to see the total price of a quote based on selected products.
+- I want to filter quotes by client and date.
+- I want to generate a PDF of a quote for sharing with clients.
+- I want to see the price for each product in a quote.
+
+
+
+
+
+
 
