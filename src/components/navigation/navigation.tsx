@@ -14,6 +14,8 @@ import { supabase } from '@/lib/supabase';
 import { menuItems } from './menuItems';
 import { useNavigate } from 'react-router';
 
+const preventAutoFocus = (e: Event) => e.preventDefault();
+
 export const NavigationBar = () => {
   const { user } = useAuth();
 
@@ -24,13 +26,13 @@ export const NavigationBar = () => {
       >
         {/* Logo */}
         {user && (
-          <a href="/" className="flex items-center h-full">
+          <a href="/" className="flex items-center h-12">
             <img src={maxVoltsLogo} alt="Max Volts Logo" className="h-8 md:h-10 md:block " />
           </a>
         )}
 
         {!user && (
-          <a href="/" className="flex items-center">
+          <a href="/" className="flex items-center h-12">
             <img src={maxVoltsLogo} alt="Max Volts Logo" className="h-10 md:h-12" />
           </a>
         )}
@@ -68,7 +70,7 @@ const DesktopMenu = () => {
               </p>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="p-2 min-w-max flexRow gap-2">
+            <DropdownMenuContent onCloseAutoFocus={preventAutoFocus} className="p-2 min-w-max flexRow gap-2">
               {menuItem.items.map((item) => {
                 const Icon = item.icon;
                 return <DesktopMenuItem {...item} key={item.name} Icon={Icon} />;
@@ -92,7 +94,7 @@ type MenuItemProps = {
 const DesktopMenuItem = ({ name, href, Icon }: MenuItemProps) => {
   return (
     <div className="flexRow">
-      <DropdownMenuItem className="cursor-pointer rounded-md px-3 py-2.5 focus:bg-mv-orange/10 flex-col items-center text-center min-w-max">
+      <DropdownMenuItem className="cursor-pointer rounded-md px-3 py-2.5 flex-col items-center text-center min-w-max">
         <a href={href} className="flexCol gap-2">
           <Icon className="size-6 text-mv-orange" />
           <span className="text-lg">{name}</span>
@@ -114,7 +116,10 @@ const MobileMenu = () => {
           <Menu className="w-8 h-8 text-gray-600" />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-screen mr-4 p-0 rounded-none border-t-0 border-l-0 border-r-0">
+        <DropdownMenuContent
+          onCloseAutoFocus={preventAutoFocus}
+          className="w-screen mr-4 p-0 rounded-none border-t-0 border-l-0 border-r-0"
+        >
           {menuItems.map((menuItem, menuIndex) => (
             <div key={menuItem.name}>
               {menuItem.items.map((item) => {
@@ -133,7 +138,7 @@ const MobileMenu = () => {
 
 const MobileMenuItem = ({ name, href, Icon }: MenuItemProps) => {
   return (
-    <DropdownMenuItem className="cursor-pointer px-6 py-3 focus:bg-mv-orange/10 rounded-none">
+    <DropdownMenuItem className="cursor-pointer px-6 py-3 rounded-none">
       <a href={href} className="flex items-center gap-3 w-full">
         <Icon className="h-5 w-5 text-mv-orange" />
         <span className="text-lg text-gray-700">{name}</span>
@@ -161,7 +166,7 @@ const AvatarIcon = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="hidden md:block rounded-full focus:outline-none focus:ring-2 focus:ring-[--color-mv-orange]">
+        <button className="hidden md:block rounded-full">
           <Avatar>
             <AvatarImage
               src={user?.user_metadata?.avatar_url || ''}
@@ -175,7 +180,7 @@ const AvatarIcon = () => {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent onCloseAutoFocus={preventAutoFocus} align="end" className="w-56">
         <div className="px-2 py-2">
           <p className="text-sm font-medium">User</p>
           <p className="text-xs text-muted-foreground">{user.email}</p>
@@ -183,7 +188,7 @@ const AvatarIcon = () => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={logout} className="focus:bg-mv-orange/10 cursor-pointer">
+        <DropdownMenuItem onClick={logout} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4 text-mv-orange" />
           <span className="text-black">Log out</span>
         </DropdownMenuItem>
