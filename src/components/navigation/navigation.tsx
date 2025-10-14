@@ -1,19 +1,18 @@
-import { Outlet } from 'react-router-dom';
 import maxVoltsLogo from '@/assets/max_volts_logo.svg';
 import useAuth from '@/lib/useAuth';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@//ui/dropdown-menu';
 import { LogOut, Menu } from 'lucide-react';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { menuItems } from './menuItems';
-
+import { useNavigate } from 'react-router';
 
 export const NavigationBar = () => {
   const { user } = useAuth();
@@ -42,8 +41,6 @@ export const NavigationBar = () => {
         {/* Mobile Burger Menu */}
         <MobileMenu />
       </nav>
-
-      <Outlet />
     </>
   );
 };
@@ -147,6 +144,7 @@ const MobileMenuItem = ({ name, href, Icon }: MenuItemProps) => {
 
 const AvatarIcon = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const getUserInitials = (email?: string) => {
     if (!email) return '';
@@ -155,6 +153,7 @@ const AvatarIcon = () => {
 
   const logout = async () => {
     await supabase.auth.signOut();
+    return navigate('/');
   };
 
   if (!user) return null;

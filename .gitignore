@@ -80,3 +80,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
+
+
+# React Router
+.react-router/
