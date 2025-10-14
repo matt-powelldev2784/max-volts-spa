@@ -111,12 +111,12 @@ const MainView = ({ setCurrentView }: MainViewProps) => {
         {/* Create Account Link */}
         <p className="text-center text-sm text-gray-600 pt-4">
           Don't have an account?{' '}
-          <span
+          <button
             className="font-bold text-mv-orange cursor-pointer hover:underline"
             onClick={() => setCurrentView('signUpWithEmail')}
           >
             Create one
-          </span>
+          </button>
         </p>
       </CardContent>
     </>
