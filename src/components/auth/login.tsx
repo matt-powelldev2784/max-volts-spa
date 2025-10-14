@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import Button from '@/components/ui/button';
 import { ArrowLeft, Mail } from 'lucide-react';
@@ -68,9 +71,8 @@ const MainView = ({ setCurrentView }: MainViewProps) => {
       <CardDescription className="px-4 text-center">Welcome to Max Volts Quotation System</CardDescription>
 
       <p className="px-6 pt-4 text-center text-gray-600">
-        To demo this project, click the{' '}
-        <span className="font-bold text-mv-orange cursor-pointer">Demo Sign In</span> button. This will use a
-        demo account.
+        To demo this project, click the <span className="font-bold text-mv-orange cursor-pointer">Demo Sign In</span>{' '}
+        button. This will use a demo account.
       </p>
 
       <CardContent className="space-y-4 px-6 pb-6 pt-4">
@@ -121,26 +123,41 @@ const MainView = ({ setCurrentView }: MainViewProps) => {
   );
 };
 
+const signInFormSchema = z.object({
+  email: z.email({ message: 'Invalid email address' }),
+  password: z.string().min(1, { message: 'Password is required' }),
+});
+
+type SignInFormData = z.infer<typeof signInFormSchema>;
+
 const SignInWithEmail = ({ setCurrentView }: MainViewProps) => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<SignInFormData>({
+    resolver: zodResolver(signInFormSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = form;
+
+  const onSubmit = async (data: SignInFormData) => {
     setError('');
-    setIsLoading(true);
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: data.email,
+      password: data.password,
     });
 
     if (signInError) {
       setError('Invalid email or password. Please try again.');
-      setIsLoading(false);
       return;
     }
 
@@ -154,94 +171,105 @@ const SignInWithEmail = ({ setCurrentView }: MainViewProps) => {
         <CardTitle className="text-center text-2xl">Sign In With Email</CardTitle>
       </CardHeader>
 
-      <CardDescription className="px-6 text-center">Enter your credentials to sign in</CardDescription>
-
-      {error && <p className="px-6 pt-4 text-center text-sm text-red-600">{error}</p>}
+      <CardDescription className="relative px-6 text-center pb-4">
+        Enter your credentials to sign in
+        {error && <p className="absolute px-6 pt-4 text-center text-sm text-red-600 -bottom-2">{error}</p>}
+      </CardDescription>
 
       <CardContent className="px-6 pb-6 pt-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="relative pb-2">
             <label className="text-sm font-medium text-gray-900">Email</label>
             <input
               type="email"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20"
-              required
+              {...register('email')}
+              className={`w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20 ${errors.email ? 'border-red-600' : ''}`}
             />
+            {errors.email && <p className="absolute text-sm text-red-600">{errors.email.message}</p>}
           </div>
 
-          <div className="space-y-2">
+          <div className="relative pb-2">
             <label className="text-sm font-medium text-gray-900">Password</label>
             <input
               type="password"
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20"
-              required
+              {...register('password')}
+              className={`w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20 ${errors.password ? 'border-red-600' : ''}`}
             />
+            {errors.password && <p className="absolute text-sm text-red-600">{errors.password.message}</p>}
           </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-mv-orange text-white font-semibold"
-            size="lg"
-            isLoading={isLoading}
-          >
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </Button>
+          <div className="flexCol gap-2 pt-4">
+            <Button
+              type="submit"
+              className="w-full bg-mv-orange text-white font-semibold"
+              size="lg"
+              isLoading={isSubmitting}
+            >
+              Sign In
+            </Button>
 
-          <Button
-            type="button"
-            variant="ghost"
-            size="lg"
-            className="w-full border-gray-300 text-gray-700 font-medium"
-            onClick={() => setCurrentView('main')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to sign in options
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="lg"
+              className="w-full border-gray-300 text-gray-700 font-medium"
+              onClick={() => setCurrentView('main')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to sign in options
+            </Button>
+          </div>
         </form>
       </CardContent>
     </>
   );
 };
 
+const signUpFormSchema = z
+  .object({
+    email: z.email({ message: 'Invalid email address' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+    confirmPassword: z.string().min(1, { message: 'Please confirm your password' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+type SignUpFormData = z.infer<typeof signUpFormSchema>;
+
 const SignUpWithEmail = ({ setCurrentView }: MainViewProps) => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpFormSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = form;
+
+  const onSubmit = async (data: SignUpFormData) => {
     setError('');
 
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-
-    setIsLoading(true);
-
     const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
+      email: data.email,
+      password: data.password,
       options: { emailRedirectTo: `${window.location.origin}/` },
     });
 
     if (signUpError) {
       setError(signUpError.message);
-      setIsLoading(false);
       return;
     }
 
@@ -255,69 +283,69 @@ const SignUpWithEmail = ({ setCurrentView }: MainViewProps) => {
         <CardTitle className="text-center text-2xl">Create Account</CardTitle>
       </CardHeader>
 
-      <CardDescription className="px-6 text-center">
+      <CardDescription className="relative px-6 text-center pb-4">
         Enter email and password to create your account
+        {error && <p className="absolute px-6 pt-4 text-center text-sm text-red-600 -bottom-2">{error}</p>}
       </CardDescription>
 
-      {error && <p className="px-6 pt-4 text-center text-sm text-red-600">{error}</p>}
-
       <CardContent className="px-6 pb-6 pt-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="relative pb-2">
             <label className="text-sm font-medium text-gray-900">Email</label>
             <input
               type="email"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20"
-              required
+              {...register('email')}
+              className={`w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20 ${errors.email ? 'border-red-600' : ''}`}
             />
+            {errors.email && <p className="absolute text-sm text-red-600">{errors.email.message}</p>}
           </div>
 
-          <div className="space-y-2">
+          <div className="relative pb-2">
             <label className="text-sm font-medium text-gray-900">Password</label>
             <input
               type="password"
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20"
-              required
+              {...register('password')}
+              className={`w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20 ${errors.password ? 'border-red-600' : ''}`}
             />
+            {errors.password && <p className="absolute text-sm text-red-600">{errors.password.message}</p>}
           </div>
 
-          <div className="space-y-2">
+          <div className="relative pb-2">
             <label className="text-sm font-medium text-gray-900">Confirm Password</label>
             <input
               type="password"
               placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20"
-              required
+              {...register('confirmPassword')}
+              className={`w-full rounded-md border border-gray-300 px-3 py-2 focus:border-mv-orange focus:outline-none focus:ring-2 focus:ring-mv-orange/20 ${errors.confirmPassword ? 'border-red-600' : ''}`}
             />
+            {errors.confirmPassword && (
+              <p className="absolute text-sm text-red-600">{errors.confirmPassword.message}</p>
+            )}
           </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-mv-orange text-white font-semibold"
-            size="lg"
-            isLoading={isLoading}
-          >
-            Create Account
-          </Button>
+          <div className="flexCol gap-2 pt-4">
+            <Button
+              type="submit"
+              className="w-full bg-mv-orange text-white font-semibold"
+              size="lg"
+              isLoading={isSubmitting}
+            >
+              Create Account
+            </Button>
 
-          <Button
-            type="button"
-            variant="ghost"
-            size="lg"
-            className="w-full border-gray-300 text-gray-700 font-medium"
-            onClick={() => setCurrentView('main')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to sign in options
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="lg"
+              className="w-full border-gray-300 text-gray-700 font-medium"
+              onClick={() => setCurrentView('main')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to sign in options
+            </Button>
+          </div>
         </form>
       </CardContent>
     </>
