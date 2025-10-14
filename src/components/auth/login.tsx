@@ -3,13 +3,13 @@ import { supabase } from '@/lib/supabase';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
-import Button from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@//ui/card';
+import Button from '@//ui/button';
 import { ArrowLeft, Mail } from 'lucide-react';
 import maxVoltsIcon from '@/assets/max_volts_icon.svg';
 import googleGIcon from '@/assets/google_g_logo.svg';
 import useAuth from '@/lib/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 type CurrentView = 'main' | 'signInWithEmail' | 'signUpWithEmail';
 
