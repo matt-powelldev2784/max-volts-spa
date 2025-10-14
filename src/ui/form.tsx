@@ -14,7 +14,7 @@ import {
 } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
-import { Label } from '@/layouts/ui/label';
+import { Label } from '@//ui/label';
 
 const Form = FormProvider;
 
@@ -135,4 +135,5 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { useFormField, Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField };

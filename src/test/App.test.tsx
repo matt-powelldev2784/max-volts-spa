@@ -1,10 +1,10 @@
+import AddClient from '@/components/addClient/addClient';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import App from '../App';
 
 describe('App', () => {
   it('renders welcome message', () => {
-    render(<App />);
-    expect(screen.getByText('Welcome to Max Volts SPA')).toBeInTheDocument();
+    render(<AddClient />);
+    expect(screen.getByText('Add Client')).toBeInTheDocument();
   });
 });
