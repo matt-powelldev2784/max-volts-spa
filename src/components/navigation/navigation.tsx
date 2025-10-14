@@ -170,7 +170,7 @@ const AvatarIcon = () => {
               referrerPolicy="no-referrer"
             />
             <AvatarFallback className="bg-light-black text-white font-medium">
-              {getUserInitials(user?.email)}
+              {getUserInitials(user.email)}
             </AvatarFallback>
           </Avatar>
         </button>
@@ -179,7 +179,7 @@ const AvatarIcon = () => {
       <DropdownMenuContent align="end" className="w-56">
         <div className="px-2 py-2">
           <p className="text-sm font-medium">User</p>
-          <p className="text-xs text-muted-foreground">{user?.email}</p>
+          <p className="text-xs text-muted-foreground">{user.email}</p>
         </div>
 
         <DropdownMenuSeparator />
