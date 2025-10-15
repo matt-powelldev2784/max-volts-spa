@@ -19,6 +19,7 @@ export type Database = {
           address1: string | null
           address2: string | null
           city: string | null
+          company: string | null
           county: string | null
           created_at: string | null
           email: string | null
@@ -31,6 +32,7 @@ export type Database = {
           address1?: string | null
           address2?: string | null
           city?: string | null
+          company?: string | null
           county?: string | null
           created_at?: string | null
           email?: string | null
@@ -43,6 +45,7 @@ export type Database = {
           address1?: string | null
           address2?: string | null
           city?: string | null
+          company?: string | null
           county?: string | null
           created_at?: string | null
           email?: string | null

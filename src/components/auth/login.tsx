@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@//ui/card';
-import Button from '@//ui/button';
+import { Button } from '@//ui/button';
 import { ArrowLeft, Mail } from 'lucide-react';
 import maxVoltsIcon from '@/assets/max_volts_icon.svg';
 import googleGIcon from '@/assets/google_g_logo.svg';

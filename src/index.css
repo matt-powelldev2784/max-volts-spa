@@ -23,6 +23,8 @@
 
   --font-family-sans: 'Roboto Flex', ui-sans-serif, system-ui, sans-serif;
   --font-size-base: 1.0625rem;
+
+   --breakpoint-md: 900px;
 }
 
 @layer base {
