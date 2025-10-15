@@ -73,6 +73,7 @@ const ViewClients = () => {
 
   return (
     <div className="w-11/12 mx-auto flexCol">
+      {/* Pagination and search */}
       <div className="flex flex-col md:flex-row w-full justify-between items-start md:items-end px-0 md:px-2 mb-4 gap-2 md:gap-8 mt-4 md:mt-4">
         <p className="text-2xl text-gray-800 mb-4 md:mb-0">Client List</p>
 
