@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { supabase } from '@/lib/supabase';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@//ui/card';
-import Button from '@//ui/button';
+import { Button } from '@//ui/button';
 import { ArrowLeft } from 'lucide-react';
 import maxVoltsIcon from '@/assets/max_volts_icon.svg';
 import useAuth from '@/lib/useAuth';
