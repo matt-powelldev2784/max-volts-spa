@@ -19,6 +19,7 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4',
         iconPrimary: 'bg-neutral-400 text-white',
         iconGhost: 'bg-mv-green text-white',
+        blank: '',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
