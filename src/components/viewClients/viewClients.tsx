@@ -1,6 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { Loader2, ArrowRight, ChevronsUpDown, ArrowUpDown, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import {
+  Loader2,
+  ArrowRight,
+  ChevronsUpDown,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  RotateCcw,
+} from 'lucide-react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/ui/table';
 import { Button, LinkButton } from '@/ui/button';
 import ErrorCard from '@/lib/errorCard';
@@ -75,7 +84,18 @@ const ViewClients = () => {
     <div className="w-11/12 mx-auto flexCol">
       {/* Pagination and search */}
       <div className="flex flex-col md:flex-row w-full justify-between items-start md:items-end px-0 md:px-2 mb-4 gap-2 md:gap-8 mt-4 md:mt-4">
-        <p className="text-2xl text-gray-800 mb-4 md:mb-0">Client List</p>
+        <div className="flexRow gap-4  mb-4 md:mb-0">
+          <p className="text-2xl text-gray-800 ">Client List</p>
+          <Button
+            onClick={() => setSearchTerm('')}
+            type="submit"
+            variant="blank"
+            size="sm"
+            className="text-sm h-[34px]"
+          >
+            <RotateCcw className="text-mv-orange p-0 size-5" />
+          </Button>
+        </div>
 
         <div className="flex flex-col-reverse md:flex-col justify-end items-center gap-4 md:gap-10 w-full md:w-auto mb-2 md:mb-0">
           <form
