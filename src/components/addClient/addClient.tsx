@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router';
 import { UserPlus, ArrowLeft, Loader2 } from 'lucide-react';
 import type { Database } from '@/types/database.types';
+import FormError from '@/lib/formError';
 
 type ClientInsert = Database['public']['Tables']['client']['Insert'];
 
@@ -217,6 +218,9 @@ const AddClient = () => {
                     )}
                   />
                 </div>
+
+                {/* Error Message */}
+                {mutation.isError && <FormError message={mutation.error.message} />}
 
                 {/*  Buttons */}
                 <div className="flexCol gap-2 pt-4">
