@@ -1,21 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import {
-  Loader2,
-  ArrowRight,
-  ChevronsUpDown,
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  RotateCcw,
-} from 'lucide-react';
+import { ArrowRight, ChevronsUpDown, ArrowUpDown, ChevronLeft, ChevronRight, Search, RotateCcw } from 'lucide-react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/ui/table';
 import { Button, LinkButton } from '@/ui/button';
 import ErrorCard from '@/lib/errorCard';
 import { Link } from 'react-router';
 import { useRef, useState } from 'react';
 import type { Tables } from '@/types/database.types';
+import LoadingSpinner from '@/ui/LoadingSpinner';
 
 type Client = Tables<'client'>;
 
@@ -77,7 +69,7 @@ const ViewClients = () => {
     setPage(0);
   };
 
-  if (isLoading) return <Loader2 className="animate-spin h-6 w-6 mx-auto mt-4 text-mv-orange" />;
+  if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorCard message={error?.message || 'An unknown error occurred.'} />;
 
   return (
