@@ -65,7 +65,9 @@ const DesktopMenu = () => {
             onOpenChange={(open) => (open ? setOpenMenu(menuItem.name) : setOpenMenu(''))}
           >
             <DropdownMenuTrigger>
-              <p className={`text-black pb-1 border-b-2 ${isOpen ? 'border-mv-orange' : 'border-transparent'}`}>
+              <p
+                className={`text-black border-b-2 translate-y-0.25 ${isOpen ? 'border-mv-orange' : 'border-transparent'}`}
+              >
                 {menuItem.name}
               </p>
             </DropdownMenuTrigger>
