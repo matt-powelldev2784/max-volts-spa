@@ -71,9 +71,9 @@ const AddClient = () => {
     <div className="flex min-h-screen items-start justify-center bg-none md:bg-gray-50 md:p-4 pb-24 md:pb-24">
       <div className="w-full flexCol md:max-w-[600px]">
         <div className="flexRow gap-4 mt-4 mb-6  md:bg-transparent w-full">
-          <Button variant="iconGhost" size="sm" onClick={() => navigate('/view-clients')}>
+          <LinkButton variant="iconGhost" size="sm" to="/view-clients">
             <ArrowLeft className="h-6 w-6" />
-          </Button>
+          </LinkButton>
           <h1 className="text-3xl font-bold text-gray-800">Add New Client</h1>
         </div>
 
@@ -228,7 +228,7 @@ const AddClient = () => {
                     {mutation.isPending ? <Loader2 className="text-white" /> : 'Add Client'}
                   </Button>
 
-                  <LinkButton type="button" variant="ghost" size="lgFullWidth" to="/view-clients">
+                  <LinkButton variant="ghost" size="lgFullWidth" to="/view-clients">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Cancel
                   </LinkButton>
