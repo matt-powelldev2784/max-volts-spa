@@ -146,7 +146,7 @@ const ViewProducts = () => {
       <Table className="table md:hidden table-fixed">
         <TableHeader>
           <TableRow className="bg-neutral-100">
-            <TableHead className="w-14"></TableHead>
+            <TableHead className="w-10"></TableHead>
             <TableHead className="w-1/2">Name</TableHead>
             <TableHead className="w-1/2 pr-4">Value</TableHead>
           </TableRow>
@@ -163,7 +163,7 @@ const ViewProducts = () => {
                 </Link>
               </TableCell>
               <TableCell className="truncate">{product.name}</TableCell>
-              <TableCell className="pr-4 truncate">{product.value}</TableCell>
+              <TableCell className="pr-4 truncate">£{product.value}</TableCell>
             </TableRow>
           ))}
 
