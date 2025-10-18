@@ -86,6 +86,7 @@ export type Database = {
           notes: string | null
           status: string
           total_value: number | null
+          user_email: string
           user_id: string
         }
         Insert: {
@@ -96,6 +97,7 @@ export type Database = {
           notes?: string | null
           status: string
           total_value?: number | null
+          user_email?: string
           user_id: string
         }
         Update: {
@@ -106,6 +108,7 @@ export type Database = {
           notes?: string | null
           status?: string
           total_value?: number | null
+          user_email?: string
           user_id?: string
         }
         Relationships: [

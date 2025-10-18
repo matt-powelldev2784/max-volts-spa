@@ -13,7 +13,8 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "update:types": "npx supabase gen types typescript --project-id djladasdtsrswxsvjtcw --schema public > src/types/database.types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
