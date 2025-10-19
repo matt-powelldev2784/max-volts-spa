@@ -125,25 +125,34 @@ export type Database = {
         Row: {
           created_at: string | null
           markup: number | null
+          name: string
           product_id: number
           quantity: number | null
           quote_id: number
+          total_value: number | null
+          value: number
           vat_rate: number | null
         }
         Insert: {
           created_at?: string | null
           markup?: number | null
+          name: string
           product_id: number
           quantity?: number | null
           quote_id: number
+          total_value?: number | null
+          value?: number
           vat_rate?: number | null
         }
         Update: {
           created_at?: string | null
           markup?: number | null
+          name?: string
           product_id?: number
           quantity?: number | null
           quote_id?: number
+          total_value?: number | null
+          value?: number
           vat_rate?: number | null
         }
         Relationships: [
