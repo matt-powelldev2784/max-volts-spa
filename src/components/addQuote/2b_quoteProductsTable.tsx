@@ -5,6 +5,7 @@ import { TableCell, TableHead, TableHeader, TableRow, TableBody, Table } from '@
 import type { QuoteProduct, QuoteProductInsert } from '@/types/dbTypes';
 import { supabase } from '@/lib/supabase';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import FormError from '@/lib/formError';
 
 type QuoteProductsTableProps = {
   quoteProducts: QuoteProductInsert[];
@@ -150,14 +151,17 @@ export const QuoteProductsTable = ({
           </TableBody>
         </Table>
 
-        <div className="flex flex-col items-end">
-          <div className="border-2 border-gray-200 rounded-xl mt-4 px-6 py-4 w-[220px] flex flex-col items-end">
+        <div className="flex flex-col items-end mb-4">
+          <div className="border-2 border-gray-200 rounded-xl mt-4 px-6 py-4 mb-4 w-[220px] flex flex-col items-end">
             <span className="text-gray-500 text-sm font-medium mb-1">Quote Total</span>
             <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
           </div>
 
+          {/* Error Message */}
+          {mutation.isError && <FormError message={mutation.error.message} />}
+
           {/*  Buttons */}
-          <div className="flexCol gap-2 pt-4 w-[220px]">
+          <div className="flexCol gap-2 w-[220px]">
             <Button onClick={onSubmit} size="lgFullWidth" disabled={mutation.isPending}>
               {mutation.isPending ? <Loader2 className="text-white" /> : 'Add Products'}
             </Button>
