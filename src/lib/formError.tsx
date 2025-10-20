@@ -10,7 +10,6 @@ const FormError = ({ message }: FormErrorProps) => {
       <CircleX className="h-5 w-5 text-red-500 mb-1" />
       <p className="font-semibold text-black">Server Error</p>
       <p className="text-sm text-red-600 text-center">{message}</p>
-      <p className="text-sm text-gray-700 mt-1">Please try again</p>
     </div>
   );
 };
