@@ -57,7 +57,7 @@ const AddQuote = () => {
         />
       </>
     );
-  if (step === 3) return <QuoteSummary quoteId={quoteId} clientId={clientId} quoteProducts={quoteProducts} />;
+  if (step === 3) return <QuoteSummary quoteId={quoteId} clientId={clientId} />;
 };
 
 export default AddQuote;

@@ -9,7 +9,7 @@ type QuoteSummaryProps = {
 const QuoteSummary = ({ quoteId, clientId, quoteProducts }: QuoteSummaryProps) => {
   console.log('quoteId, clientId, quoteProducts', quoteId, clientId, quoteProducts);
 
-  return <div>Quote Summary Component</div>;
+  return <div className="w-full text-center p-2">Quote Summary Component</div>;
 };
 
 export default QuoteSummary;
