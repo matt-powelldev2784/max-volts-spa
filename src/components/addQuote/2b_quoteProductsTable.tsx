@@ -15,6 +15,7 @@ type QuoteProductsTableProps = {
 };
 
 const addQuoteProducts = async (quoteProducts: QuoteProductInsert[]) => {
+  if (quoteProducts.length === 0) throw new Error('Please add at least one product to the quote and try again.');
   const { data, error } = await supabase.from('quote_product').insert(quoteProducts).select();
   if (error) throw new Error(error.message);
   return data as QuoteProduct[];
