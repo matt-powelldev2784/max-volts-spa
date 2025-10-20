@@ -15,7 +15,7 @@ const addProductSchema = z.object({
   quantity: z.number().min(1),
   markup: z.number().min(0),
   vat_rate: z.number().min(0),
-  totalValue: z.number().min(0),
+  total_value: z.number().min(0),
 });
 
 type AddProductModalProps = {
@@ -52,7 +52,7 @@ const AddProductModal = ({
       quantity: 1,
       markup: 100,
       vat_rate: 20,
-      totalValue: 0,
+      total_value: 0,
     },
   });
 
@@ -61,18 +61,18 @@ const AddProductModal = ({
     'quantity',
     'markup',
     'vat_rate',
-    'totalValue',
+    'total_value',
   ]);
 
   useEffect(() => {
-    const totalValue = getTotalValue({
+    const total_value = getTotalValue({
       quantity: watchedQuantity,
       value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
-    return form.setValue('totalValue', totalValue);
+    return form.setValue('total_value', total_value);
   }, [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, form, products]);
 
   const handleClose = () => {
@@ -83,13 +83,13 @@ const AddProductModal = ({
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
     const { quantity, markup, vat_rate } = values;
     const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
-    const totalValue = getTotalValue({ quantity, value, markup, vat_rate });
+    const total_value = getTotalValue({ quantity, value, markup, vat_rate });
 
     const quoteProductInsert: QuoteProductInsert = {
       ...values,
       quote_id: quoteId ?? 0,
       value: value,
-      total_value: totalValue,
+      total_value: total_value,
     };
 
     setQuoteProducts((prev) => [...prev, quoteProductInsert]);

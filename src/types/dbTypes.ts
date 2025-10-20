@@ -5,3 +5,4 @@ export type QuoteProductInsert = Database['public']['Tables']['quote_product']['
 export type Client = Database['public']['Tables']['client']['Row'];
 export type Quote = Database['public']['Tables']['quote']['Row'];
 export type Product = Database['public']['Tables']['product']['Row'];
+export type QuoteProduct = Database['public']['Tables']['quote_product']['Row'];

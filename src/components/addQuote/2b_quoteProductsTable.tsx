@@ -1,23 +1,47 @@
 import { Button, LinkButton } from '@/ui/button';
-import { ArrowLeft, Trash } from 'lucide-react';
+import { ArrowLeft, Loader2, Trash } from 'lucide-react';
 import { type Dispatch, type SetStateAction } from 'react';
 import { TableCell, TableHead, TableHeader, TableRow, TableBody, Table } from '@/ui/table';
-import type { QuoteProductInsert } from '@/types/dbTypes';
+import type { QuoteProduct, QuoteProductInsert } from '@/types/dbTypes';
+import { supabase } from '@/lib/supabase';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type QuoteProductsTableProps = {
   quoteProducts: QuoteProductInsert[];
   setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
   setIsOpenProductModalOpen: Dispatch<SetStateAction<boolean>>;
+  setStep: Dispatch<SetStateAction<number>>;
+};
+
+const addQuoteProducts = async (quoteProducts: QuoteProductInsert[]) => {
+  const { data, error } = await supabase.from('quote_product').insert(quoteProducts).select();
+  if (error) throw new Error(error.message);
+  return data as QuoteProduct[];
 };
 
 export const QuoteProductsTable = ({
   quoteProducts,
   setQuoteProducts,
   setIsOpenProductModalOpen,
+  setStep,
 }: QuoteProductsTableProps) => {
+  const queryClient = useQueryClient();
+
   const totalValue = quoteProducts.reduce((acc, curr) => {
     return acc + (curr.total_value || 0);
   }, 0);
+
+  const mutation = useMutation({
+    mutationFn: addQuoteProducts,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes', 'quoteProducts'] });
+      setStep(3);
+    },
+  });
+
+  const onSubmit = () => {
+    mutation.mutate(quoteProducts);
+  };
 
   const onRemove = (index: number) => {
     setQuoteProducts((prev) => prev.filter((_, i) => i !== index));
@@ -132,9 +156,17 @@ export const QuoteProductsTable = ({
             <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
           </div>
 
-          <Button size="lg" variant="default" className="mt-6 w-[220px]" disabled={quoteProducts.length === 0}>
-            Proceed to Quote Summary
-          </Button>
+          {/*  Buttons */}
+          <div className="flexCol gap-2 pt-4 w-[220px]">
+            <Button onClick={onSubmit} size="lgFullWidth" disabled={mutation.isPending}>
+              {mutation.isPending ? <Loader2 className="text-white" /> : 'Add Products'}
+            </Button>
+
+            <LinkButton variant="ghost" size="lgFullWidth" to="/view-quotes">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Cancel
+            </LinkButton>
+          </div>
         </div>
       </div>
     </div>

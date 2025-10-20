@@ -52,6 +52,7 @@ const AddQuote = () => {
           quoteProducts={quoteProducts}
           setQuoteProducts={setQuoteProducts}
           setIsOpenProductModalOpen={setIsOpenProductModalOpen}
+          setStep={setStep}
         />
       </>
     );
