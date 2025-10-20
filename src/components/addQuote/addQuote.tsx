@@ -87,13 +87,11 @@ const AddQuote = () => {
           quoteId={quoteId}
         />
 
-        <div className="flex mx-auto items-end justify-end w-11/12 mt-4">
-          <Button onClick={() => setIsOpenProductModalOpen(true)} className="text-sm h-[34px] mb-4">
-            Add Product
-          </Button>
-        </div>
-
-        <QuoteProductsTable quoteProducts={quoteProducts} setQuoteProducts={setQuoteProducts} />
+        <QuoteProductsTable
+          quoteProducts={quoteProducts}
+          setQuoteProducts={setQuoteProducts}
+          setIsOpenProductModalOpen={setIsOpenProductModalOpen}
+        />
       </>
     );
 };
@@ -103,7 +101,7 @@ const addProductSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   quantity: z.number().min(1),
   markup: z.number().min(0),
-  vatRate: z.number().min(0),
+  vat_rate: z.number().min(0),
   totalValue: z.number().min(0),
 });
 
@@ -119,11 +117,11 @@ type GetTotalValueProps = {
   quantity: number;
   value: number;
   markup: number;
-  vatRate: number;
+  vat_rate: number;
 };
 
-const getTotalValue = ({ quantity, value, markup, vatRate }: GetTotalValueProps) => {
-  return quantity * value * (1 + markup / 100) * (1 + vatRate / 100);
+const getTotalValue = ({ quantity, value, markup, vat_rate }: GetTotalValueProps) => {
+  return quantity * value * (1 + markup / 100) * (1 + vat_rate / 100);
 };
 
 const AddProductModal = ({
@@ -140,7 +138,7 @@ const AddProductModal = ({
       name: '',
       quantity: 1,
       markup: 100,
-      vatRate: 20,
+      vat_rate: 20,
       totalValue: 0,
     },
   });
@@ -149,7 +147,7 @@ const AddProductModal = ({
     'product_id',
     'quantity',
     'markup',
-    'vatRate',
+    'vat_rate',
     'totalValue',
   ]);
 
@@ -158,7 +156,7 @@ const AddProductModal = ({
       quantity: watchedQuantity,
       value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
       markup: watchedMarkup,
-      vatRate: watchedVatRate,
+      vat_rate: watchedVatRate,
     });
 
     return form.setValue('totalValue', totalValue);
@@ -170,9 +168,9 @@ const AddProductModal = ({
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
-    const { quantity, markup, vatRate } = values;
+    const { quantity, markup, vat_rate } = values;
     const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
-    const totalValue = getTotalValue({ quantity, value, markup, vatRate });
+    const totalValue = getTotalValue({ quantity, value, markup, vat_rate });
 
     const quoteProductInsert: QuoteProductInsert = {
       ...values,
@@ -255,7 +253,7 @@ const AddProductModal = ({
 
             <FormField
               control={form.control}
-              name="vatRate"
+              name="vat_rate"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>VAT Rate (%)</FormLabel>
@@ -412,16 +410,39 @@ const CreateQuote = ({ setStep, setQuoteId, setClientId }: AddQuoteProps) => {
 type QuoteProductsTableProps = {
   quoteProducts: QuoteProductInsert[];
   setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
+  setIsOpenProductModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const QuoteProductsTable = ({ quoteProducts, setQuoteProducts }: QuoteProductsTableProps) => {
+export const QuoteProductsTable = ({
+  quoteProducts,
+  setQuoteProducts,
+  setIsOpenProductModalOpen,
+}: QuoteProductsTableProps) => {
+  const totalValue = quoteProducts.reduce((acc, curr) => {
+    return acc + (curr.total_value || 0);
+  }, 0);
+
   const onRemove = (index: number) => {
     setQuoteProducts((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="w-11/12 mx-auto">
+    <div className="w-11/12 mx-auto mt-4">
       <div className="overflow-x-auto">
+        <div className="flexRow gap-4 mt-4 mb-6 md:bg-transparent w-full">
+          <LinkButton variant="iconGhost" size="sm" to="/view-quotes">
+            <ArrowLeft className="h-6 w-6" />
+          </LinkButton>
+          <h1 className="text-3xl font-bold text-gray-800">Add Products</h1>
+        </div>
+
+        <div className="flex justify-between items-end gap-4 mb-4 mx-2">
+          <p className="text-2xl text-gray-800">Quote Products</p>
+          <Button onClick={() => setIsOpenProductModalOpen(true)} className="text-sm h-[34px]">
+            Add Product
+          </Button>
+        </div>
+
         {/* Desktop Table */}
         <Table className="hidden md:table table-fixed">
           <TableHeader>
@@ -430,8 +451,8 @@ export const QuoteProductsTable = ({ quoteProducts, setQuoteProducts }: QuotePro
               <TableHead className="w-80">Product</TableHead>
               <TableHead>Quantity</TableHead>
               <TableHead>Unit value</TableHead>
-              <TableHead>Markup %</TableHead>
-              <TableHead>VAT %</TableHead>
+              <TableHead>Markup</TableHead>
+              <TableHead>VAT</TableHead>
               <TableHead>Total</TableHead>
             </TableRow>
           </TableHeader>
@@ -439,7 +460,6 @@ export const QuoteProductsTable = ({ quoteProducts, setQuoteProducts }: QuotePro
           <TableBody>
             {quoteProducts.map((quoteProduct, index) => (
               <TableRow key={`${quoteProduct.product_id}-${index}`}>
-                {/* Remove button first */}
                 <TableCell>
                   <Button
                     size="sm"
@@ -453,10 +473,10 @@ export const QuoteProductsTable = ({ quoteProducts, setQuoteProducts }: QuotePro
 
                 <TableCell>{quoteProduct.name}</TableCell>
                 <TableCell>{quoteProduct.quantity}</TableCell>
-                <TableCell>{quoteProduct.value}</TableCell>
-                <TableCell>{quoteProduct.markup}</TableCell>
-                <TableCell>{quoteProduct.vat_rate}</TableCell>
-                <TableCell className="font-bold">{`£ ${quoteProduct.total_value}`}</TableCell>
+                <TableCell>£{quoteProduct.value?.toFixed(2)}</TableCell>
+                <TableCell>{quoteProduct.markup}%</TableCell>
+                <TableCell>{quoteProduct.vat_rate}%</TableCell>
+                <TableCell className="font-bold">{`£ ${quoteProduct.total_value?.toFixed(2)}`}</TableCell>
               </TableRow>
             ))}
 
@@ -495,7 +515,7 @@ export const QuoteProductsTable = ({ quoteProducts, setQuoteProducts }: QuotePro
                 </TableCell>
 
                 <TableCell>{quoteProduct.name}</TableCell>
-                <TableCell className="font-bold">{`£ ${quoteProduct.total_value}`}</TableCell>
+                <TableCell className="font-bold">{`£ ${quoteProduct.total_value?.toFixed(2)}`}</TableCell>
               </TableRow>
             ))}
 
@@ -508,6 +528,17 @@ export const QuoteProductsTable = ({ quoteProducts, setQuoteProducts }: QuotePro
             )}
           </TableBody>
         </Table>
+
+        <div className="flex flex-col items-end">
+          <div className="border-2 border-gray-200 rounded-xl mt-4 px-6 py-4 w-[220px] flex flex-col items-end">
+            <span className="text-gray-500 text-sm font-medium mb-1">Quote Total</span>
+            <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
+          </div>
+
+          <Button size="lg" variant="default" className="mt-6 w-[220px]" disabled={quoteProducts.length === 0}>
+            Proceed to Quote Summary
+          </Button>
+        </div>
       </div>
     </div>
   );
