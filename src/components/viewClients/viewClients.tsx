@@ -146,7 +146,7 @@ const ViewClients = () => {
       <Table className="table md:hidden table-fixed">
         <TableHeader>
           <TableRow className="bg-neutral-100">
-            <TableHead className="w-14"></TableHead>
+            <TableHead className="w-10"></TableHead>
             <TableHead className="w-1/2">Name</TableHead>
             <TableHead className="w-1/2 pr-4">Company</TableHead>
           </TableRow>

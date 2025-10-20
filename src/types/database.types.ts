@@ -86,6 +86,7 @@ export type Database = {
           notes: string | null
           status: string
           total_value: number | null
+          user_email: string
           user_id: string
         }
         Insert: {
@@ -96,6 +97,7 @@ export type Database = {
           notes?: string | null
           status: string
           total_value?: number | null
+          user_email?: string
           user_id: string
         }
         Update: {
@@ -106,6 +108,7 @@ export type Database = {
           notes?: string | null
           status?: string
           total_value?: number | null
+          user_email?: string
           user_id?: string
         }
         Relationships: [
@@ -121,26 +124,38 @@ export type Database = {
       quote_product: {
         Row: {
           created_at: string | null
+          id: number
           markup: number | null
+          name: string
           product_id: number
           quantity: number | null
           quote_id: number
+          total_value: number | null
+          value: number
           vat_rate: number | null
         }
         Insert: {
           created_at?: string | null
+          id?: number
           markup?: number | null
+          name: string
           product_id: number
           quantity?: number | null
           quote_id: number
+          total_value?: number | null
+          value?: number
           vat_rate?: number | null
         }
         Update: {
           created_at?: string | null
+          id?: number
           markup?: number | null
+          name?: string
           product_id?: number
           quantity?: number | null
           quote_id?: number
+          total_value?: number | null
+          value?: number
           vat_rate?: number | null
         }
         Relationships: [
