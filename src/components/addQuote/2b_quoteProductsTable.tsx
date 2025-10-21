@@ -9,6 +9,7 @@ import FormError from '@/lib/formError';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/ui/card';
 
 type QuoteProductsTableProps = {
+  quoteId: number;
   quoteProducts: QuoteProductInsert[];
   setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
   setIsOpenProductModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -22,7 +23,26 @@ const addQuoteProducts = async (quoteProducts: QuoteProductInsert[]) => {
   return data;
 };
 
+const updateQuoteTotal = async ({ quoteId, total_value }: { quoteId: number; total_value: number }) => {
+  const { error } = await supabase.from('quote').update({ total_value }).eq('id', quoteId);
+  if (error) throw new Error(error.message);
+  return total_value;
+};
+
+type UpdateQuotesProps = {
+  quoteId: number;
+  quoteProducts: QuoteProductInsert[];
+  totalValue: number;
+};
+
+const updateQuote = async ({ quoteId, quoteProducts, totalValue }: UpdateQuotesProps) => {
+  const data = await addQuoteProducts(quoteProducts);
+  if (!data) throw new Error('Failed to add products to quote.');
+  await updateQuoteTotal({ quoteId, total_value: totalValue });
+};
+
 export const QuoteProductsTable = ({
+  quoteId,
   quoteProducts,
   setQuoteProducts,
   setIsOpenProductModalOpen,
@@ -35,7 +55,7 @@ export const QuoteProductsTable = ({
   }, 0);
 
   const mutation = useMutation({
-    mutationFn: addQuoteProducts,
+    mutationFn: updateQuote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quotes', 'quoteProducts'] });
       setStep(3);
@@ -43,7 +63,7 @@ export const QuoteProductsTable = ({
   });
 
   const onSubmit = () => {
-    mutation.mutate(quoteProducts);
+    mutation.mutate({ quoteId, quoteProducts, totalValue });
   };
 
   const onRemove = (index: number) => {
