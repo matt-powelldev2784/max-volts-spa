@@ -6,7 +6,7 @@ import { Button, LinkButton } from '@/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { FilePlus2, ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, UserPlus } from 'lucide-react';
 import FormError from '@/lib/formError';
 import useAuth from '@/lib/useAuth';
 import ErrorCard from '@/lib/errorCard';
@@ -94,7 +94,7 @@ const CreateQuote = ({ setStep, setQuoteId, setClientId }: CreateQuoteProps) => 
 
         <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl -translate-y-6 md:-translate-y-0">
           <CardHeader className="rounded-t-xl">
-            <FilePlus2 className="mx-auto h-12 w-12 text-mv-orange mb-2" />
+            <UserPlus className="mx-auto h-12 w-12 text-mv-orange mb-2" />
             <CardTitle className="text-center text-2xl">Select Client</CardTitle>
             <CardDescription className="text-center">
               Select a client and click next to start your quote.
