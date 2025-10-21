@@ -50,6 +50,7 @@ const AddQuote = () => {
         />
 
         <QuoteProductsTable
+          quoteId={quoteId}
           quoteProducts={quoteProducts}
           setQuoteProducts={setQuoteProducts}
           setIsOpenProductModalOpen={setIsOpenProductModalOpen}
