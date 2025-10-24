@@ -8,14 +8,13 @@ import AddClient from './0_addClient';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import AddProducts from './1b_addProducts';
 import QuoteSummary from './2_quoteSummary';
+import StepIndicator, { type Steps } from './_stepIndicator';
 
 const getProducts = async () => {
   const { data, error } = await supabase.from('product').select('id, name, value').order('name', { ascending: true });
   if (error) throw new Error(error.message);
   return data as Product[];
 };
-
-export type Steps = 'AddClient' | 'AddProducts' | 'QuoteSummary';
 
 const AddQuote = () => {
   const [quoteId, setQuoteId] = useState(0);
@@ -39,28 +38,36 @@ const AddQuote = () => {
     return <ErrorCard message={productsError?.message || 'Failed to load products.'} />;
   }
 
-  if (step === 'AddClient') return <AddClient setStep={setStep} setQuoteId={setQuoteId} setClientId={setClientId} />;
-  if (step === 'AddProducts')
-    return (
-      <>
-        <AddProductModal
-          isModalOpen={isAddProductModalOpen}
-          setIsOpenProductModalOpen={setIsOpenProductModalOpen}
-          setQuoteProducts={setQuoteProducts}
-          products={productsData}
-          quoteId={quoteId}
-        />
+  return (
+    <div className="">
+      <StepIndicator activeStep={step} />
 
-        <AddProducts
-          quoteId={quoteId}
-          quoteProducts={quoteProducts}
-          setQuoteProducts={setQuoteProducts}
-          setIsOpenProductModalOpen={setIsOpenProductModalOpen}
-          setStep={setStep}
-        />
-      </>
-    );
-  if (step === 'QuoteSummary') return <QuoteSummary quoteId={quoteId} clientId={clientId} />;
+      {step === 'AddClient' && <AddClient setStep={setStep} setQuoteId={setQuoteId} setClientId={setClientId} />}
+
+      {step === 'AddProducts' && (
+        <>
+          <AddProductModal
+            isModalOpen={isAddProductModalOpen}
+            setIsOpenProductModalOpen={setIsOpenProductModalOpen}
+            setQuoteProducts={setQuoteProducts}
+            products={productsData}
+            quoteId={quoteId}
+          />
+
+          <AddProducts
+            quoteId={quoteId}
+            quoteProducts={quoteProducts}
+            setQuoteProducts={setQuoteProducts}
+            setIsOpenProductModalOpen={setIsOpenProductModalOpen}
+            setStep={setStep}
+          />
+        </>
+      )}
+
+      {step === 'QuoteSummary' && <QuoteSummary quoteId={quoteId} clientId={clientId} />}
+    </div>
+  );
 };
+
 
 export default AddQuote;

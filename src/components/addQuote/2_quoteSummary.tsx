@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, LinkButton } from '@/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card';
-import { ArrowLeft, FileText, Loader2 } from 'lucide-react';
+import { Button } from '@/ui/button';
+import { Card, CardContent, CardDescription, CardHeader } from '@/ui/card';
+import { Loader2 } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/ui/form';
 import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
@@ -99,19 +99,10 @@ const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
   if (isLoadingQuote || isLoadingClient) return <LoadingSpinner />;
 
   return (
-    <div className="flex min-h-screen items-start justify-center bg-none md:bg-gray-50 md:p-4 pb-24 md:pb-24">
+    <div className="flex min-h-screen items-start justify-center md:p-4 pb-24 md:pb-24">
       <div className="w-full flexCol md:max-w-[600px]">
-        <div className="flexRow gap-4 mt-4 mb-6 md:bg-transparent w-full">
-          <LinkButton variant="iconGhost" size="sm" to="/view-quotes">
-            <ArrowLeft className="h-6 w-6" />
-          </LinkButton>
-          <h1 className="text-3xl font-bold text-gray-800">Create Quote</h1>
-        </div>
-
-        <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl -translate-y-6 md:-translate-y-0">
+        <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl">
           <CardHeader className="rounded-t-xl">
-            <FileText className="mx-auto h-12 w-12 text-mv-orange mb-2" />
-            <CardTitle className="text-center text-2xl">Quote Summary</CardTitle>
             <CardDescription className="text-center">
               Check quote details, add notes if required and submit
             </CardDescription>
