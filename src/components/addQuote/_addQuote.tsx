@@ -3,11 +3,11 @@ import { supabase } from '@/lib/supabase';
 import ErrorCard from '@/lib/errorCard';
 import { useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-import AddProductModal from './2a_addProductModal';
-import CreateQuote from './1_createQuote';
+import AddProductModal from './1a_addProductModal';
+import CreateQuote from './0_createQuote';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
-import QuoteProductsTable from './2b_quoteProductsTable';
-import QuoteSummary from './3_quoteSummary';
+import QuoteProductsTable from './1b_quoteProductsTable';
+import QuoteSummary from './2_quoteSummary';
 
 const getProducts = async () => {
   const { data, error } = await supabase.from('product').select('id, name, value').order('name', { ascending: true });
@@ -58,7 +58,7 @@ const AddQuote = () => {
         />
       </>
     );
-  if (step === 3) return <QuoteSummary quoteId={quoteId} clientId={clientId} />;
+  if (step === 2) return <QuoteSummary quoteId={quoteId} clientId={clientId} />;
 };
 
 export default AddQuote;

@@ -58,7 +58,7 @@ export const QuoteProductsTable = ({
     mutationFn: updateQuote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quotes', 'quoteProducts'] });
-      setStep(3);
+      setStep(2);
     },
   });
 
