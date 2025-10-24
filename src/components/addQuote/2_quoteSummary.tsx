@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/ui/button';
+import { Button, LinkButton } from '@/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/ui/card';
-import { Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/ui/form';
 import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
@@ -137,8 +137,13 @@ const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
 
                 {mutation.isError && <div className="text-red-600 text-sm">{mutation.error.message}</div>}
 
-                <div className="flex justify-end gap-2">
-                  <Button type="submit" size="lg" disabled={mutation.isPending}>
+                <div className="w-full flex flex-row justify-center md:justify-end gap-2 pt-4">
+                  <LinkButton variant="ghost" size="formButton" to="/view-quotes">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Cancel
+                  </LinkButton>
+
+                  <Button type="submit" size="formButton" disabled={mutation.isPending}>
                     {mutation.isPending ? <Loader2 className="text-white" /> : 'Submit'}
                   </Button>
                 </div>

@@ -139,13 +139,13 @@ const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
                 {mutation.isError && <FormError message={mutation.error.message} />}
 
                 {/*  Buttons */}
-                <div className="flex flex-row justify-center md:justify-end gap-2 pt-4">
-                  <LinkButton variant="ghost" size="lg" to="/view-quotes">
+                <div className="w-full flex flex-row justify-center md:justify-end gap-2 pt-4">
+                  <LinkButton variant="ghost" size="formButton" to="/view-quotes">
                     <ArrowLeft className="mr-2 h-4 w-4 text-grey-500" />
                     Cancel
                   </LinkButton>
 
-                  <Button type="submit" size="lg" disabled={mutation.isPending}>
+                  <Button type="submit" size="formButton" disabled={mutation.isPending}>
                     {mutation.isPending ? <Loader2 className="text-white" /> : 'Next Step'}
                   </Button>
                 </div>

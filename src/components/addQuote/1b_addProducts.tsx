@@ -169,7 +169,7 @@ export const AddProducts = ({
             </div>
 
             <div className="flex flex-col items-end mb-4">
-              <div className="border-2 border-gray-200 rounded-xl mt-4 px-6 py-4 mb-4 w-[220px] flex flex-col items-end">
+              <div className="border-2 border-gray-200 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end">
                 <span className="text-gray-500 text-sm font-medium mb-1">Quote Total</span>
                 <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
               </div>
@@ -178,15 +178,15 @@ export const AddProducts = ({
               {mutation.isError && <FormError message={mutation.error.message} />}
 
               {/*  Buttons */}
-              <div className="flexCol gap-2 w-[220px]">
-                <Button onClick={onSubmit} size="lgFullWidth" disabled={mutation.isPending}>
-                  {mutation.isPending ? <Loader2 className="text-white" /> : 'Next Step'}
-                </Button>
-
-                <LinkButton variant="ghost" size="lgFullWidth" to="/view-quotes">
+              <div className="w-full flex flex-row justify-center md:justify-end gap-2 pt-4">
+                <LinkButton variant="ghost" size="formButton" to="/view-quotes">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Cancel
                 </LinkButton>
+
+                <Button onClick={onSubmit} size="formButton" disabled={mutation.isPending}>
+                  {mutation.isPending ? <Loader2 className="text-white" /> : 'Next Step'}
+                </Button>
               </div>
             </div>
           </CardContent>
