@@ -4,9 +4,9 @@ import ErrorCard from '@/lib/errorCard';
 import { useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import AddProductModal from './1a_addProductModal';
-import CreateQuote from './0_createQuote';
+import AddClient from './0_addClient';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
-import QuoteProductsTable from './1b_quoteProductsTable';
+import AddProducts from './1b_addProducts';
 import QuoteSummary from './2_quoteSummary';
 
 const getProducts = async () => {
@@ -15,10 +15,12 @@ const getProducts = async () => {
   return data as Product[];
 };
 
+export type Steps = 'AddClient' | 'AddProducts' | 'QuoteSummary';
+
 const AddQuote = () => {
   const [quoteId, setQuoteId] = useState(0);
   const [clientId, setClientId] = useState(0);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState<Steps>('AddClient');
   const [quoteProducts, setQuoteProducts] = useState<QuoteProductInsert[]>([]);
   const [isAddProductModalOpen, setIsOpenProductModalOpen] = useState(true);
 
@@ -37,8 +39,8 @@ const AddQuote = () => {
     return <ErrorCard message={productsError?.message || 'Failed to load products.'} />;
   }
 
-  if (step === 0) return <CreateQuote setStep={setStep} setQuoteId={setQuoteId} setClientId={setClientId} />;
-  if (step === 1)
+  if (step === 'AddClient') return <AddClient setStep={setStep} setQuoteId={setQuoteId} setClientId={setClientId} />;
+  if (step === 'AddProducts')
     return (
       <>
         <AddProductModal
@@ -49,7 +51,7 @@ const AddQuote = () => {
           quoteId={quoteId}
         />
 
-        <QuoteProductsTable
+        <AddProducts
           quoteId={quoteId}
           quoteProducts={quoteProducts}
           setQuoteProducts={setQuoteProducts}
@@ -58,7 +60,7 @@ const AddQuote = () => {
         />
       </>
     );
-  if (step === 2) return <QuoteSummary quoteId={quoteId} clientId={clientId} />;
+  if (step === 'QuoteSummary') return <QuoteSummary quoteId={quoteId} clientId={clientId} />;
 };
 
 export default AddQuote;

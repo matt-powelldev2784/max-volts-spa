@@ -7,14 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import FormError from '@/lib/formError';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/ui/card';
-
-type QuoteProductsTableProps = {
-  quoteId: number;
-  quoteProducts: QuoteProductInsert[];
-  setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
-  setIsOpenProductModalOpen: Dispatch<SetStateAction<boolean>>;
-  setStep: Dispatch<SetStateAction<number>>;
-};
+import type { Steps } from './_addQuote';
 
 const addQuoteProducts = async (quoteProducts: QuoteProductInsert[]) => {
   if (quoteProducts.length === 0) throw new Error('Please add at least one product to the quote and try again.');
@@ -41,13 +34,21 @@ const updateQuote = async ({ quoteId, quoteProducts, totalValue }: UpdateQuotesP
   await updateQuoteTotal({ quoteId, total_value: totalValue });
 };
 
-export const QuoteProductsTable = ({
+type AddProductProps = {
+  quoteId: number;
+  quoteProducts: QuoteProductInsert[];
+  setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
+  setIsOpenProductModalOpen: Dispatch<SetStateAction<boolean>>;
+  setStep: Dispatch<SetStateAction<Steps>>;
+};
+
+export const AddProducts = ({
   quoteId,
   quoteProducts,
   setQuoteProducts,
   setIsOpenProductModalOpen,
   setStep,
-}: QuoteProductsTableProps) => {
+}: AddProductProps) => {
   const queryClient = useQueryClient();
 
   const totalValue = quoteProducts.reduce((acc, curr) => {
@@ -58,7 +59,7 @@ export const QuoteProductsTable = ({
     mutationFn: updateQuote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quotes', 'quoteProducts'] });
-      setStep(2);
+      setStep('QuoteSummary');
     },
   });
 
@@ -187,7 +188,7 @@ export const QuoteProductsTable = ({
               {/*  Buttons */}
               <div className="flexCol gap-2 w-[220px]">
                 <Button onClick={onSubmit} size="lgFullWidth" disabled={mutation.isPending}>
-                  {mutation.isPending ? <Loader2 className="text-white" /> : 'Add Products'}
+                  {mutation.isPending ? <Loader2 className="text-white" /> : 'Next'}
                 </Button>
 
                 <LinkButton variant="ghost" size="lgFullWidth" to="/view-quotes">
@@ -203,4 +204,4 @@ export const QuoteProductsTable = ({
   );
 };
 
-export default QuoteProductsTable;
+export default AddProducts;

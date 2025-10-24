@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Dispatch, SetStateAction } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Client, Quote, QuoteInsert } from '@/types/dbTypes';
+import type { Steps } from './_addQuote';
 
 const createQuote = async (quote: QuoteInsert) => {
   const { data, error } = await supabase.from('quote').insert(quote).select().single();
@@ -31,13 +32,13 @@ const formSchema = z.object({
   client_id: z.number('Client is required').refine((val) => val > 0, { message: 'Client is required' }),
 });
 
-type CreateQuoteProps = {
-  setStep: Dispatch<SetStateAction<number>>;
+type AddClientProps = {
+  setStep: Dispatch<SetStateAction<Steps>>;
   setClientId: Dispatch<SetStateAction<number>>;
   setQuoteId: Dispatch<SetStateAction<number>>;
 };
 
-const CreateQuote = ({ setStep, setQuoteId, setClientId }: CreateQuoteProps) => {
+const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -64,7 +65,7 @@ const CreateQuote = ({ setStep, setQuoteId, setClientId }: CreateQuoteProps) => 
       queryClient.invalidateQueries({ queryKey: ['quotes'] });
       setQuoteId(data.id);
       setClientId(data.client_id);
-      setStep(1);
+      setStep('AddProducts');
     },
   });
 
@@ -147,7 +148,7 @@ const CreateQuote = ({ setStep, setQuoteId, setClientId }: CreateQuoteProps) => 
                 {/*  Buttons */}
                 <div className="flexCol gap-2 pt-4">
                   <Button type="submit" size="lgFullWidth" disabled={mutation.isPending}>
-                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Create Quote'}
+                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Next'}
                   </Button>
 
                   <LinkButton variant="ghost" size="lgFullWidth" to="/view-quotes">
@@ -164,4 +165,4 @@ const CreateQuote = ({ setStep, setQuoteId, setClientId }: CreateQuoteProps) => 
   );
 };
 
-export default CreateQuote;
+export default AddClient;
