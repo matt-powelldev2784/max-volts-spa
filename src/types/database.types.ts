@@ -59,18 +59,21 @@ export type Database = {
       product: {
         Row: {
           created_at: string | null
+          description: string | null
           id: number
           name: string
           value: number
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           id?: number
           name: string
           value: number
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: number
           name?: string
           value?: number

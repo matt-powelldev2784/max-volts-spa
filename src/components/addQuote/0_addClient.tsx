@@ -98,7 +98,7 @@ const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
           <CardContent className="px-4 md:px-6 pb-6 pt-4">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
-                <div className="space-y-4">
+                <div className="relative space-y-4">
                   <FormField
                     control={form.control}
                     name="client_id"
@@ -114,7 +114,7 @@ const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
                             disabled={clientsLoading}
                           >
                             <SelectTrigger
-                              className="w-full rounded-md border border-gray-300 px-3 py-2  bg-white"
+                              className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
                               aria-invalid={Boolean(form.formState.errors.client_id)}
                             >
                               <SelectValue placeholder={clientsLoading ? 'Loading clients...' : 'Select a client'} />
@@ -123,7 +123,9 @@ const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
                             <SelectContent>
                               {clients?.map((client) => (
                                 <SelectItem key={client.id} value={String(client.id)}>
-                                  {`${client.name} ${client.company}`}
+                                  <span className="block max-w-[230px] md:max-w-[700px] truncate">
+                                    {`${client.name} ${client.company}`}
+                                  </span>
                                 </SelectItem>
                               ))}
                             </SelectContent>
