@@ -43,7 +43,7 @@ const StepIndicator = ({ activeStep }: StepIndicatorProps) => {
               {isComplete ? <Check className="h-4 w-4 md:h-5 md:w-5" /> : step.icon}
             </div>
             <span
-              className={`mt-2 max-w-[50px] md:max-w-full text-center text-sm md:text-sm font-medium ${isActive ? 'text-mv-orange' : 'text-gray-400'}`}
+              className={`mt-2 max-w-[65px] md:max-w-full text-center text-sm md:text-sm font-medium ${isActive ? 'text-mv-orange' : 'text-gray-400'}`}
             >
               {step.label}
             </span>
