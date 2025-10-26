@@ -211,7 +211,7 @@ const AddProductModal = ({
 
             <div className="mt-2 font-semibold">Total: £{watchedTotalValue.toFixed(2)}</div>
 
-            <div className="relative w-full flex flex-row justify-center md:justify-end gap-2 pt-4 ">
+            <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
               <Button type="button" variant="ghost" size="formButton" onClick={handleClose}>
                 Cancel
               </Button>

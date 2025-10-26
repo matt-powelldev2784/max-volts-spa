@@ -137,7 +137,7 @@ const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
 
                 {mutation.isError && <div className="text-red-600 text-sm">{mutation.error.message}</div>}
 
-                <div className="w-full flex flex-row justify-center md:justify-end gap-2 pt-4">
+                <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
                   <LinkButton variant="ghost" size="formButton" to="/view-quotes">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Cancel
