@@ -10,23 +10,14 @@ import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-import type { Client, Quote } from '@/types/dbTypes';
+import type { Client, QuoteInsert, QuoteProductInsert } from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
+import useAuth from '@/lib/useAuth';
+import FormError from '@/lib/formError';
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
 });
-
-type QuoteSummaryProps = {
-  quoteId: number;
-  clientId: number;
-};
-
-const getQuote = async (quoteId: number) => {
-  const { data, error } = await supabase.from('quote').select('*').eq('id', quoteId).single();
-  if (error) throw new Error(error.message);
-  return data as Quote;
-};
 
 const getClient = async (clientId: number) => {
   const { data, error } = await supabase.from('client').select('*').eq('id', clientId).single();
@@ -34,30 +25,44 @@ const getClient = async (clientId: number) => {
   return data as Client;
 };
 
-type UpdateQuoteNotesProps = {
-  quoteId: number;
-  notes: string;
+type CreateQuoteProps = {
+  quoteProductsInsert: QuoteProductInsert[];
+  quoteInsert: QuoteInsert;
 };
 
-const updateQuoteNotes = async ({ quoteId, notes }: UpdateQuoteNotesProps) => {
-  const { error } = await supabase.from('quote').update({ notes, status: 'quoted' }).eq('id', quoteId);
-  if (error) throw new Error(error.message);
-  return;
+const createQuote = async ({ quoteProductsInsert, quoteInsert }: CreateQuoteProps) => {
+  // add quote db entry
+  const { data: quoteData, error: quoteError } = await supabase.from('quote').insert(quoteInsert).select().single();
+  if (quoteError) throw new Error(quoteError.message);
+  const quoteId = quoteData.id;
+  if (!quoteId) throw new Error('Failed to create quote entry in database.');
+
+  // add quote products db entries
+  const { data: quoteProductData, error: QuoteProductError } = await supabase
+    .from('quote_product')
+    .insert(
+      quoteProductsInsert.map((quoteProduct) => ({
+        ...quoteProduct,
+        quote_id: quoteId,
+      }))
+    )
+    .select();
+  if (QuoteProductError) throw new Error('Failed to add quote products to database.');
+  return { quoteData, quoteProductData };
 };
 
-const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
+type QuoteSummaryProps = {
+  clientId: number;
+  quoteProducts: QuoteProductInsert[];
+};
+
+const QuoteSummary = ({ clientId, quoteProducts }: QuoteSummaryProps) => {
+  const { user, loading: userIsLoading } = useAuth();
+  const userEmail = user?.email;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const {
-    data: quote,
-    isLoading: isLoadingQuote,
-    isError: isQuoteError,
-    error: quoteError,
-  } = useQuery({
-    queryKey: ['quote', quoteId],
-    queryFn: () => getQuote(quoteId),
-  });
+  const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
 
   const {
     data: client,
@@ -77,26 +82,33 @@ const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
   });
 
   const mutation = useMutation({
-    mutationFn: updateQuoteNotes,
+    mutationFn: createQuote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quote', quoteId] });
+      queryClient.invalidateQueries({ queryKey: ['quote'] });
+      navigate('/view-quotes');
     },
   });
 
-  const onSubmit = (values: z.infer<typeof notesSchema>) => {
-    mutation.mutate({
-      quoteId,
-      notes: values.notes,
-    });
-    queryClient.invalidateQueries({ queryKey: ['quotes'] });
-    navigate('/view-quotes');
-  };
-
-  if (isQuoteError) return <ErrorCard message={quoteError?.message || 'Failed to load quote.'} />;
-  if (quote?.total_value === null) return <ErrorCard message="Quote total value is missing." />;
+  if (isLoadingClient) return <LoadingSpinner />;
+  if (userIsLoading || !userEmail) return <LoadingSpinner />;
+  if (!user) return <ErrorCard message="Unable to access user information. Please login and try again." />;
   if (isClientError) return <ErrorCard message={clientError?.message || 'Failed to load client.'} />;
 
-  if (isLoadingQuote || isLoadingClient) return <LoadingSpinner />;
+  const onSubmit = (values: z.infer<typeof notesSchema>) => {
+    mutation.mutate({
+      quoteInsert: {
+        client_id: clientId,
+        total_value: totalValue,
+        user_id: user.id,
+        user_email: userEmail,
+        notes: values.notes,
+        status: 'quoted',
+      },
+      quoteProductsInsert: quoteProducts.map((product) => ({
+        ...product,
+      })),
+    });
+  };
 
   return (
     <div className="flex min-h-screen items-start justify-center md:p-4 pb-24 md:pb-24">
@@ -116,7 +128,7 @@ const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
 
             <p className="font-medium text-sm pb-1">Quote Total</p>
             <div className="rounded-md border border-gray-500 bg-gray-50 w-full px-4 py-2 mb-4">
-              <p>{`£${quote?.total_value.toFixed(2)}`}</p>
+              <p>{`£${totalValue.toFixed(2)}`}</p>
             </div>
 
             <Form {...form}>
@@ -135,7 +147,7 @@ const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
                   )}
                 />
 
-                {mutation.isError && <div className="text-red-600 text-sm">{mutation.error.message}</div>}
+                {mutation.isError && <FormError message={mutation.error.message} />}
 
                 <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
                   <LinkButton variant="ghost" size="formButton" to="/view-quotes">
@@ -144,7 +156,7 @@ const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
                   </LinkButton>
 
                   <Button type="submit" size="formButton" disabled={mutation.isPending}>
-                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Submit'}
+                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Create Quote'}
                   </Button>
                 </div>
               </form>

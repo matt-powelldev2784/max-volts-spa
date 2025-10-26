@@ -24,7 +24,6 @@ type AddProductModalProps = {
   setIsAddProductModalOpen: Dispatch<SetStateAction<boolean>>;
   setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
   products: Product[];
-  quoteId?: number;
 };
 
 type GetTotalValueProps = {
@@ -43,7 +42,6 @@ const AddProductModal = ({
   setIsAddProductModalOpen,
   setQuoteProducts,
   products,
-  quoteId,
 }: AddProductModalProps) => {
   const form = useForm<z.infer<typeof addProductSchema>>({
     resolver: zodResolver(addProductSchema),
@@ -97,9 +95,8 @@ const AddProductModal = ({
     const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
     const total_value = getTotalValue({ quantity, value, markup, vat_rate });
 
-    const quoteProductInsert: QuoteProductInsert = {
+    const quoteProductInsert = {
       ...values,
-      quote_id: quoteId ?? 0,
       value: value,
       total_value: total_value,
     };
@@ -161,7 +158,6 @@ const AddProductModal = ({
               )}
             />
 
-            {/* Description field below quantity */}
             <FormField
               control={form.control}
               name="description"

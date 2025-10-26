@@ -75,7 +75,6 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <FormItemContext.Provider value={{ id }}>
       <div data-slot="form-item" className={cn('grid gap-0 relative pb-2', className)} {...props} />
-      {/*                                              ^^^^^ Changed from gap-2 to gap-1 */}
     </FormItemContext.Provider>
   );
 }

@@ -134,7 +134,7 @@ export type Database = {
           product_id: number
           quantity: number | null
           quote_id: number
-          total_value: number | null
+          total_value: number
           value: number
           vat_rate: number | null
         }
@@ -147,7 +147,7 @@ export type Database = {
           product_id: number
           quantity?: number | null
           quote_id: number
-          total_value?: number | null
+          total_value: number
           value?: number
           vat_rate?: number | null
         }
@@ -160,7 +160,7 @@ export type Database = {
           product_id?: number
           quantity?: number | null
           quote_id?: number
-          total_value?: number | null
+          total_value?: number
           value?: number
           vat_rate?: number | null
         }

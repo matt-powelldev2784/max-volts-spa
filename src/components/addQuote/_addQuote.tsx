@@ -20,11 +20,12 @@ const getProducts = async () => {
 };
 
 const AddQuote = () => {
-  const [quoteId, setQuoteId] = useState(0);
   const [clientId, setClientId] = useState(0);
   const [step, setStep] = useState<Steps>('AddClient');
   const [quoteProducts, setQuoteProducts] = useState<QuoteProductInsert[]>([]);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+
+  console.log('quoteProducts', quoteProducts);
 
   const {
     data: productsData,
@@ -45,7 +46,7 @@ const AddQuote = () => {
     <div className="">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && <AddClient setStep={setStep} setQuoteId={setQuoteId} setClientId={setClientId} />}
+      {step === 'AddClient' && <AddClient setStep={setStep} setClientId={setClientId} />}
 
       {step === 'AddProducts' && (
         <>
@@ -54,11 +55,9 @@ const AddQuote = () => {
             setIsAddProductModalOpen={setIsAddProductModalOpen}
             setQuoteProducts={setQuoteProducts}
             products={productsData}
-            quoteId={quoteId}
           />
 
           <AddProducts
-            quoteId={quoteId}
             quoteProducts={quoteProducts}
             setQuoteProducts={setQuoteProducts}
             setIsAddProductModalOpen={setIsAddProductModalOpen}
@@ -67,7 +66,7 @@ const AddQuote = () => {
         </>
       )}
 
-      {step === 'QuoteSummary' && <QuoteSummary quoteId={quoteId} clientId={clientId} />}
+      {step === 'QuoteSummary' && <QuoteSummary clientId={clientId} quoteProducts={quoteProducts} />}
     </div>
   );
 };

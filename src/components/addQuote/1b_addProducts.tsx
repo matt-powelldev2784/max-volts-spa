@@ -1,68 +1,28 @@
 import { Button, LinkButton } from '@/ui/button';
-import { ArrowLeft, Loader2, Trash, Pencil, EllipsisVertical } from 'lucide-react';
+import { ArrowLeft, Trash, Pencil, EllipsisVertical } from 'lucide-react';
 import { type Dispatch, type SetStateAction } from 'react';
 import type { QuoteProductInsert } from '@/types/dbTypes';
-import { supabase } from '@/lib/supabase';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import FormError from '@/lib/formError';
 import { Card, CardContent } from '@/ui/card';
 import type { Steps } from './_stepIndicator';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
 
 type AddProductProps = {
-  quoteId: number;
   quoteProducts: QuoteProductInsert[];
   setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
   setIsAddProductModalOpen: Dispatch<SetStateAction<boolean>>;
   setStep: Dispatch<SetStateAction<Steps>>;
 };
 
-const addQuoteProducts = async (quoteProducts: QuoteProductInsert[]) => {
-  if (quoteProducts.length === 0) throw new Error('Please add at least one product to the quote and try again.');
-  const { data, error } = await supabase.from('quote_product').insert(quoteProducts).select();
-  if (error) throw new Error(error.message);
-  return data;
-};
-
-const updateQuoteTotal = async ({ quoteId, total_value }: { quoteId: number; total_value: number }) => {
-  const { error } = await supabase.from('quote').update({ total_value }).eq('id', quoteId);
-  if (error) throw new Error(error.message);
-  return total_value;
-};
-
-type UpdateQuotesProps = {
-  quoteId: number;
-  quoteProducts: QuoteProductInsert[];
-  totalValue: number;
-};
-
-const updateQuote = async ({ quoteId, quoteProducts, totalValue }: UpdateQuotesProps) => {
-  const data = await addQuoteProducts(quoteProducts);
-  if (!data) throw new Error('Failed to add products to quote.');
-  await updateQuoteTotal({ quoteId, total_value: totalValue });
-};
-
 export const AddProducts = ({
-  quoteId,
   quoteProducts,
   setQuoteProducts,
   setIsAddProductModalOpen,
   setStep,
 }: AddProductProps) => {
-  const queryClient = useQueryClient();
-
-  const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
-
-  const mutation = useMutation({
-    mutationFn: updateQuote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quotes', 'quoteProducts'] });
-      setStep('QuoteSummary');
-    },
-  });
+  const totalValue = quoteProducts.reduce((acc, curr) => acc + curr.total_value, 0);
 
   const onSubmit = () => {
-    mutation.mutate({ quoteId, quoteProducts, totalValue });
+    setStep('QuoteSummary');
   };
 
   const handleRemove = (index: number) => {
@@ -113,9 +73,6 @@ export const AddProducts = ({
                 <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
               </div>
 
-              {/* Mutation error */}
-              {mutation.isError && <FormError message={mutation.error.message} />}
-
               {/* Buttons */}
               <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
                 <LinkButton variant="ghost" size="formButton" to="/view-quotes">
@@ -123,12 +80,8 @@ export const AddProducts = ({
                   Cancel
                 </LinkButton>
 
-                <Button
-                  onClick={onSubmit}
-                  size="formButton"
-                  disabled={quoteProducts.length === 0 || mutation.isPending}
-                >
-                  {mutation.isPending ? <Loader2 className="text-white" /> : 'Next Step'}
+                <Button onClick={onSubmit} size="formButton" disabled={quoteProducts.length === 0}>
+                  Next Step
                 </Button>
               </div>
             </div>

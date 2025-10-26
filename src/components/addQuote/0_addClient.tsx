@@ -5,27 +5,16 @@ import { useQuery } from '@tanstack/react-query';
 import { Button, LinkButton } from '@/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/ui/form';
 import { Card, CardContent, CardDescription, CardHeader } from '@/ui/card';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Loader2 } from 'lucide-react';
-import FormError from '@/lib/formError';
-import useAuth from '@/lib/useAuth';
 import ErrorCard from '@/lib/errorCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { Dispatch, SetStateAction } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Client, Quote, QuoteInsert } from '@/types/dbTypes';
 import type { Steps } from './_stepIndicator';
-
-const createQuote = async (quote: QuoteInsert) => {
-  const { data, error } = await supabase.from('quote').insert(quote).select().single();
-  if (error) throw new Error(error.message);
-  return data as Quote;
-};
 
 const getClients = async () => {
   const { data, error } = await supabase.from('client').select('id, name, company').order('name', { ascending: true });
   if (error) throw new Error(error.message);
-  return data as Client[];
+  return data;
 };
 
 const formSchema = z.object({
@@ -35,13 +24,9 @@ const formSchema = z.object({
 type AddClientProps = {
   setStep: Dispatch<SetStateAction<Steps>>;
   setClientId: Dispatch<SetStateAction<number>>;
-  setQuoteId: Dispatch<SetStateAction<number>>;
 };
 
-const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
-
+const AddClient = ({ setStep, setClientId }: AddClientProps) => {
   const {
     data: clients,
     isLoading: clientsLoading,
@@ -58,38 +43,21 @@ const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
       client_id: 0,
     },
   });
-
-  const mutation = useMutation({
-    mutationFn: createQuote,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['quotes'] });
-      setQuoteId(data.id);
-      setClientId(data.client_id);
-      setStep('AddProducts');
-    },
-  });
+  const watchedClientId = form.watch('client_id');
+  const isFormInvalid = !!form.formState.errors.client_id || watchedClientId === 0;
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    if (!user) return;
-    mutation.mutate({
-      client_id: values.client_id,
-      status: 'new',
-      total_value: 0,
-      user_id: user.id,
-      user_email: user.email ?? '',
-    });
+    setClientId(values.client_id);
+    setStep('AddProducts');
   };
 
   if (isClientsError) return <ErrorCard message={clientsError?.message || 'Failed to load clients.'} />;
-  if (!user?.email) return <ErrorCard message="Unable to access user email. Please login and try again." />;
 
   return (
     <div className="flex min-h-screen items-start justify-center md:p-4 pb-24 md:pb-24">
       <div className="w-full flexCol md:max-w-[600px]">
         <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl">
           <CardHeader className="rounded-t-xl ">
-            {/* <UserPlus className="mx-auto h-12 w-12 text-mv-orange mb-2" />
-            <CardTitle className="text-center text-2xl">Select Client</CardTitle> */}
             <CardDescription className="text-center">
               Select a client and click next to start your quote.
             </CardDescription>
@@ -107,6 +75,7 @@ const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
                         <FormLabel>
                           Client <span className="text-red-500">*</span>
                         </FormLabel>
+
                         <FormControl>
                           <Select
                             value={field.value && Number(field.value) > 0 ? String(field.value) : ''}
@@ -137,18 +106,14 @@ const AddClient = ({ setStep, setQuoteId, setClientId }: AddClientProps) => {
                   />
                 </div>
 
-                {/* Error Message */}
-                {mutation.isError && <FormError message={mutation.error.message} />}
-
                 {/*  Buttons */}
                 <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
                   <LinkButton variant="ghost" size="formButton" to="/view-quotes">
-                    <ArrowLeft className="mr-2 h-4 w-4 text-grey-500" />
                     Cancel
                   </LinkButton>
 
-                  <Button type="submit" size="formButton" disabled={mutation.isPending}>
-                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Next Step'}
+                  <Button size="formButton" disabled={isFormInvalid}>
+                    Next Step
                   </Button>
                 </div>
               </form>
