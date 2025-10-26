@@ -48,9 +48,12 @@ export const AddProducts = ({
             {/* Products List */}
             <div className="flex flex-col gap-5 mb-8 w-full mx-auto">
               {quoteProducts.length === 0 && (
-                <article className="relative flexCol gap-2 bg-white border border-gray-200 rounded-xl shadow-sm px-2 py-4 ">
-                  <p className="text-gray-500 text-center">No products added</p>
-                  <p className="text-gray-500 text-center">Click the Add Product button to add items to the quote</p>
+                <article className="relative flex flex-row items-center justify-between gap-2 bg-white border border-gray-200 rounded-xl px-2 py-4 ">
+                  <EllipsisVertical className="h-6 w-6 md:h-8 md:w-8 text-gray-500" />
+                  <div className="w-full">
+                    <p className="text-gray-500 text-center">No products added</p>
+                    <p className="text-gray-500 text-center">Click the Add Product button to add items to the quote</p>
+                  </div>
                 </article>
               )}
 
