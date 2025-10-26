@@ -127,13 +127,18 @@ const AddProductModal = ({
                         field.onChange(Number(val));
                       }}
                     >
-                      <SelectTrigger className="w-full" aria-invalid={form.formState.errors.product_id ? true : false}>
+                      <SelectTrigger
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
+                        aria-invalid={form.formState.errors.product_id ? true : false}
+                      >
                         <SelectValue placeholder="Select a product" />
                       </SelectTrigger>
                       <SelectContent>
                         {products.map((product) => (
                           <SelectItem key={product.id} value={String(product.id)}>
-                            {product.name} (£{product.value})
+                            <span className="block max-w-[230px] md:max-w-[700px] truncate">
+                              {product.name} (£{product.value})
+                            </span>
                           </SelectItem>
                         ))}
                       </SelectContent>

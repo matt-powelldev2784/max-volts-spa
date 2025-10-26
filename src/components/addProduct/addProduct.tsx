@@ -16,7 +16,7 @@ type ProductInsert = Database['public']['Tables']['product']['Insert'];
 
 const formSchema = z.object({
   name: z.string().nonempty({ message: 'Name is required' }),
-  value: z.string().regex(/^(0|[1-9]\d*)\.\d{2}$/, { message: 'Must be a number with exactly 2 decimal places' }),
+  value: z.string().regex(/^(0|[1-9]\d*)\.\d{2}$/, { message: 'Number must have 2 decimal places' }),
   description: z.string().optional(),
 });
 

@@ -48,11 +48,13 @@ export const AddProducts = ({
             {/* Products List */}
             <div className="flex flex-col gap-5 mb-8 w-full mx-auto">
               {quoteProducts.length === 0 && (
-                <article className="relative flex flex-row items-center justify-between gap-2 bg-white border border-gray-200 rounded-xl px-2 py-4 ">
+                <article className="relative flex flex-row items-center justify-between gap-2 bg-white border-2 border-gray-200 rounded-xl px-2 py-4">
                   <EllipsisVertical className="h-6 w-6 md:h-8 md:w-8 text-gray-500" />
-                  <div className="w-full">
-                    <p className="text-gray-500 text-center">No products added</p>
-                    <p className="text-gray-500 text-center">Click the Add Product button to add items to the quote</p>
+                  <div className="absolute w-full -translate-x-2">
+                    <p className="text-gray-500 text-center">No products added.</p>
+                    <p className="text-gray-500 text-center hidden md:block">
+                      Click the Add Product button to add items to the quote
+                    </p>
                   </div>
                 </article>
               )}
@@ -114,7 +116,9 @@ const AddProductCard = ({ product, onEdit, onRemove }: AddProductCardProps) => (
             <p className="text-base font-bold text-mv-orange">{`£ ${product.total_value?.toFixed(2)}`}</p>
           </div>
         </div>
-        <div className="text-gray-500 text-xs mt-2 mb-0 italic line-clamp-2 max-w-[600px]">{product.description}</div>
+        <div className="text-gray-500 text-sm italic line-clamp-2 max-w-[600px] hidden md:block">
+          {product.description}
+        </div>
       </div>
     </div>
   </article>
