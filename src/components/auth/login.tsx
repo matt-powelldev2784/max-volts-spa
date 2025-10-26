@@ -8,15 +8,12 @@ import { Button } from '@//ui/button';
 import { ArrowLeft, Mail } from 'lucide-react';
 import maxVoltsIcon from '@/assets/max_volts_icon.svg';
 import googleGIcon from '@/assets/google_g_logo.svg';
-import useAuth from '@/lib/useAuth';
 import { useNavigate } from 'react-router';
 
 type CurrentView = 'main' | 'signInWithEmail' | 'signUpWithEmail';
 
 const Login = () => {
   const [currentView, setCurrentView] = useState<CurrentView>('main');
-  const { user } = useAuth();
-  console.log('user', user);
 
   return (
     <div className="flex min-h-screen items-start justify-center bg-gray-50 p-4">
