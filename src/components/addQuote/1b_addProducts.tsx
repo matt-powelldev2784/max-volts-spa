@@ -90,7 +90,9 @@ export const AddProducts = ({
               {quoteProducts.length === 0 && (
                 <article className="relative flexCol gap-2 bg-white border border-gray-200 rounded-xl shadow-sm px-2 py-4 ">
                   <p className="italic text-gray-500 text-center">No products added</p>
-                  <p className="text-black normal text-center">Click the add product button to items to the quote</p>
+                  <p className="text-black font-bold normal text-center">
+                    Click the add product button to items to the quote
+                  </p>
                 </article>
               )}
 
@@ -120,7 +122,12 @@ export const AddProducts = ({
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Cancel
                 </LinkButton>
-                <Button onClick={onSubmit} size="formButton" disabled={mutation.isPending}>
+
+                <Button
+                  onClick={onSubmit}
+                  size="formButton"
+                  disabled={quoteProducts.length === 0 || mutation.isPending}
+                >
                   {mutation.isPending ? <Loader2 className="text-white" /> : 'Next Step'}
                 </Button>
               </div>

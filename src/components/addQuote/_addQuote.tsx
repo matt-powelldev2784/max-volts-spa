@@ -24,7 +24,7 @@ const AddQuote = () => {
   const [clientId, setClientId] = useState(0);
   const [step, setStep] = useState<Steps>('AddClient');
   const [quoteProducts, setQuoteProducts] = useState<QuoteProductInsert[]>([]);
-  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(true);
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
 
   const {
     data: productsData,
