@@ -21,8 +21,9 @@ const getProducts = async () => {
 
 const AddQuote = () => {
   const [clientId, setClientId] = useState(0);
-  const [step, setStep] = useState<Steps>('AddClient');
   const [quoteProducts, setQuoteProducts] = useState<QuoteProductInsert[]>([]);
+  const [notes, setNotes] = useState('');
+  const [step, setStep] = useState<Steps>('AddClient');
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
 
   const {
@@ -44,7 +45,7 @@ const AddQuote = () => {
     <div className="">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && <AddClient setStep={setStep} setClientId={setClientId} />}
+      {step === 'AddClient' && <AddClient setStep={setStep} clientId={clientId} setClientId={setClientId} />}
 
       {step === 'AddProducts' && (
         <>
@@ -64,7 +65,15 @@ const AddQuote = () => {
         </>
       )}
 
-      {step === 'QuoteSummary' && <QuoteSummary clientId={clientId} quoteProducts={quoteProducts} />}
+      {step === 'QuoteSummary' && (
+        <QuoteSummary
+          clientId={clientId}
+          quoteProducts={quoteProducts}
+          setStep={setStep}
+          notes={notes}
+          setNotes={setNotes}
+        />
+      )}
     </div>
   );
 };

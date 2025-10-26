@@ -23,10 +23,11 @@ const formSchema = z.object({
 
 type AddClientProps = {
   setStep: Dispatch<SetStateAction<Steps>>;
+  clientId: number;
   setClientId: Dispatch<SetStateAction<number>>;
 };
 
-const AddClient = ({ setStep, setClientId }: AddClientProps) => {
+const AddClient = ({ setStep, setClientId, clientId }: AddClientProps) => {
   const {
     data: clients,
     isLoading: clientsLoading,
@@ -40,7 +41,7 @@ const AddClient = ({ setStep, setClientId }: AddClientProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      client_id: 0,
+      client_id: clientId || 0,
     },
   });
   const watchedClientId = form.watch('client_id');
@@ -78,7 +79,7 @@ const AddClient = ({ setStep, setClientId }: AddClientProps) => {
 
                         <FormControl>
                           <Select
-                            value={field.value && Number(field.value) > 0 ? String(field.value) : ''}
+                            value={Number(field.value) > 0 ? String(field.value) : ''}
                             onValueChange={(val) => field.onChange(val === '' ? 0 : Number(val))}
                             disabled={clientsLoading}
                           >

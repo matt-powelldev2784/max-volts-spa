@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, LinkButton } from '@/ui/button';
+import { Button } from '@/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/ui/card';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/ui/form';
 import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
@@ -14,6 +14,8 @@ import type { Client, QuoteInsert, QuoteProductInsert } from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
+import type { Dispatch, SetStateAction } from 'react';
+import type { Steps } from './_stepIndicator';
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
@@ -47,21 +49,24 @@ const createQuote = async ({ quoteProductsInsert, quoteInsert }: CreateQuoteProp
       }))
     )
     .select();
-  
+
   if (QuoteProductError) {
     await supabase.from('quote').delete().eq('id', quoteId);
     throw new Error('Failed to add quote products to database.');
-  } 
-  
+  }
+
   return { quoteData, quoteProductData };
 };
 
 type QuoteSummaryProps = {
   clientId: number;
   quoteProducts: QuoteProductInsert[];
+  notes: string;
+  setNotes: Dispatch<SetStateAction<string>>;
+  setStep: Dispatch<SetStateAction<Steps>>;
 };
 
-const QuoteSummary = ({ clientId, quoteProducts }: QuoteSummaryProps) => {
+const QuoteSummary = ({ clientId, quoteProducts, notes, setNotes, setStep }: QuoteSummaryProps) => {
   const { user, loading: userIsLoading } = useAuth();
   const userEmail = user?.email;
   const navigate = useNavigate();
@@ -82,7 +87,7 @@ const QuoteSummary = ({ clientId, quoteProducts }: QuoteSummaryProps) => {
   const form = useForm<z.infer<typeof notesSchema>>({
     resolver: zodResolver(notesSchema),
     defaultValues: {
-      notes: '',
+      notes: notes || '',
     },
   });
 
@@ -145,7 +150,14 @@ const QuoteSummary = ({ clientId, quoteProducts }: QuoteSummaryProps) => {
                     <FormItem>
                       <FormLabel>Notes</FormLabel>
                       <FormControl>
-                        <Textarea {...field} rows={4} placeholder="Notes" />
+                        <Textarea
+                          {...field}
+                          rows={4}
+                          placeholder="Notes"
+                          onBlur={() => {
+                            setNotes(field.value);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -155,10 +167,9 @@ const QuoteSummary = ({ clientId, quoteProducts }: QuoteSummaryProps) => {
                 {mutation.isError && <FormError message={mutation.error.message} />}
 
                 <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
-                  <LinkButton variant="ghost" size="formButton" to="/view-quotes">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Cancel
-                  </LinkButton>
+                  <Button variant="ghost" size="formButton" onClick={() => setStep('AddProducts')}>
+                    Go Back
+                  </Button>
 
                   <Button type="submit" size="formButton" disabled={mutation.isPending}>
                     {mutation.isPending ? <Loader2 className="text-white" /> : 'Create Quote'}

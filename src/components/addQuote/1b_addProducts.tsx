@@ -1,4 +1,4 @@
-import { Button, LinkButton } from '@/ui/button';
+import { Button } from '@/ui/button';
 import { Trash, Pencil, EllipsisVertical } from 'lucide-react';
 import { type Dispatch, type SetStateAction } from 'react';
 import type { QuoteProductInsert } from '@/types/dbTypes';
@@ -78,9 +78,9 @@ export const AddProducts = ({
 
               {/* Buttons */}
               <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
-                <LinkButton variant="ghost" size="formButton" to="/view-quotes">
-                  Cancel
-                </LinkButton>
+                <Button variant="ghost" size="formButton" onClick={() => setStep('AddClient')}>
+                  Go Back
+                </Button>
 
                 <Button onClick={onSubmit} size="formButton" disabled={quoteProducts.length === 0}>
                   Next Step
