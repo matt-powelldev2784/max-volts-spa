@@ -150,17 +150,10 @@ const AddProductCard = ({ product, onEdit, onRemove }: AddProductCardProps) => (
         <div className="flex items-center justify-between">
           <div className="font-semibold text-base text-gray-800 break-words">{product.name}</div>
           <div className="flex items-center min-w-[80px] justify-end ml-4">
-            <p className="text-base font-bold text-mv-orange">{`£ ${product.total_value?.toFixed(2) ?? '-'}`}</p>
+            <p className="text-base font-bold text-mv-orange">{`£ ${product.total_value?.toFixed(2)}`}</p>
           </div>
         </div>
-        <div className="text-gray-500 text-xs mt-2 mb-0 italic line-clamp-2 max-w-[600px]">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
-          standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
-          make a type specimen book. It has survived not only five centuries, but also the leap into electronic
-          typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-          sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
-          PageMaker including versions of Lorem Ipsum
-        </div>
+        <div className="text-gray-500 text-xs mt-2 mb-0 italic line-clamp-2 max-w-[600px]">{product.description}</div>
       </div>
     </div>
   </article>

@@ -40,9 +40,9 @@ type UpdateQuoteNotesProps = {
 };
 
 const updateQuoteNotes = async ({ quoteId, notes }: UpdateQuoteNotesProps) => {
-  const { error } = await supabase.from('quote').update({ notes }).eq('id', quoteId);
+  const { error } = await supabase.from('quote').update({ notes, status: 'quoted' }).eq('id', quoteId);
   if (error) throw new Error(error.message);
-  return notes;
+  return;
 };
 
 const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
@@ -84,11 +84,11 @@ const QuoteSummary = ({ quoteId, clientId }: QuoteSummaryProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof notesSchema>) => {
-    if (values.notes.trim() === '') return navigate('/view-quotes');
     mutation.mutate({
       quoteId,
       notes: values.notes,
     });
+    queryClient.invalidateQueries({ queryKey: ['quotes'] });
     navigate('/view-quotes');
   };
 

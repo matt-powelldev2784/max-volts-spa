@@ -127,6 +127,7 @@ export type Database = {
       quote_product: {
         Row: {
           created_at: string | null
+          description: string | null
           id: number
           markup: number | null
           name: string
@@ -139,6 +140,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           id?: number
           markup?: number | null
           name: string
@@ -151,6 +153,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: number
           markup?: number | null
           name?: string

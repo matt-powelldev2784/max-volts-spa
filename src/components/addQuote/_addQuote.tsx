@@ -11,7 +11,10 @@ import QuoteSummary from './2_quoteSummary';
 import StepIndicator, { type Steps } from './_stepIndicator';
 
 const getProducts = async () => {
-  const { data, error } = await supabase.from('product').select('id, name, value').order('name', { ascending: true });
+  const { data, error } = await supabase
+    .from('product')
+    .select('id, name, value, description')
+    .order('name', { ascending: true });
   if (error) throw new Error(error.message);
   return data as Product[];
 };

@@ -16,6 +16,7 @@ const addProductSchema = z.object({
   markup: z.number().min(0),
   vat_rate: z.number().min(0),
   total_value: z.number().min(0),
+  description: z.string().optional(),
 });
 
 type AddProductModalProps = {
@@ -53,6 +54,7 @@ const AddProductModal = ({
       markup: 100,
       vat_rate: 20,
       total_value: 0,
+      description: '',
     },
   });
 
@@ -64,6 +66,16 @@ const AddProductModal = ({
     'total_value',
   ]);
 
+  // Set default description when product changes
+  useEffect(() => {
+    const selectedProduct = products.find((product) => product.id === Number(watchedProductId));
+    if (selectedProduct) {
+      form.setValue('description', selectedProduct.description ?? '');
+      form.setValue('name', selectedProduct.name ?? '');
+    }
+  }, [watchedProductId, form, products]);
+
+  // Recalculate total value when the related product values change
   useEffect(() => {
     const total_value = getTotalValue({
       quantity: watchedQuantity,
@@ -72,7 +84,7 @@ const AddProductModal = ({
       vat_rate: watchedVatRate,
     });
 
-    return form.setValue('total_value', total_value);
+    form.setValue('total_value', total_value);
   }, [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, form, products]);
 
   const handleClose = () => {
@@ -116,7 +128,6 @@ const AddProductModal = ({
                       value={field.value ? String(field.value) : ''}
                       onValueChange={(val) => {
                         field.onChange(Number(val));
-                        form.setValue('name', products.find((product) => product.id === Number(val))?.name || '');
                       }}
                     >
                       <SelectTrigger className="w-full" aria-invalid={form.formState.errors.product_id ? true : false}>
@@ -144,6 +155,26 @@ const AddProductModal = ({
                   <FormLabel>Quantity</FormLabel>
                   <FormControl>
                     <Input {...field} type="number" min={1} onChange={(e) => field.onChange(Number(e.target.value))} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Description field below quantity */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <textarea
+                      className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
+                      placeholder="Description"
+                      rows={3}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
