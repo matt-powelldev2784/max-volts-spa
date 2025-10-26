@@ -88,7 +88,10 @@ export const AddProducts = ({
             {/* Products List */}
             <div className="flex flex-col gap-5 mb-8 w-full mx-auto">
               {quoteProducts.length === 0 && (
-                <div className="col-span-full text-center text-gray-500 py-8">No products added.</div>
+                <article className="relative flexCol gap-2 bg-white border border-gray-200 rounded-xl shadow-sm px-2 py-4 ">
+                  <p className="italic text-gray-500 text-center">No products added</p>
+                  <p className="text-black normal text-center">Click the add product button to items to the quote</p>
+                </article>
               )}
 
               {quoteProducts.map((product, index) => (
