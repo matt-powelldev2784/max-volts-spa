@@ -110,7 +110,7 @@ const AddProductModal = ({
 
   return (
     <Dialog open={isModalOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent>
+      <DialogContent className="w-full h-full max-w-none rounded-none overflow-y-auto sm:max-w-lg sm:rounded-2xl sm:h-auto">
         <DialogHeader>
           <DialogTitle>Add Product</DialogTitle>
         </DialogHeader>
@@ -211,11 +211,14 @@ const AddProductModal = ({
 
             <div className="mt-2 font-semibold">Total: £{watchedTotalValue.toFixed(2)}</div>
 
-            <div className="flex justify-end gap-2 mt-6">
-              <Button type="button" variant="ghost" onClick={handleClose}>
+            <div className="relative w-full flex flex-row justify-center md:justify-end gap-2 pt-4 ">
+              <Button type="button" variant="ghost" size="formButton" onClick={handleClose}>
                 Cancel
               </Button>
-              <Button type="submit">Add Product</Button>
+
+              <Button type="submit" size="formButton">
+                Add Product
+              </Button>
             </div>
           </form>
         </Form>
