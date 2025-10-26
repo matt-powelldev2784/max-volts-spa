@@ -74,13 +74,13 @@ export const AddProducts = ({
   };
 
   return (
-    <div className="flex min-h-screen items-start justify-center md:p-4 pb-24 md:pb-24">
+    <section className="flex min-h-screen items-start justify-center md:p-4 pb-24 md:pb-24">
       <div className="w-full flexCol md:max-w-[900px]">
         <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl">
           <CardContent className="px-4 md:px-8 pb-6 pt-4">
             {/* Add Product Button */}
             <div className="flex justify-end items-end gap-4 mb-4">
-              <Button onClick={() => setIsOpenProductModalOpen(true)} className="text-sm h-[34px]">
+              <Button onClick={handleEdit} className="text-sm h-[34px]">
                 Add Product
               </Button>
             </div>
@@ -95,7 +95,7 @@ export const AddProducts = ({
                 <AddProductCard
                   key={`${product.product_id}-${index}`}
                   product={product}
-                  onEdit={() => handleEdit()}
+                  onEdit={handleEdit}
                   onRemove={() => handleRemove(index)}
                 />
               ))}
@@ -125,7 +125,7 @@ export const AddProducts = ({
           </CardContent>
         </Card>
       </div>
-    </div>
+    </section>
   );
 };
 
@@ -137,7 +137,7 @@ type AddProductCardProps = {
   onRemove: () => void;
 };
 const AddProductCard = ({ product, onEdit, onRemove }: AddProductCardProps) => (
-  <div className="relative flex items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm pl-2 pr-10 py-4 transition hover:shadow-md">
+  <article className="relative flex items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm pl-2 pr-10 py-4 transition hover:shadow-md">
     <div className="flex flex-col items-center mr-4">
       <ProductActionsDropdown onEdit={onEdit} onRemove={onRemove} />
     </div>
@@ -147,7 +147,7 @@ const AddProductCard = ({ product, onEdit, onRemove }: AddProductCardProps) => (
         <div className="flex items-center justify-between">
           <div className="font-semibold text-base text-gray-800 break-words">{product.name}</div>
           <div className="flex items-center min-w-[80px] justify-end ml-4">
-            <span className="text-base font-bold text-mv-orange">{`£ ${product.total_value?.toFixed(2) ?? '-'}`}</span>
+            <p className="text-base font-bold text-mv-orange">{`£ ${product.total_value?.toFixed(2) ?? '-'}`}</p>
           </div>
         </div>
         <div className="text-gray-500 text-xs mt-2 mb-0 italic line-clamp-2 max-w-[600px]">
@@ -160,7 +160,7 @@ const AddProductCard = ({ product, onEdit, onRemove }: AddProductCardProps) => (
         </div>
       </div>
     </div>
-  </div>
+  </article>
 );
 
 type ProductActionsDropdownProps = {
@@ -180,12 +180,12 @@ const ProductActionsDropdown = ({ onEdit, onRemove }: ProductActionsDropdownProp
       <div className="flex flex-col">
         <DropdownMenuItem className="flex items-center gap-3 px-2 py-1" onClick={onEdit}>
           <Pencil className="h-6 w-6 text-mv-orange" />
-          <span className="text-lg mr-2">Edit</span>
+          <p className="text-lg mr-2">Edit</p>
         </DropdownMenuItem>
 
         <DropdownMenuItem className="flex items-center gap-3 px-2 py-1" onClick={onRemove}>
           <Trash className="h-6 w-6 text-mv-orange" />
-          <span className="text-lg mr-2">Remove</span>
+          <p className="text-lg mr-2">Remove</p>
         </DropdownMenuItem>
       </div>
     </DropdownMenuContent>
