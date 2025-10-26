@@ -47,7 +47,12 @@ const createQuote = async ({ quoteProductsInsert, quoteInsert }: CreateQuoteProp
       }))
     )
     .select();
-  if (QuoteProductError) throw new Error('Failed to add quote products to database.');
+  
+  if (QuoteProductError) {
+    await supabase.from('quote').delete().eq('id', quoteId);
+    throw new Error('Failed to add quote products to database.');
+  } 
+  
   return { quoteData, quoteProductData };
 };
 
