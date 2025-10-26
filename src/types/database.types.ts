@@ -59,18 +59,21 @@ export type Database = {
       product: {
         Row: {
           created_at: string | null
+          description: string | null
           id: number
           name: string
           value: number
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           id?: number
           name: string
           value: number
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: number
           name?: string
           value?: number
@@ -124,37 +127,40 @@ export type Database = {
       quote_product: {
         Row: {
           created_at: string | null
+          description: string | null
           id: number
           markup: number | null
           name: string
           product_id: number
           quantity: number | null
           quote_id: number
-          total_value: number | null
+          total_value: number
           value: number
           vat_rate: number | null
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           id?: number
           markup?: number | null
           name: string
           product_id: number
           quantity?: number | null
           quote_id: number
-          total_value?: number | null
+          total_value: number
           value?: number
           vat_rate?: number | null
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: number
           markup?: number | null
           name?: string
           product_id?: number
           quantity?: number | null
           quote_id?: number
-          total_value?: number | null
+          total_value?: number
           value?: number
           vat_rate?: number | null
         }

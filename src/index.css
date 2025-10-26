@@ -1,8 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
-
 @custom-variant dark (&:is(.dark *));
+
+/* to add border to all elements, uncomment the following lines */
+/* this is for debugging layout only, not for production */
+/* * {
+  @apply border-1 border-green-500;
+} */
+
 
 @font-face {
   font-family: 'Roboto Flex';
@@ -43,7 +48,7 @@
   }
 
   button:focus-visible, a:focus-visible {
-    @apply outline-none ring-2 ring-gray-200 ring-offset-2;
+    @apply outline-none ring-2 ring-gray-300 ring-offset-1;
   }
 }
 

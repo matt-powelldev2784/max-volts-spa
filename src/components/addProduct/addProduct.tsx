@@ -17,6 +17,7 @@ type ProductInsert = Database['public']['Tables']['product']['Insert'];
 const formSchema = z.object({
   name: z.string().nonempty({ message: 'Name is required' }),
   value: z.string().regex(/^(0|[1-9]\d*)\.\d{2}$/, { message: 'Must be a number with exactly 2 decimal places' }),
+  description: z.string().optional(),
 });
 
 const addProduct = async (product: ProductInsert) => {
@@ -38,6 +39,7 @@ const AddProduct = () => {
     defaultValues: {
       name: '',
       value: '',
+      description: '',
     },
   });
 
@@ -86,6 +88,25 @@ const AddProduct = () => {
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <textarea
+                            className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
+                            placeholder="Description"
+                            rows={3}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
