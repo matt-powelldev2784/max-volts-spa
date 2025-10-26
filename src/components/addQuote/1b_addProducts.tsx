@@ -49,10 +49,8 @@ export const AddProducts = ({
             <div className="flex flex-col gap-5 mb-8 w-full mx-auto">
               {quoteProducts.length === 0 && (
                 <article className="relative flexCol gap-2 bg-white border border-gray-200 rounded-xl shadow-sm px-2 py-4 ">
-                  <p className="italic text-gray-500 text-center">No products added</p>
-                  <p className="text-black font-bold normal text-center">
-                    Click the add product button to add items to the quote
-                  </p>
+                  <p className="text-gray-500 text-center">No products added</p>
+                  <p className="text-gray-500 text-center">Click the Add Product button to add items to the quote</p>
                 </article>
               )}
 
