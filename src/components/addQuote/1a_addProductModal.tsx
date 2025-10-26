@@ -20,7 +20,7 @@ const addProductSchema = z.object({
 
 type AddProductModalProps = {
   isModalOpen: boolean;
-  setIsOpenProductModalOpen: Dispatch<SetStateAction<boolean>>;
+  setIsAddProductModalOpen: Dispatch<SetStateAction<boolean>>;
   setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
   products: Product[];
   quoteId?: number;
@@ -39,7 +39,7 @@ const getTotalValue = ({ quantity, value, markup, vat_rate }: GetTotalValueProps
 
 const AddProductModal = ({
   isModalOpen,
-  setIsOpenProductModalOpen,
+  setIsAddProductModalOpen,
   setQuoteProducts,
   products,
   quoteId,
@@ -76,7 +76,7 @@ const AddProductModal = ({
   }, [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, form, products]);
 
   const handleClose = () => {
-    setIsOpenProductModalOpen(false);
+    setIsAddProductModalOpen(false);
     form.reset();
   };
 

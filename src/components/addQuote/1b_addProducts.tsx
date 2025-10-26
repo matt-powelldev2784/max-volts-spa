@@ -13,7 +13,7 @@ type AddProductProps = {
   quoteId: number;
   quoteProducts: QuoteProductInsert[];
   setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
-  setIsOpenProductModalOpen: Dispatch<SetStateAction<boolean>>;
+  setIsAddProductModalOpen: Dispatch<SetStateAction<boolean>>;
   setStep: Dispatch<SetStateAction<Steps>>;
 };
 
@@ -46,7 +46,7 @@ export const AddProducts = ({
   quoteId,
   quoteProducts,
   setQuoteProducts,
-  setIsOpenProductModalOpen,
+  setIsAddProductModalOpen,
   setStep,
 }: AddProductProps) => {
   const queryClient = useQueryClient();
@@ -70,7 +70,7 @@ export const AddProducts = ({
   };
 
   const handleEdit = () => {
-    setIsOpenProductModalOpen(true);
+    setIsAddProductModalOpen(true);
   };
 
   return (

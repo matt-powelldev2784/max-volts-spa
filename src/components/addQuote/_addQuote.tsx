@@ -21,7 +21,7 @@ const AddQuote = () => {
   const [clientId, setClientId] = useState(0);
   const [step, setStep] = useState<Steps>('AddClient');
   const [quoteProducts, setQuoteProducts] = useState<QuoteProductInsert[]>([]);
-  const [isAddProductModalOpen, setIsOpenProductModalOpen] = useState(true);
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(true);
 
   const {
     data: productsData,
@@ -48,7 +48,7 @@ const AddQuote = () => {
         <>
           <AddProductModal
             isModalOpen={isAddProductModalOpen}
-            setIsOpenProductModalOpen={setIsOpenProductModalOpen}
+            setIsAddProductModalOpen={setIsAddProductModalOpen}
             setQuoteProducts={setQuoteProducts}
             products={productsData}
             quoteId={quoteId}
@@ -58,7 +58,7 @@ const AddQuote = () => {
             quoteId={quoteId}
             quoteProducts={quoteProducts}
             setQuoteProducts={setQuoteProducts}
-            setIsOpenProductModalOpen={setIsOpenProductModalOpen}
+            setIsAddProductModalOpen={setIsAddProductModalOpen}
             setStep={setStep}
           />
         </>
