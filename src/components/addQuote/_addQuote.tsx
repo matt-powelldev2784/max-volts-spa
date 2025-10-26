@@ -25,8 +25,6 @@ const AddQuote = () => {
   const [quoteProducts, setQuoteProducts] = useState<QuoteProductInsert[]>([]);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
 
-  console.log('quoteProducts', quoteProducts);
-
   const {
     data: productsData,
     isLoading: isLoadingProducts,
