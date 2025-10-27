@@ -6,10 +6,7 @@ import { Button, LinkButton } from '@/ui/button';
 import ErrorCard from '@/lib/errorCard';
 import { Link } from 'react-router';
 import { useRef, useState } from 'react';
-import type { Tables } from '@/types/database.types';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-
-type Client = Tables<'client'>;
 
 type SortField = 'name' | 'company' | 'email';
 type SortOrder = 'asc' | 'desc';
@@ -35,7 +32,7 @@ const getClients = async (sortBy: SortField, sortOrder: SortOrder, page: number,
     throw new Error(error.message);
   }
 
-  return { clients: data as Client[], totalCount: count ?? 0 };
+  return { clients: data, totalCount: count ?? 0 };
 };
 
 const ViewClients = () => {
