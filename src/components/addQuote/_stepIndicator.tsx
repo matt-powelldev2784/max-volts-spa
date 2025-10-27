@@ -51,7 +51,7 @@ const StepIndicator = ({ activeStep }: StepIndicatorProps) => {
               <span
                 className={`mt-0 max-w-[65px] md:max-w-full text-center text-sm md:text-sm font-medium 
                   ${isActive ? 'text-mv-orange' : 'text-gray-400'}
-                  ${isComplete ? 'text-green-700' : ''}`}
+                  ${isComplete ? 'text-green-600' : ''}`}
               >
                 {step.label}
               </span>
