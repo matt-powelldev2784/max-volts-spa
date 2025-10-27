@@ -14,6 +14,7 @@ const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
   name: z.string().min(1, 'Name is required'),
   quantity: z.number().min(1),
+  value: z.number().min(0),
   markup: z.number().min(0),
   vat_rate: z.number().min(0),
   total_value: z.number().min(0),
@@ -50,6 +51,7 @@ const AddProductModal = ({
       product_id: 0,
       name: '',
       quantity: 1,
+      value: 0,
       markup: 100,
       vat_rate: 20,
       total_value: 0,
@@ -65,12 +67,13 @@ const AddProductModal = ({
     'total_value',
   ]);
 
-  // Set default description when product changes
+  // Set product and cost description when product changes
   useEffect(() => {
     const selectedProduct = products.find((product) => product.id === Number(watchedProductId));
     if (selectedProduct) {
-      form.setValue('description', selectedProduct.description ?? '');
-      form.setValue('name', selectedProduct.name ?? '');
+      form.setValue('description', selectedProduct.description || '');
+      form.setValue('name', selectedProduct.name);
+      form.setValue('value', selectedProduct.value);
     }
   }, [watchedProductId, form, products]);
 
@@ -138,9 +141,7 @@ const AddProductModal = ({
                       <SelectContent>
                         {products.map((product) => (
                           <SelectItem key={product.id} value={String(product.id)}>
-                            <span className="block max-w-[230px] md:max-w-[700px] truncate">
-                              {product.name} (£{product.value})
-                            </span>
+                            <span className="block max-w-[230px] md:max-w-[700px] truncate">{product.name}</span>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -159,6 +160,24 @@ const AddProductModal = ({
                   <FormLabel>Quantity</FormLabel>
                   <FormControl>
                     <Input {...field} type="number" min={1} onChange={(e) => field.onChange(Number(e.target.value))} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="value"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cost</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-[12.75px] text-gray-700 pointer-events-none">
+                        £
+                      </span>
+                      <Input {...field} type="number" disabled className="bg-gray-100 text-black pl-6" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
