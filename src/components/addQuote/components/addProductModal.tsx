@@ -67,13 +67,15 @@ const AddProductModal = ({
     'total_value',
   ]);
 
-  // Set product and cost description when product changes
+  // Set default form values when a product is selected
   useEffect(() => {
     const selectedProduct = products.find((product) => product.id === Number(watchedProductId));
     if (selectedProduct) {
       form.setValue('description', selectedProduct.description || '');
       form.setValue('name', selectedProduct.name);
       form.setValue('value', selectedProduct.value);
+      form.setValue('markup', selectedProduct.markup);
+      form.setValue('vat_rate', selectedProduct.vat);
     }
   }, [watchedProductId, form, products]);
 

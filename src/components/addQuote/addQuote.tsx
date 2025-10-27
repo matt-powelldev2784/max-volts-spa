@@ -5,18 +5,15 @@ import { useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import AddProductModal from './components/addProductModal';
 import AddClient from './components/addClient';
-import type { Product, QuoteProductInsert } from '@/types/dbTypes';
+import type { QuoteProductInsert } from '@/types/dbTypes';
 import AddProducts from './components/addProducts';
 import QuoteSummary from './components/quoteSummary';
 import StepIndicator, { type Steps } from './components/stepIndicator';
 
 const getProducts = async () => {
-  const { data, error } = await supabase
-    .from('product')
-    .select('id, name, value, description')
-    .order('name', { ascending: true });
+  const { data, error } = await supabase.from('product').select('*').order('name', { ascending: true });
   if (error) throw new Error(error.message);
-  return data as Product[];
+  return data;
 };
 
 const AddQuote = () => {
