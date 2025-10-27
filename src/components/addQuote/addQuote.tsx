@@ -42,7 +42,7 @@ const AddQuote = () => {
   }
 
   return (
-    <div className="">
+    <div className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
       {step === 'AddClient' && <AddClient setStep={setStep} clientId={clientId} setClientId={setClientId} />}
