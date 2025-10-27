@@ -70,17 +70,16 @@ const AddClient = () => {
   return (
     <div className="flex min-h-screen items-start justify-center bg-none md:bg-gray-50 md:p-4 pb-24 md:pb-24">
       <div className="w-full flexCol md:max-w-[600px]">
-        <div className="flexRow gap-4 mt-4 mb-6  md:bg-transparent w-full">
-          <LinkButton variant="iconGhost" size="sm" to="/view-clients">
-            <ArrowLeft className="h-6 w-6" />
-          </LinkButton>
-          <h1 className="text-3xl font-bold text-gray-800">Add New Client</h1>
+        {/*  Title */}
+        <div className="flexRow gap-4 mt-4 mb-6 md:bg-transparent w-full">
+          <div className="rounded-full bg-mv-orange w-10 h-10 flexCol">
+            <UserPlus className="h-5 w-5 text-white" />
+          </div>
+          <CardTitle className="text-center text-2xl">Add Client</CardTitle>
         </div>
 
         <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl -translate-y-6 md:-translate-y-0">
           <CardHeader className="rounded-t-xl">
-            <UserPlus className="mx-auto h-12 w-12 text-mv-orange mb-2" />
-            <CardTitle className="text-center text-2xl">Client Details</CardTitle>
             <CardDescription className="text-center">
               Fill in the form below and click submit to add a new client.
             </CardDescription>
@@ -223,15 +222,15 @@ const AddClient = () => {
                 {mutation.isError && <FormError message={mutation.error.message} />}
 
                 {/*  Buttons */}
-                <div className="flexCol gap-2 pt-4">
-                  <Button type="submit" size="lgFullWidth" disabled={mutation.isPending}>
-                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Add Client'}
-                  </Button>
-
-                  <LinkButton variant="ghost" size="lgFullWidth" to="/view-clients">
+                <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
+                  <LinkButton variant="ghost" size="formButton" to="/view-clients">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Cancel
                   </LinkButton>
+
+                  <Button type="submit" size="formButton" disabled={mutation.isPending}>
+                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Add Client'}
+                  </Button>
                 </div>
               </form>
             </Form>

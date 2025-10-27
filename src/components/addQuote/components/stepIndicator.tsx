@@ -40,7 +40,7 @@ const StepIndicator = ({ activeStep }: StepIndicatorProps) => {
           return (
             <div key={step.key} className="min-h-[70px] md:min-h-full flex flex-col items-center z-1">
               <div
-                className={`flex items-center justify-center rounded-full h-14 w-14 border-8 border-[#FDF2E8] md:border-white
+                className={`flex items-center justify-center rounded-full h-14 w-14 border-8 border-[#FDF2E8] md:border-gray-50
                 ${isActive ? 'bg-mv-orange text-white ' : 'bg-gray-200 text-gray-400'}
                 ${isComplete ? 'bg-green-500 text-green-100' : ''}
                 transition-colors duration-200`}
