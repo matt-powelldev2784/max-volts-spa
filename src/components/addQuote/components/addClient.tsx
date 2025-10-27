@@ -9,7 +9,7 @@ import ErrorCard from '@/lib/errorCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { Dispatch, SetStateAction } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Steps } from './_stepIndicator';
+import type { Steps } from './stepIndicator';
 
 const getClients = async () => {
   const { data, error } = await supabase.from('client').select('id, name, company').order('name', { ascending: true });

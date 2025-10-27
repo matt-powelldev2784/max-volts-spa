@@ -15,7 +15,7 @@ import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
 import type { Dispatch, SetStateAction } from 'react';
-import type { Steps } from './_stepIndicator';
+import type { Steps } from './stepIndicator';
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
