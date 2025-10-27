@@ -144,8 +144,8 @@ const ViewProducts = () => {
         <TableHeader>
           <TableRow className="bg-neutral-100">
             <TableHead className="w-10"></TableHead>
-            <TableHead className="w-1/2">Name</TableHead>
-            <TableHead className="w-1/2 pr-4">Value</TableHead>
+            <TableHead className="w-5/8">Name</TableHead>
+            <TableHead className="w-3/8 pr-4">Value</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -160,7 +160,7 @@ const ViewProducts = () => {
                 </Link>
               </TableCell>
               <TableCell className="truncate">{product.name}</TableCell>
-              <TableCell className="pr-4 truncate">£{product.value}</TableCell>
+              <TableCell className="pr-4 truncate">£{product.value.toFixed(2)}</TableCell>
             </TableRow>
           ))}
 
@@ -180,7 +180,7 @@ const ViewProducts = () => {
           <TableRow className="bg-neutral-100">
             <TableHead className="w-16"></TableHead>
 
-            <TableHead className="w-1/2">
+            <TableHead className="w-7/8">
               <button onClick={() => handleSort('name')} className="flex items-center">
                 Name
                 <ChevronsUpDown className="w-4 h-4 ml-2" />
@@ -188,7 +188,7 @@ const ViewProducts = () => {
               </button>
             </TableHead>
 
-            <TableHead className="w-1/2">
+            <TableHead className="w-1/8">
               <button onClick={() => handleSort('value')} className="flex items-center">
                 Value
                 <ChevronsUpDown className="w-4 h-4 ml-2" />
