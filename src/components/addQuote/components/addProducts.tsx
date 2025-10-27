@@ -3,7 +3,7 @@ import { Trash, Pencil, EllipsisVertical } from 'lucide-react';
 import { type Dispatch, type SetStateAction } from 'react';
 import type { QuoteProductInsert } from '@/types/dbTypes';
 import { Card, CardContent } from '@/ui/card';
-import type { Steps } from './_stepIndicator';
+import type { Steps } from './stepIndicator';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
 
 type AddProductProps = {

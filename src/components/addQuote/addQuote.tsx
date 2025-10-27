@@ -3,12 +3,12 @@ import { supabase } from '@/lib/supabase';
 import ErrorCard from '@/lib/errorCard';
 import { useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-import AddProductModal from './1a_addProductModal';
-import AddClient from './0_addClient';
+import AddProductModal from './components/addProductModal';
+import AddClient from './components/addClient';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
-import AddProducts from './1b_addProducts';
-import QuoteSummary from './2_quoteSummary';
-import StepIndicator, { type Steps } from './_stepIndicator';
+import AddProducts from './components/addProducts';
+import QuoteSummary from './components/quoteSummary';
+import StepIndicator, { type Steps } from './components/stepIndicator';
 
 const getProducts = async () => {
   const { data, error } = await supabase
@@ -77,6 +77,5 @@ const AddQuote = () => {
     </div>
   );
 };
-
 
 export default AddQuote;
