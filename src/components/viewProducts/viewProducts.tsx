@@ -6,10 +6,7 @@ import { Button, LinkButton } from '@/ui/button';
 import ErrorCard from '@/lib/errorCard';
 import { Link } from 'react-router';
 import { useRef, useState } from 'react';
-import type { Tables } from '@/types/database.types';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-
-type Product = Tables<'product'>;
 
 type SortField = 'name' | 'value';
 type SortOrder = 'asc' | 'desc';
@@ -35,7 +32,7 @@ const getProducts = async (sortBy: SortField, sortOrder: SortOrder, page: number
     throw new Error(error.message);
   }
 
-  return { products: data as Product[], totalCount: count ?? 0 };
+  return { products: data, totalCount: count ?? 0 };
 };
 
 const ViewProducts = () => {

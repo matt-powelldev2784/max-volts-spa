@@ -6,7 +6,6 @@ import { Button, LinkButton } from '@/ui/button';
 import ErrorCard from '@/lib/errorCard';
 import { Link } from 'react-router';
 import { useRef, useState } from 'react';
-import type { Tables } from '@/types/database.types';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 
 const quoteStatusStyle: Record<string, string> = {
@@ -14,10 +13,6 @@ const quoteStatusStyle: Record<string, string> = {
   quoted: 'bg-orange-500 text-white',
   accepted: 'bg-mv-green text-white',
   rejected: 'bg-destructive text-white',
-};
-
-type Quote = Tables<'quote'> & {
-  client: Pick<Tables<'client'>, 'name' | 'company'>;
 };
 
 type SortField = 'id' | 'created_at';
@@ -44,7 +39,7 @@ const getQuotes = async (sortBy: SortField, sortOrder: SortOrder, page: number, 
     throw new Error(error.message);
   }
 
-  return { quotes: data as Quote[], totalCount: count ?? 0 };
+  return { quotes: data, totalCount: count ?? 0 };
 };
 
 const ViewQuotes = () => {
