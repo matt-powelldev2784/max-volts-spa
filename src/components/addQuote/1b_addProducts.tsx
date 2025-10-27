@@ -1,5 +1,5 @@
-import { Button, LinkButton } from '@/ui/button';
-import { ArrowLeft, Trash, Pencil, EllipsisVertical } from 'lucide-react';
+import { Button } from '@/ui/button';
+import { Trash, Pencil, EllipsisVertical } from 'lucide-react';
 import { type Dispatch, type SetStateAction } from 'react';
 import type { QuoteProductInsert } from '@/types/dbTypes';
 import { Card, CardContent } from '@/ui/card';
@@ -48,11 +48,13 @@ export const AddProducts = ({
             {/* Products List */}
             <div className="flex flex-col gap-5 mb-8 w-full mx-auto">
               {quoteProducts.length === 0 && (
-                <article className="relative flex flex-row items-center justify-between gap-2 bg-white border border-gray-200 rounded-xl px-2 py-4 ">
+                <article className="relative flex flex-row items-center justify-between gap-2 bg-white border-2 border-gray-200 rounded-xl px-2 py-4">
                   <EllipsisVertical className="h-6 w-6 md:h-8 md:w-8 text-gray-500" />
-                  <div className="w-full">
-                    <p className="text-gray-500 text-center">No products added</p>
-                    <p className="text-gray-500 text-center">Click the Add Product button to add items to the quote</p>
+                  <div className="absolute w-full -translate-x-2">
+                    <p className="text-gray-500 text-center">No products added.</p>
+                    <p className="text-gray-500 text-center hidden md:block">
+                      Click the Add Product button to add items to the quote
+                    </p>
                   </div>
                 </article>
               )}
@@ -76,10 +78,9 @@ export const AddProducts = ({
 
               {/* Buttons */}
               <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
-                <LinkButton variant="ghost" size="formButton" to="/view-quotes">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Cancel
-                </LinkButton>
+                <Button variant="ghost" size="formButton" onClick={() => setStep('AddClient')}>
+                  Go Back
+                </Button>
 
                 <Button onClick={onSubmit} size="formButton" disabled={quoteProducts.length === 0}>
                   Next Step
@@ -101,20 +102,24 @@ type AddProductCardProps = {
   onRemove: () => void;
 };
 const AddProductCard = ({ product, onEdit, onRemove }: AddProductCardProps) => (
-  <article className="relative flex items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm pl-2 pr-10 py-4 transition hover:shadow-md">
-    <div className="flex flex-col items-center mr-4">
+  <article className="relative flex items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm pl-2 pr-4 md:pr-10 py-4 transition hover:shadow-md">
+    <div className="flex flex-col items-center mr-2 md:mr-4">
       <ProductActionsDropdown onEdit={onEdit} onRemove={onRemove} />
     </div>
 
-    <div className="flex flex-1 items-center min-w-0">
+    <div className="flex flex-1 items-center">
       <div className="flex flex-col flex-1 min-w-0">
         <div className="flex items-center justify-between">
-          <div className="font-semibold text-base text-gray-800 break-words">{product.name}</div>
-          <div className="flex items-center min-w-[80px] justify-end ml-4">
-            <p className="text-base font-bold text-mv-orange">{`£ ${product.total_value?.toFixed(2)}`}</p>
-          </div>
+          <span className="font-semibold text-base text-gray-800 line-clamp-1 flex-3">{product.name}</span>
+
+          <span className="text-base font-bold text-mv-orange min-w-[80px] ml-2 md:ml-4 flex justify-end flex-1">
+            £ {product.total_value?.toFixed(2)}
+          </span>
         </div>
-        <div className="text-gray-500 text-xs mt-2 mb-0 italic line-clamp-2 max-w-[600px]">{product.description}</div>
+
+        <span className="text-gray-500 text-sm italic line-clamp-2 max-w-[600px] hidden md:block">
+          {product.description}
+        </span>
       </div>
     </div>
   </article>

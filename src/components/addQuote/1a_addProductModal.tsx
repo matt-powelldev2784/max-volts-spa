@@ -8,6 +8,7 @@ import { Input } from '@/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
+import { StretchHorizontal } from 'lucide-react';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -108,7 +109,8 @@ const AddProductModal = ({
   return (
     <Dialog open={isModalOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="w-full h-full max-w-none rounded-none overflow-y-auto sm:max-w-lg sm:rounded-2xl sm:h-auto">
-        <DialogHeader>
+        <DialogHeader className="flexCol">
+          <StretchHorizontal className="h-6 w-6 md:h-8 md:w-8 text-mv-orange" />
           <DialogTitle>Add Product</DialogTitle>
         </DialogHeader>
 
@@ -127,13 +129,18 @@ const AddProductModal = ({
                         field.onChange(Number(val));
                       }}
                     >
-                      <SelectTrigger className="w-full" aria-invalid={form.formState.errors.product_id ? true : false}>
+                      <SelectTrigger
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
+                        aria-invalid={form.formState.errors.product_id ? true : false}
+                      >
                         <SelectValue placeholder="Select a product" />
                       </SelectTrigger>
                       <SelectContent>
                         {products.map((product) => (
                           <SelectItem key={product.id} value={String(product.id)}>
-                            {product.name} (£{product.value})
+                            <span className="block max-w-[230px] md:max-w-[700px] truncate">
+                              {product.name} (£{product.value})
+                            </span>
                           </SelectItem>
                         ))}
                       </SelectContent>
