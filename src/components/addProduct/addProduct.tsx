@@ -18,15 +18,13 @@ const formSchema = z.object({
   name: z.string().nonempty({ message: 'Name is required' }),
   value: z.string().regex(/^(0|[1-9]\d*)\.\d{2}$/, { message: 'Number must have 2 decimal places' }),
   description: z.string().optional(),
+  markup: z.number().min(0),
+  vat: z.number().min(0),
 });
 
 const addProduct = async (product: ProductInsert) => {
   const { data, error } = await supabase.from('product').insert(product);
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
+  if (error) throw new Error(error.message);
   return data;
 };
 
@@ -40,6 +38,8 @@ const AddProduct = () => {
       name: '',
       value: '',
       description: '',
+      markup: 100,
+      vat: 20,
     },
   });
 
@@ -119,10 +119,67 @@ const AddProduct = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Value £<span className="text-red-500">*</span>
+                          Value<span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Value £s" {...field} />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-[10px] text-black text-sm">£</span>
+                            <Input
+                              {...field}
+                              type="number"
+                              className="pl-6 "
+                              placeholder="Value"
+                              aria-invalid={!!form.formState.errors.value}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="markup"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Default Markup % <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Markup"
+                            {...field}
+                            min={0}
+                            step="any"
+                            value={field.value}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            aria-invalid={!!form.formState.errors.markup}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="vat"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Default VAT % <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="VAT"
+                            {...field}
+                            value={field.value}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            aria-invalid={!!form.formState.errors.vat}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

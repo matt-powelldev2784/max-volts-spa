@@ -61,22 +61,28 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: number
+          markup: number
           name: string
           value: number
+          vat: number
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: number
+          markup?: number
           name: string
           value: number
+          vat?: number
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: number
+          markup?: number
           name?: string
           value?: number
+          vat?: number
         }
         Relationships: []
       }
