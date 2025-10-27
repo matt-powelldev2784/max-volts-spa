@@ -134,12 +134,12 @@ const AddProduct = () => {
                 {mutation.isError && <FormError message={mutation.error.message} />}
 
                 {/*  Buttons */}
-                <div className="flexCol gap-2 pt-4">
-                  <Button type="submit" size="lgFullWidth" disabled={mutation.isPending}>
+                <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
+                  <Button type="submit" size="formButton" disabled={mutation.isPending}>
                     {mutation.isPending ? <Loader2 className="text-white" /> : 'Add Product'}
                   </Button>
 
-                  <LinkButton variant="ghost" size="lgFullWidth" to="/view-products">
+                  <LinkButton variant="ghost" size="formButton" to="/view-products">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Cancel
                   </LinkButton>
