@@ -9,7 +9,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import { StretchHorizontal } from 'lucide-react';
-import ErrorCard from '@/lib/errorCard';
 import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 
 const addProductSchema = z.object({
@@ -120,7 +119,7 @@ const EditProductModal = ({
     handleClose();
   };
 
-  if (selectedQuoteProductIndex == null) return <ErrorCard message="No product selected for editing." />;
+  if (selectedQuoteProductIndex === null) return
   const selectedProductId = quoteProducts[selectedQuoteProductIndex].product_id.toString();
 
   return (
