@@ -144,8 +144,8 @@ const ViewProducts = () => {
         <TableHeader>
           <TableRow className="bg-neutral-100">
             <TableHead className="w-10"></TableHead>
-            <TableHead className="w-1/2">Name</TableHead>
-            <TableHead className="w-1/2 pr-4">Value</TableHead>
+            <TableHead className="w-full">Name</TableHead>
+            <TableHead className="w-28 pr-4">Value</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -159,8 +159,10 @@ const ViewProducts = () => {
                   </div>
                 </Link>
               </TableCell>
+
               <TableCell className="truncate">{product.name}</TableCell>
-              <TableCell className="pr-4 truncate">£{product.value}</TableCell>
+
+              <TableCell className="pr-4 truncate ">£{product.value.toFixed(2)}</TableCell>
             </TableRow>
           ))}
 
@@ -179,22 +181,22 @@ const ViewProducts = () => {
         <TableHeader>
           <TableRow className="bg-neutral-100">
             <TableHead className="w-16"></TableHead>
-
-            <TableHead className="w-1/2">
+            <TableHead className="w-2/4">
               <button onClick={() => handleSort('name')} className="flex items-center">
                 Name
                 <ChevronsUpDown className="w-4 h-4 ml-2" />
                 {sortBy === 'name' && <ArrowUpDown className="text-mv-orange w-4 h-4 ml-2" />}
               </button>
             </TableHead>
-
-            <TableHead className="w-1/2">
+            <TableHead className="w-1/6">
               <button onClick={() => handleSort('value')} className="flex items-center">
                 Value
                 <ChevronsUpDown className="w-4 h-4 ml-2" />
                 {sortBy === 'value' && <ArrowUpDown className="text-mv-orange w-4 h-4 ml-2" />}
               </button>
             </TableHead>
+            <TableHead className="w-1/6">Markup %</TableHead>
+            <TableHead className="w-1/6">VAT %</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -214,12 +216,18 @@ const ViewProducts = () => {
               <TableCell className="truncate" title={product.value?.toString() || ''}>
                 £{product.value.toFixed(2)}
               </TableCell>
+              <TableCell className="truncate" title={product.markup?.toString() || ''}>
+                {product.markup}%
+              </TableCell>
+              <TableCell className="truncate" title={product.vat?.toString() || ''}>
+                {product.vat}%
+              </TableCell>
             </TableRow>
           ))}
 
           {products?.length === 0 && (
             <TableRow>
-              <TableCell colSpan={3} className="text-center py-4 h-12">
+              <TableCell colSpan={5} className="text-center py-4 h-12">
                 {searchTerm ? 'No products found matching your search.' : 'No products found.'}
               </TableCell>
             </TableRow>

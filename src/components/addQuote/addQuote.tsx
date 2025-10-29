@@ -5,26 +5,26 @@ import { useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import AddProductModal from './components/addProductModal';
 import AddClient from './components/addClient';
-import type { Product, QuoteProductInsert } from '@/types/dbTypes';
+import type { QuoteProductInsert } from '@/types/dbTypes';
 import AddProducts from './components/addProducts';
 import QuoteSummary from './components/quoteSummary';
 import StepIndicator, { type Steps } from './components/stepIndicator';
+import EditProductModal from './components/editProductModal';
 
 const getProducts = async () => {
-  const { data, error } = await supabase
-    .from('product')
-    .select('id, name, value, description')
-    .order('name', { ascending: true });
+  const { data, error } = await supabase.from('product').select('*').order('name', { ascending: true });
   if (error) throw new Error(error.message);
-  return data as Product[];
+  return data;
 };
 
 const AddQuote = () => {
   const [clientId, setClientId] = useState(0);
   const [quoteProducts, setQuoteProducts] = useState<QuoteProductInsert[]>([]);
+  const [selectedQuoteProductIndex, setSelectedQuoteProductIndex] = useState<number | null>(null);
   const [notes, setNotes] = useState('');
   const [step, setStep] = useState<Steps>('AddClient');
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
 
   const {
     data: productsData,
@@ -49,18 +49,32 @@ const AddQuote = () => {
 
       {step === 'AddProducts' && (
         <>
+          <AddProducts
+            quoteProducts={quoteProducts}
+            setQuoteProducts={setQuoteProducts}
+            setIsAddProductModalOpen={setIsAddProductModalOpen}
+            setIsEditProductModalOpen={setIsEditProductModalOpen}
+            setStep={setStep}
+            setSelectedQuoteProductIndex={setSelectedQuoteProductIndex}
+          />
+
           <AddProductModal
             isModalOpen={isAddProductModalOpen}
             setIsAddProductModalOpen={setIsAddProductModalOpen}
             setQuoteProducts={setQuoteProducts}
             products={productsData}
+            quoteProducts={quoteProducts}
+            setSelectedQuoteProductIndex={setSelectedQuoteProductIndex}
           />
 
-          <AddProducts
-            quoteProducts={quoteProducts}
+          <EditProductModal
+            isModalOpen={isEditProductModalOpen}
+            setIsEditProductModalOpen={setIsEditProductModalOpen}
             setQuoteProducts={setQuoteProducts}
-            setIsAddProductModalOpen={setIsAddProductModalOpen}
-            setStep={setStep}
+            products={productsData}
+            quoteProducts={quoteProducts}
+            selectedQuoteProductIndex={selectedQuoteProductIndex}
+            setSelectedQuoteProductIndex={setSelectedQuoteProductIndex}
           />
         </>
       )}
