@@ -1,45 +1,37 @@
 import { Button } from '@/ui/button';
 import { Trash, Pencil, EllipsisVertical } from 'lucide-react';
-import { type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch } from 'react';
 import type { QuoteProductInsert } from '@/types/dbTypes';
 import { Card, CardContent } from '@/ui/card';
-import type { Steps } from './stepIndicator';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
+import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 
 type AddProductProps = {
   quoteProducts: QuoteProductInsert[];
-  setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
-  setIsAddProductModalOpen: Dispatch<SetStateAction<boolean>>;
-  setIsEditProductModalOpen: Dispatch<SetStateAction<boolean>>;
-  setStep: Dispatch<SetStateAction<Steps>>;
-  setSelectedQuoteProductIndex: Dispatch<SetStateAction<number | null>>;
+  dispatch: Dispatch<AddQuoteAction>;
 };
 
-export const AddProducts = ({
-  quoteProducts,
-  setQuoteProducts,
-  setIsAddProductModalOpen,
-  setIsEditProductModalOpen,
-  setStep,
-  setSelectedQuoteProductIndex,
-}: AddProductProps) => {
+export const AddProducts = ({ quoteProducts, dispatch }: AddProductProps) => {
   const totalValue = quoteProducts.reduce((acc, curr) => acc + curr.total_value, 0);
 
   const onSubmit = () => {
-    setStep('QuoteSummary');
+    dispatch({ type: 'SET_STEP', payload: 'QuoteSummary' });
   };
 
   const onRemoveProduct = (index: number) => {
-    setQuoteProducts((prev) => prev.filter((_, i) => i !== index));
+    dispatch({ type: 'SET_QUOTE_PRODUCTS', payload: quoteProducts.filter((_, i) => i !== index) });
   };
 
   const onAddProduct = () => {
-    setIsAddProductModalOpen(true);
+    dispatch({ type: 'SET_IS_ADD_PRODUCT_MODAL_OPEN', payload: true });
   };
 
   const onEditProduct = (index: number) => {
-    setSelectedQuoteProductIndex(index);
-    setIsEditProductModalOpen(true);
+    dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', payload: { index, isOpen: true } });
+  };
+
+  const goToPreviousStep = () => {
+    dispatch({ type: 'SET_STEP', payload: 'AddClient' });
   };
 
   return (
@@ -87,7 +79,7 @@ export const AddProducts = ({
 
               {/* Buttons */}
               <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
-                <Button variant="ghost" size="formButton" onClick={() => setStep('AddClient')}>
+                <Button variant="ghost" size="formButton" onClick={goToPreviousStep}>
                   Go Back
                 </Button>
 

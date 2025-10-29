@@ -7,9 +7,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardHeader } from '@/ui/card';
 import ErrorCard from '@/lib/errorCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { Steps } from './stepIndicator';
+import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 
 const getClients = async () => {
   const { data, error } = await supabase.from('client').select('id, name, company').order('name', { ascending: true });
@@ -22,12 +22,11 @@ const formSchema = z.object({
 });
 
 type AddClientProps = {
-  setStep: Dispatch<SetStateAction<Steps>>;
+  dispatch: Dispatch<AddQuoteAction>;
   clientId: number;
-  setClientId: Dispatch<SetStateAction<number>>;
 };
 
-const AddClient = ({ setStep, setClientId, clientId }: AddClientProps) => {
+const AddClient = ({ dispatch, clientId }: AddClientProps) => {
   const {
     data: clients,
     isLoading: clientsLoading,
@@ -48,8 +47,8 @@ const AddClient = ({ setStep, setClientId, clientId }: AddClientProps) => {
   const isFormInvalid = !!form.formState.errors.client_id || watchedClientId === 0;
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    setClientId(values.client_id);
-    setStep('AddProducts');
+    dispatch({ type: 'SET_CLIENT_ID', payload: values.client_id });
+    dispatch({ type: 'SET_STEP', payload: 'AddProducts' });
   };
 
   if (isClientsError) return <ErrorCard message={clientsError?.message || 'Failed to load clients.'} />;

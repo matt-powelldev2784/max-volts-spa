@@ -14,8 +14,8 @@ import type { Client, QuoteInsert, QuoteProductInsert } from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
-import type { Dispatch, SetStateAction } from 'react';
-import type { Steps } from './stepIndicator';
+import type { Dispatch } from 'react';
+import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
@@ -62,11 +62,10 @@ type QuoteSummaryProps = {
   clientId: number;
   quoteProducts: QuoteProductInsert[];
   notes: string;
-  setNotes: Dispatch<SetStateAction<string>>;
-  setStep: Dispatch<SetStateAction<Steps>>;
+  dispatch: Dispatch<AddQuoteAction>;
 };
 
-const QuoteSummary = ({ clientId, quoteProducts, notes, setNotes, setStep }: QuoteSummaryProps) => {
+const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummaryProps) => {
   const { user, loading: userIsLoading } = useAuth();
   const userEmail = user?.email;
   const navigate = useNavigate();
@@ -98,6 +97,14 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, setNotes, setStep }: Quo
       navigate('/view-quotes');
     },
   });
+
+  const setNotes = (notes: string) => {
+    dispatch({ type: 'SET_NOTES', payload: notes });
+  };
+
+  const goToPreviousStep = () => {
+    dispatch({ type: 'SET_STEP', payload: 'AddProducts' });
+  };
 
   if (isLoadingClient) return <LoadingSpinner />;
   if (userIsLoading || !userEmail) return <LoadingSpinner />;
@@ -167,7 +174,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, setNotes, setStep }: Quo
                 {mutation.isError && <FormError message={mutation.error.message} />}
 
                 <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
-                  <Button variant="ghost" size="formButton" onClick={() => setStep('AddProducts')}>
+                  <Button variant="ghost" size="formButton" onClick={goToPreviousStep}>
                     Go Back
                   </Button>
 

@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import ErrorCard from '@/lib/errorCard';
-import { useState } from 'react';
+import { useReducer } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import AddProductModal from './components/addProductModal';
 import AddClient from './components/addClient';
-import type { QuoteProductInsert } from '@/types/dbTypes';
 import AddProducts from './components/addProducts';
 import QuoteSummary from './components/quoteSummary';
-import StepIndicator, { type Steps } from './components/stepIndicator';
+import StepIndicator from './components/stepIndicator';
 import EditProductModal from './components/editProductModal';
+import { addQuoteInitialState, addQuoteReducer } from './reducer/addQuoteReducer';
 
 const getProducts = async () => {
   const { data, error } = await supabase.from('product').select('*').order('name', { ascending: true });
@@ -18,13 +18,16 @@ const getProducts = async () => {
 };
 
 const AddQuote = () => {
-  const [clientId, setClientId] = useState(0);
-  const [quoteProducts, setQuoteProducts] = useState<QuoteProductInsert[]>([]);
-  const [selectedQuoteProductIndex, setSelectedQuoteProductIndex] = useState<number | null>(null);
-  const [notes, setNotes] = useState('');
-  const [step, setStep] = useState<Steps>('AddClient');
-  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
-  const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
+  const [state, dispatch] = useReducer(addQuoteReducer, addQuoteInitialState);
+  const {
+    clientId,
+    quoteProducts,
+    selectedQuoteProductIndex,
+    notes,
+    step,
+    isAddProductModalOpen,
+    isEditProductModalOpen,
+  } = state;
 
   const {
     data: productsData,
@@ -45,48 +48,31 @@ const AddQuote = () => {
     <div className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && <AddClient setStep={setStep} clientId={clientId} setClientId={setClientId} />}
+      {step === 'AddClient' && <AddClient dispatch={dispatch} clientId={clientId} />}
 
       {step === 'AddProducts' && (
         <>
-          <AddProducts
-            quoteProducts={quoteProducts}
-            setQuoteProducts={setQuoteProducts}
-            setIsAddProductModalOpen={setIsAddProductModalOpen}
-            setIsEditProductModalOpen={setIsEditProductModalOpen}
-            setStep={setStep}
-            setSelectedQuoteProductIndex={setSelectedQuoteProductIndex}
-          />
+          <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />
 
           <AddProductModal
             isModalOpen={isAddProductModalOpen}
-            setIsAddProductModalOpen={setIsAddProductModalOpen}
-            setQuoteProducts={setQuoteProducts}
+            dispatch={dispatch}
             products={productsData}
             quoteProducts={quoteProducts}
-            setSelectedQuoteProductIndex={setSelectedQuoteProductIndex}
           />
 
           <EditProductModal
             isModalOpen={isEditProductModalOpen}
-            setIsEditProductModalOpen={setIsEditProductModalOpen}
-            setQuoteProducts={setQuoteProducts}
             products={productsData}
             quoteProducts={quoteProducts}
             selectedQuoteProductIndex={selectedQuoteProductIndex}
-            setSelectedQuoteProductIndex={setSelectedQuoteProductIndex}
+            dispatch={dispatch}
           />
         </>
       )}
 
       {step === 'QuoteSummary' && (
-        <QuoteSummary
-          clientId={clientId}
-          quoteProducts={quoteProducts}
-          setStep={setStep}
-          notes={notes}
-          setNotes={setNotes}
-        />
+        <QuoteSummary clientId={clientId} quoteProducts={quoteProducts} notes={notes} dispatch={dispatch} />
       )}
     </div>
   );

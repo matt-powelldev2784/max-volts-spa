@@ -3,12 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/ui/form';
-import { useEffect, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, type Dispatch } from 'react';
 import { Input } from '@/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import { StretchHorizontal } from 'lucide-react';
+import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -23,11 +24,9 @@ const addProductSchema = z.object({
 
 type AddProductModalProps = {
   isModalOpen: boolean;
-  setIsAddProductModalOpen: Dispatch<SetStateAction<boolean>>;
-  setQuoteProducts: Dispatch<SetStateAction<QuoteProductInsert[]>>;
   products: Product[];
   quoteProducts: QuoteProductInsert[];
-  setSelectedQuoteProductIndex: Dispatch<SetStateAction<number | null>>;
+  dispatch: Dispatch<AddQuoteAction>;
 };
 
 type GetTotalValueProps = {
@@ -41,13 +40,7 @@ const getTotalValue = ({ quantity, value, markup, vat_rate }: GetTotalValueProps
   return quantity * value * (1 + markup / 100) * (1 + vat_rate / 100);
 };
 
-const AddProductModal = ({
-  isModalOpen,
-  setIsAddProductModalOpen,
-  setQuoteProducts,
-  products,
-  setSelectedQuoteProductIndex,
-}: AddProductModalProps) => {
+const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: AddProductModalProps) => {
   const form = useForm<z.infer<typeof addProductSchema>>({
     resolver: zodResolver(addProductSchema),
     defaultValues: {
@@ -96,8 +89,7 @@ const AddProductModal = ({
 
   const handleClose = () => {
     form.reset();
-    setIsAddProductModalOpen(false);
-    setSelectedQuoteProductIndex(null);
+    dispatch({ type: 'SET_IS_ADD_PRODUCT_MODAL_OPEN', payload: false });
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
@@ -111,7 +103,11 @@ const AddProductModal = ({
       total_value: total_value,
     };
 
-    setQuoteProducts((prev) => [...prev, quoteProductInsert]);
+    dispatch({
+      type: 'SET_QUOTE_PRODUCTS',
+      payload: [...quoteProducts, quoteProductInsert],
+    });
+
     handleClose();
   };
 
