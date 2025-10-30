@@ -102,7 +102,7 @@ type AddProductCardProps = {
   onEditProduct: () => void;
   onRemoveProduct: () => void;
 };
-const AddProductCard = ({ product, onEditProduct, onRemoveProduct }: AddProductCardProps) => (
+export const AddProductCard = ({ product, onEditProduct, onRemoveProduct }: AddProductCardProps) => (
   <article className="relative flex items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm pl-2 pr-4 md:pr-10 py-4 transition hover:shadow-md">
     <div className="flex flex-col items-center mr-2 md:mr-4">
       <DropdownMenu>
