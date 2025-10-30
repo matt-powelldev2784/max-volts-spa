@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/ui/button';
 import { CardDescription } from '@/ui/card';
-import { Loader2, MoreVertical } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/ui/form';
 import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
@@ -17,6 +17,7 @@ import FormError from '@/lib/formError';
 import type { Dispatch } from 'react';
 import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 import { CardContentTab, CardDescriptionTab, CardHeaderTab, CardTab } from '@/ui/cardTab';
+import { QuoteProductCard } from './quoteProductCard';
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
@@ -135,7 +136,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
         {client && <ClientCard client={client} />}
 
         {quoteProducts.length > 0 && (
-          <ProductList quoteProducts={quoteProducts} totalValue={totalValue} totalVat={totalVat} />
+          <ProductList quoteProducts={quoteProducts} totalValue={totalValue} totalVat={totalVat} dispatch={dispatch} />
         )}
 
         <CardTab>
@@ -241,9 +242,18 @@ type ProductListProps = {
   quoteProducts: QuoteProductInsert[];
   totalVat: number;
   totalValue: number;
+  dispatch: Dispatch<AddQuoteAction>;
 };
 
-const ProductList = ({ quoteProducts, totalVat, totalValue }: ProductListProps) => {
+const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductListProps) => {
+  const onEditProduct = (index: number) => {
+    dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', payload: { index, isOpen: true } });
+  };
+
+  const onRemoveProduct = (index: number) => {
+    dispatch({ type: 'SET_QUOTE_PRODUCTS', payload: quoteProducts.filter((_, i) => i !== index) });
+  };
+
   return (
     <CardTab className="w-full">
       <CardHeaderTab>
@@ -252,7 +262,12 @@ const ProductList = ({ quoteProducts, totalVat, totalValue }: ProductListProps) 
 
       <CardContentTab>
         {quoteProducts.map((product, index) => (
-          <QuoteProductCard key={index} quoteProduct={product} />
+          <QuoteProductCard
+            key={index}
+            product={product}
+            onEditProduct={() => onEditProduct(index)}
+            onRemoveProduct={() => onRemoveProduct(index)}
+          />
         ))}
 
         <div className="flex flex-col items-end">
@@ -270,38 +285,6 @@ const ProductList = ({ quoteProducts, totalVat, totalValue }: ProductListProps) 
         </div>
       </CardContentTab>
     </CardTab>
-  );
-};
-
-type QuoteProductCardProps = {
-  quoteProduct: QuoteProductInsert;
-};
-
-const QuoteProductCard = ({ quoteProduct }: QuoteProductCardProps) => {
-  return (
-    <article className="relative flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm pl-2 pr-4 md:pr-10 py-4">
-      <div className="absolute h-full top-0 hidden md:flex md:items-center">
-        <MoreVertical className="text-gray-400 w-8 h-8 mr-3" />
-      </div>
-
-      <div className="flex items-center justify-between w-full pl-2 md:pl-12 ">
-        <div className="flex items-center">
-          <div className="flex flex-col items-center mr-4">
-            <span className="font-semibold text-base text-gray-900">{quoteProduct.quantity}</span>
-          </div>
-          <span className="font-semibold text-base text-gray-800 line-clamp-1">{quoteProduct.name}</span>
-        </div>
-        <span className="text-base font-bold text-mv-orange min-w-[80px] ml-2 md:ml-4 flex justify-end flex-1">
-          £ {quoteProduct.total_value?.toFixed(2)}
-        </span>
-      </div>
-
-      {quoteProduct.description && (
-        <span className=" text-gray-500 text-sm italic line-clamp-2 max-w-[500px] hidden md:block ml-12">
-          {quoteProduct.description}
-        </span>
-      )}
-    </article>
   );
 };
 
