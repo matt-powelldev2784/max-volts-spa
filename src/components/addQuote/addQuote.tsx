@@ -29,8 +29,6 @@ const AddQuote = () => {
     isEditProductModalOpen,
   } = state;
 
-  console.log('quoteProducts', quoteProducts);
-
   const {
     data: productsData,
     isLoading: isLoadingProducts,
@@ -52,30 +50,26 @@ const AddQuote = () => {
 
       {step === 'AddClient' && <AddClient dispatch={dispatch} clientId={clientId} />}
 
-      {step === 'AddProducts' && (
-        <>
-          <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />
-
-          <AddProductModal
-            isModalOpen={isAddProductModalOpen}
-            dispatch={dispatch}
-            products={productsData}
-            quoteProducts={quoteProducts}
-          />
-
-          <EditProductModal
-            isModalOpen={isEditProductModalOpen}
-            products={productsData}
-            quoteProducts={quoteProducts}
-            selectedQuoteProductIndex={selectedQuoteProductIndex}
-            dispatch={dispatch}
-          />
-        </>
-      )}
+      {step === 'AddProducts' && <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />}
 
       {step === 'QuoteSummary' && (
         <QuoteSummary clientId={clientId} quoteProducts={quoteProducts} notes={notes} dispatch={dispatch} />
       )}
+
+      <AddProductModal
+        isModalOpen={isAddProductModalOpen}
+        dispatch={dispatch}
+        products={productsData}
+        quoteProducts={quoteProducts}
+      />
+
+      <EditProductModal
+        isModalOpen={isEditProductModalOpen}
+        products={productsData}
+        quoteProducts={quoteProducts}
+        selectedQuoteProductIndex={selectedQuoteProductIndex}
+        dispatch={dispatch}
+      />
     </div>
   );
 };
