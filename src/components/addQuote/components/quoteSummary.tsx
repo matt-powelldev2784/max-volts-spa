@@ -3,8 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/ui/button';
-import { Card, CardContent, CardDescription, CardHeader } from '@/ui/card';
-import { Loader2 } from 'lucide-react';
+import { CardDescription } from '@/ui/card';
+import { Loader2, MoreVertical } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/ui/form';
 import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
@@ -16,6 +16,7 @@ import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
 import type { Dispatch } from 'react';
 import type { AddQuoteAction } from '../reducer/addQuoteReducer';
+import { CardContentTab, CardDescriptionTab, CardHeaderTab, CardTab } from '@/ui/cardTab';
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
@@ -70,7 +71,6 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
   const userEmail = user?.email;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
   const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
 
   const {
@@ -129,24 +129,20 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
 
   return (
     <div className="flex min-h-screen items-start justify-center md:p-4 pb-24 md:pb-24">
-      <div className="w-full flexCol md:max-w-[600px]">
-        <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl">
-          <CardHeader className="rounded-t-xl">
+      <div className="w-full flexCol md:max-w-[900px] px-4">
+        {client && <ClientCard client={client} />}
+
+        {quoteProducts.length > 0 && <ProductList quoteProducts={quoteProducts} />}
+
+        <CardTab>
+          <CardHeaderTab>
+            <CardDescriptionTab>Submit</CardDescriptionTab>
+          </CardHeaderTab>
+
+          <CardContentTab className="w-full flex flex-col gap-4 px-4 md:px-8 md:py-8">
             <CardDescription className="text-center">
-              Check quote details, add notes if required and submit
+              Check quote details, add notes if required and then click create quote.
             </CardDescription>
-          </CardHeader>
-
-          <CardContent className="px-4 md:px-6 pb-6 pt-4">
-            <p className="font-medium text-sm pb-1">Client Name:</p>
-            <div className="rounded-md border border-gray-500 bg-gray-50 w-full px-4 py-2 mb-4">
-              <div>{client?.name}</div>
-            </div>
-
-            <p className="font-medium text-sm pb-1">Quote Total</p>
-            <div className="rounded-md border border-gray-500 bg-gray-50 w-full px-4 py-2 mb-4">
-              <p>{`£${totalValue.toFixed(2)}`}</p>
-            </div>
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
@@ -164,6 +160,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
                           onBlur={() => {
                             setNotes(field.value);
                           }}
+                          className="bg-white"
                         />
                       </FormControl>
                       <FormMessage />
@@ -173,21 +170,125 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
 
                 {mutation.isError && <FormError message={mutation.error.message} />}
 
-                <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
+                <div className="relative w-full flex flex-row justify-end gap-2">
                   <Button variant="ghost" size="formButton" onClick={goToPreviousStep}>
                     Go Back
                   </Button>
 
-                  <Button type="submit" size="formButton" disabled={mutation.isPending}>
+                  <Button type="submit" size="formButton" disabled={mutation.isPending} className="px-4 md:px-6">
                     {mutation.isPending ? <Loader2 className="text-white" /> : 'Create Quote'}
                   </Button>
                 </div>
               </form>
             </Form>
-          </CardContent>
-        </Card>
+          </CardContentTab>
+        </CardTab>
       </div>
     </div>
+  );
+};
+
+type ClientCardProps = {
+  client: Client;
+};
+
+const ClientCard = ({ client }: ClientCardProps) => {
+  const { name, company, email, address1, address2, city, county, post_code } = client;
+
+  return (
+    <CardTab>
+      <CardHeaderTab>
+        <CardDescriptionTab>Client Details</CardDescriptionTab>
+      </CardHeaderTab>
+      <CardContentTab>
+        <div>
+          <span className="text-gray-500 text-xs">Name</span>
+          <div className="font-semibold text-base text-gray-900">{name}</div>
+        </div>
+
+        <div>
+          <span className="text-gray-500 text-xs">Company</span>
+          <div className="font-semibold text-base text-gray-900">{company || '-'}</div>
+        </div>
+
+        <div>
+          <span className="text-gray-500 text-xs">Email</span>
+          <div className="font-semibold text-base text-gray-900">{email || '-'}</div>
+        </div>
+
+        <div>
+          <span className="text-gray-500 text-xs">Telephone</span>
+          <div className="font-semibold text-base text-gray-900">{client.telephone || '-'}</div>
+        </div>
+
+        <div className="col-span-1 md:col-span-2">
+          <span className="text-gray-500 text-xs">Address</span>
+          <div className="font-semibold text-base text-gray-900">
+            {[address1, address2, city, county, post_code].filter(Boolean).join(', ') || '-'}
+          </div>
+        </div>
+      </CardContentTab>
+    </CardTab>
+  );
+};
+
+type ProductListProps = {
+  quoteProducts: QuoteProductInsert[];
+};
+
+const ProductList = ({ quoteProducts }: ProductListProps) => {
+  const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
+
+  return (
+    <CardTab className="w-full">
+      <CardHeaderTab>
+        <CardDescriptionTab>Products</CardDescriptionTab>
+      </CardHeaderTab>
+      <CardContentTab className="w-full flex flex-col gap-4 px-4 md:px-8 md:py-8">
+        {quoteProducts.map((product, index) => (
+          <QuoteProductCard key={index} quoteProduct={product} />
+        ))}
+
+        <div className="flex flex-col items-end">
+          <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end">
+            <span className="text-black text-sm font-medium mb-1">Quote Total</span>
+            <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
+          </div>
+        </div>
+      </CardContentTab>
+    </CardTab>
+  );
+};
+
+type QuoteProductCardProps = {
+  quoteProduct: QuoteProductInsert;
+};
+
+const QuoteProductCard = ({ quoteProduct }: QuoteProductCardProps) => {
+  return (
+    <article className="relative flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm pl-2 pr-4 md:pr-10 py-4">
+      <div className="absolute h-full top-0 hidden md:flex md:items-center">
+        <MoreVertical className="text-gray-400 w-8 h-8 mr-3" />
+      </div>
+
+      <div className="flex items-center justify-between w-full pl-2 md:pl-12 ">
+        <div className="flex items-center">
+          <div className="flex flex-col items-center mr-4">
+            <span className="font-semibold text-base text-gray-900">{quoteProduct.quantity}</span>
+          </div>
+          <span className="font-semibold text-base text-gray-800 line-clamp-1">{quoteProduct.name}</span>
+        </div>
+        <span className="text-base font-bold text-mv-orange min-w-[80px] ml-2 md:ml-4 flex justify-end flex-1">
+          £ {quoteProduct.total_value?.toFixed(2)}
+        </span>
+      </div>
+
+      {quoteProduct.description && (
+        <span className=" text-gray-500 text-sm italic line-clamp-2 max-w-[500px] hidden md:block ml-12">
+          {quoteProduct.description}
+        </span>
+      )}
+    </article>
   );
 };
 
