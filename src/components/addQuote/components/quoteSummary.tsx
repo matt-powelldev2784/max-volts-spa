@@ -139,7 +139,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
             <CardDescriptionTab>Submit</CardDescriptionTab>
           </CardHeaderTab>
 
-          <CardContentTab className="w-full flex flex-col gap-4 px-4 md:px-8 md:py-8">
+          <CardContentTab>
             <CardDescription className="text-center">
               Check quote details, add notes if required and then click create quote.
             </CardDescription>
@@ -193,14 +193,15 @@ type ClientCardProps = {
 };
 
 const ClientCard = ({ client }: ClientCardProps) => {
-  const { name, company, email, address1, address2, city, county, post_code } = client;
+  const { name, company, email, telephone, address1, address2, city, county, post_code } = client;
 
   return (
     <CardTab>
       <CardHeaderTab>
         <CardDescriptionTab>Client Details</CardDescriptionTab>
       </CardHeaderTab>
-      <CardContentTab>
+
+      <CardContentTab className="md:grid-cols-2">
         <div>
           <span className="text-gray-500 text-xs">Name</span>
           <div className="font-semibold text-base text-gray-900">{name}</div>
@@ -218,7 +219,7 @@ const ClientCard = ({ client }: ClientCardProps) => {
 
         <div>
           <span className="text-gray-500 text-xs">Telephone</span>
-          <div className="font-semibold text-base text-gray-900">{client.telephone || '-'}</div>
+          <div className="font-semibold text-base text-gray-900">{telephone || '-'}</div>
         </div>
 
         <div className="col-span-1 md:col-span-2">
@@ -244,7 +245,8 @@ const ProductList = ({ quoteProducts }: ProductListProps) => {
       <CardHeaderTab>
         <CardDescriptionTab>Products</CardDescriptionTab>
       </CardHeaderTab>
-      <CardContentTab className="w-full flex flex-col gap-4 px-4 md:px-8 md:py-8">
+
+      <CardContentTab>
         {quoteProducts.map((product, index) => (
           <QuoteProductCard key={index} quoteProduct={product} />
         ))}

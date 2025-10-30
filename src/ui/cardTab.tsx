@@ -51,7 +51,7 @@ function CardContentTab({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-content-tab"
-      className={cn('px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-10 rounded-b-2xl', className)}
+      className={cn('px-6 py-6 grid grid-cols-1 gap-y-4 gap-x-10 rounded-b-2xl', className)}
       {...props}
     />
   );
