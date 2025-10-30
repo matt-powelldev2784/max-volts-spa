@@ -95,6 +95,7 @@ export type Database = {
           notes: string | null
           status: string
           total_value: number | null
+          total_vat: number
           user_email: string
           user_id: string
         }
@@ -106,6 +107,7 @@ export type Database = {
           notes?: string | null
           status: string
           total_value?: number | null
+          total_vat: number
           user_email?: string
           user_id: string
         }
@@ -117,6 +119,7 @@ export type Database = {
           notes?: string | null
           status?: string
           total_value?: number | null
+          total_vat?: number
           user_email?: string
           user_id?: string
         }
@@ -141,6 +144,7 @@ export type Database = {
           quantity: number | null
           quote_id: number
           total_value: number
+          total_vat: number
           value: number
           vat_rate: number | null
         }
@@ -154,6 +158,7 @@ export type Database = {
           quantity?: number | null
           quote_id: number
           total_value: number
+          total_vat: number
           value?: number
           vat_rate?: number | null
         }
@@ -167,6 +172,7 @@ export type Database = {
           quantity?: number | null
           quote_id?: number
           total_value?: number
+          total_vat?: number
           value?: number
           vat_rate?: number | null
         }

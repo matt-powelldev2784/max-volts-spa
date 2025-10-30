@@ -19,6 +19,7 @@ const addProductSchema = z.object({
   markup: z.number().min(0),
   vat_rate: z.number().min(0),
   total_value: z.number().min(0),
+  total_vat: z.number().min(0),
   description: z.string().optional(),
 });
 
@@ -41,6 +42,11 @@ const getTotalValue = ({ quantity, value, markup, vat_rate }: GetTotalValueProps
   return quantity * value * (1 + markup / 100) * (1 + vat_rate / 100);
 };
 
+const getTotalVat = ({ quantity, value, markup, vat_rate }: GetTotalValueProps) => {
+  const totalExclVat = quantity * value * (1 + markup / 100);
+  return totalExclVat * (vat_rate / 100);
+};
+
 const EditProductModal = ({
   isModalOpen,
   quoteProducts,
@@ -58,6 +64,7 @@ const EditProductModal = ({
       markup: 0,
       vat_rate: 0,
       total_value: 0,
+      total_vat: 0,
       description: '',
     },
   });
@@ -79,7 +86,7 @@ const EditProductModal = ({
   const [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, watchedValue, watchedTotalValue] =
     form.watch(['product_id', 'quantity', 'markup', 'vat_rate', 'value', 'total_value']);
 
-  // Recalculate total value when the related product values change
+  // Recalculate total value and total VAT when the related product values change
   useEffect(() => {
     const total_value = getTotalValue({
       quantity: watchedQuantity,
@@ -88,38 +95,44 @@ const EditProductModal = ({
       vat_rate: watchedVatRate,
     });
 
+    const total_vat = getTotalVat({
+      quantity: watchedQuantity,
+      value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
+      markup: watchedMarkup,
+      vat_rate: watchedVatRate,
+    });
+
     form.setValue('total_value', total_value);
+    form.setValue('total_vat', total_vat);
   }, [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, form, products]);
 
   const handleClose = () => {
     form.reset();
-    dispatch({ type: 'CLOSE_EDIT_PRODUCT_MODAL', payload: {isOpen: false, selectedQuoteProductIndex: null} });
+    dispatch({ type: 'CLOSE_EDIT_PRODUCT_MODAL', payload: { isOpen: false, selectedQuoteProductIndex: null } });
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
-    const { quantity, markup, vat_rate } = values;
     const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
-    const total_value = getTotalValue({ quantity, value, markup, vat_rate });
 
     const updatedQuoteProduct = {
       ...values,
       value: value,
-      total_value: total_value,
+
     };
 
     const updatedQuoteProducts = quoteProducts.map((quoteProduct, index) =>
       index === selectedQuoteProductIndex ? updatedQuoteProduct : quoteProduct
     );
 
-     dispatch({
-       type: 'SET_QUOTE_PRODUCTS',
-       payload: updatedQuoteProducts,
-     });
-   
+    dispatch({
+      type: 'SET_QUOTE_PRODUCTS',
+      payload: updatedQuoteProducts,
+    });
+
     handleClose();
   };
 
-  if (selectedQuoteProductIndex === null) return
+  if (selectedQuoteProductIndex === null) return;
   const selectedProductId = quoteProducts[selectedQuoteProductIndex].product_id.toString();
 
   return (
