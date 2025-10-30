@@ -134,7 +134,9 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
       <div className="w-full flexCol md:max-w-[900px] px-4">
         {client && <ClientCard client={client} />}
 
-        {quoteProducts.length > 0 && <ProductList quoteProducts={quoteProducts} />}
+        {quoteProducts.length > 0 && (
+          <ProductList quoteProducts={quoteProducts} totalValue={totalValue} totalVat={totalVat} />
+        )}
 
         <CardTab>
           <CardHeaderTab>
@@ -237,12 +239,11 @@ const ClientCard = ({ client }: ClientCardProps) => {
 
 type ProductListProps = {
   quoteProducts: QuoteProductInsert[];
+  totalVat: number;
+  totalValue: number;
 };
 
-const ProductList = ({ quoteProducts }: ProductListProps) => {
-  const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
-  const totalVat = quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
-
+const ProductList = ({ quoteProducts, totalVat, totalValue }: ProductListProps) => {
   return (
     <CardTab className="w-full">
       <CardHeaderTab>

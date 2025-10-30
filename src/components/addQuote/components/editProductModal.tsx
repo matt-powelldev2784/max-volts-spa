@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import { StretchHorizontal } from 'lucide-react';
 import type { AddQuoteAction } from '../reducer/addQuoteReducer';
+import { getTotalValue, getTotalVat } from '@/lib/quoteCalculator';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -29,22 +30,6 @@ type AddProductModalProps = {
   quoteProducts: QuoteProductInsert[];
   selectedQuoteProductIndex: number | null;
   dispatch: Dispatch<AddQuoteAction>;
-};
-
-type GetTotalValueProps = {
-  quantity: number;
-  value: number;
-  markup: number;
-  vat_rate: number;
-};
-
-const getTotalValue = ({ quantity, value, markup, vat_rate }: GetTotalValueProps) => {
-  return quantity * value * (markup / 100) * (1 + vat_rate / 100);
-};
-
-const getTotalVat = ({ quantity, value, markup, vat_rate }: GetTotalValueProps) => {
-  const totalExclVat = quantity * value * (markup / 100);
-  return totalExclVat * (vat_rate / 100);
 };
 
 const EditProductModal = ({
