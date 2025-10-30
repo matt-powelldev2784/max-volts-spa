@@ -42,7 +42,7 @@ const getTotalValue = ({ quantity, value, markup, vat_rate }: GetTotalValueProps
 };
 
 const getTotalVat = ({ quantity, value, markup, vat_rate }: GetTotalValueProps) => {
-  const totalExclVat = quantity * value * (1 + markup / 100);
+  const totalExclVat = quantity * value * (markup / 100);
   return totalExclVat * (vat_rate / 100);
 };
 
