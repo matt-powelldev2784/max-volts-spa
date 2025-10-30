@@ -72,6 +72,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
+  const totalVat = quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 
   const {
     data: client,
@@ -116,6 +117,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
       quoteInsert: {
         client_id: clientId,
         total_value: totalValue,
+        total_vat: totalVat,
         user_id: user.id,
         user_email: userEmail,
         notes: values.notes,
@@ -239,6 +241,7 @@ type ProductListProps = {
 
 const ProductList = ({ quoteProducts }: ProductListProps) => {
   const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
+  const totalVat = quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 
   return (
     <CardTab className="w-full">
@@ -252,9 +255,16 @@ const ProductList = ({ quoteProducts }: ProductListProps) => {
         ))}
 
         <div className="flex flex-col items-end">
-          <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end">
-            <span className="text-black text-sm font-medium mb-1">Quote Total</span>
-            <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
+          <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end gap-4">
+            <div className="flex flex-col items-end">
+              <span className="text-black text-sm font-medium">VAT Total</span>
+              <span className="text-2xl font-bold text-mv-orange">{`£ ${totalVat.toFixed(2)}`}</span>
+            </div>
+
+            <div className="flex flex-col items-end">
+              <span className="text-black text-sm font-medium">Quote Total</span>
+              <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
+            </div>
           </div>
         </div>
       </CardContentTab>

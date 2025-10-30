@@ -13,6 +13,7 @@ type AddProductProps = {
 
 export const AddProducts = ({ quoteProducts, dispatch }: AddProductProps) => {
   const totalValue = quoteProducts.reduce((acc, curr) => acc + curr.total_value, 0);
+  const totalVat = quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 
   const onSubmit = () => {
     dispatch({ type: 'SET_STEP', payload: 'QuoteSummary' });
@@ -72,9 +73,18 @@ export const AddProducts = ({ quoteProducts, dispatch }: AddProductProps) => {
 
             {/* Quote Total */}
             <div className="flex flex-col items-end mb-4">
-              <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end">
-                <span className="text-black text-sm font-medium mb-1">Quote Total</span>
-                <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
+              <div className="flex flex-col items-end">
+                <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end gap-4">
+                  <div className="flex flex-col items-end">
+                    <span className="text-black text-sm font-medium">VAT Total</span>
+                    <span className="text-2xl font-bold text-mv-orange">{`£ ${totalVat.toFixed(2)}`}</span>
+                  </div>
+
+                  <div className="flex flex-col items-end">
+                    <span className="text-black text-sm font-medium">Quote Total</span>
+                    <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
+                  </div>
+                </div>
               </div>
 
               {/* Buttons */}
