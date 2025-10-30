@@ -29,8 +29,6 @@ const AddQuote = () => {
     isEditProductModalOpen,
   } = state;
 
-  console.log('quoteProducts', quoteProducts);
-
   const {
     data: productsData,
     isLoading: isLoadingProducts,
