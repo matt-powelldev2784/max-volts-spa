@@ -54,6 +54,7 @@ const EditProductModal = ({
     },
   });
 
+  // populate the form with the current values when editing a product
   useEffect(() => {
     if (selectedQuoteProductIndex != null) {
       const quoteProduct = quoteProducts[selectedQuoteProductIndex];
