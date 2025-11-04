@@ -13,3 +13,6 @@ export type QuoteInsert = Omit<QuoteInsertAllFields, 'id' | 'created_at' | 'upda
 
 type ProductInsertAllFields = Database['public']['Tables']['product']['Insert'];
 export type ProductInsert = Omit<ProductInsertAllFields, 'id' | 'created_at' | 'updated_at'>;
+
+type ClientInsertAllFields = Database['public']['Tables']['client']['Insert'];
+export type ClientInsert = Omit<ClientInsertAllFields, 'id' | 'created_at' | 'updated_at'>;
