@@ -9,10 +9,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router';
 import { ArrowLeft, Loader2, StretchHorizontal } from 'lucide-react';
-import type { Database } from '@/types/database.types';
 import FormError from '@/lib/formError';
-
-type ProductInsert = Database['public']['Tables']['product']['Insert'];
+import type { ProductInsert } from '@/types/dbTypes';
+import { Textarea } from '@/ui/textarea';
 
 const formSchema = z.object({
   name: z.string().nonempty({ message: 'Name is required' }),
@@ -101,7 +100,7 @@ const AddProduct = () => {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <textarea
+                          <Textarea
                             className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
                             placeholder="Description"
                             rows={3}

@@ -73,7 +73,7 @@ export const AddProducts = ({ quoteProducts, dispatch }: AddProductProps) => {
 
             {/* Quote Total */}
             <div className="flex flex-col items-end mb-4">
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end w-full">
                 <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end gap-4">
                   <div className="flex flex-col items-end">
                     <span className="text-black text-sm font-medium">VAT Total</span>
