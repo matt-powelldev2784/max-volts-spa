@@ -10,3 +10,6 @@ export type QuoteProductInsert = Omit<QuoteProductInsertAllFields, 'quote_id'>;
 
 type QuoteInsertAllFields = Database['public']['Tables']['quote']['Insert'];
 export type QuoteInsert = Omit<QuoteInsertAllFields, 'id' | 'created_at' | 'updated_at'>;
+
+type ProductInsertAllFields = Database['public']['Tables']['product']['Insert'];
+export type ProductInsert = Omit<ProductInsertAllFields, 'id' | 'created_at' | 'updated_at'>;
