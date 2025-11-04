@@ -61,22 +61,22 @@ const EditProduct = ({ productId }: EditProductProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: product?.name || '',
-      value: product ? product.value.toFixed(2) : '',
-      description: product?.description || '',
-      markup: product?.markup || 100,
-      vat: product?.vat || 20,
+      name: '',
+      value: '',
+      description: '',
+      markup: 100,
+      vat: 20,
     },
   });
 
   useEffect(() => {
     if (product) {
       form.reset({
-        name: product.name || '',
-        value: product.value !== undefined ? product.value.toFixed(2) : '',
+        name: product.name,
+        value: product.value.toFixed(2),
         description: product.description || '',
-        markup: product.markup ?? 100,
-        vat: product.vat ?? 20,
+        markup: product.markup,
+        vat: product.vat,
       });
     }
   }, [product, form]);

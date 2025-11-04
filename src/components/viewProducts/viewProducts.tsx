@@ -153,7 +153,7 @@ const ViewProducts = () => {
           {products?.map((product) => (
             <TableRow key={product.id} className="hover:bg-muted transition">
               <TableCell>
-                <Link to={`/product/${product.id}`} className="flexCol">
+                <Link to={`/edit/product/${product.id}`} className="flexCol">
                   <div className="w-[25px] h-[25px] bg-mv-orange rounded">
                     <ArrowRight strokeWidth={3} className="text-white p-1" />
                   </div>
