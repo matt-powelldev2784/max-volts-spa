@@ -17,3 +17,14 @@ export type ProductInsert = Omit<ProductInsertAllFields, 'id' | 'created_at' | '
 
 type ClientInsertAllFields = Database['public']['Tables']['client']['Insert'];
 export type ClientInsert = Omit<ClientInsertAllFields, 'id' | 'created_at' | 'updated_at'>;
+
+export type QuoteStatus = 'new' | 'quoted' | 'accepted' | 'rejected';
+
+type QuoteStatusOption = { value: QuoteStatus; label: string };
+
+export const QUOTE_STATUS_OPTIONS: QuoteStatusOption[] = [
+  { value: 'new', label: 'New' },
+  { value: 'quoted', label: 'Quoted' },
+  { value: 'accepted', label: 'Accepted' },
+  { value: 'rejected', label: 'Rejected' },
+];
