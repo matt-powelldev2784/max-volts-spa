@@ -14,7 +14,8 @@
     "test:run": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "update:types": "npx supabase gen types typescript --project-id djladasdtsrswxsvjtcw --schema public > src/types/database.types.ts"
+    "update:types": "npx supabase gen types typescript --project-id djladasdtsrswxsvjtcw --schema public > src/types/database.types.ts",
+    "tsc": "npx tsc -p tsconfig.app.json --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

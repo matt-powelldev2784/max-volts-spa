@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardHeader } from '@/ui/card';
 import ErrorCard from '@/lib/errorCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
-import { useEffect, type Dispatch } from 'react';
+import { type Dispatch } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 
@@ -23,10 +23,9 @@ const formSchema = z.object({
 
 type AddClientProps = {
   dispatch: Dispatch<AddQuoteAction>;
-  clientId: number;
 };
 
-const AddClient = ({ dispatch, clientId }: AddClientProps) => {
+const AddClient = ({ dispatch }: AddClientProps) => {
   const {
     data: clients,
     isLoading: clientsLoading,
@@ -39,17 +38,11 @@ const AddClient = ({ dispatch, clientId }: AddClientProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      client_id: clientId || 0,
+      client_id: 0,
     },
   });
   const watchedClientId = form.watch('client_id');
   const isFormInvalid = !!form.formState.errors.client_id || watchedClientId === 0;
-
-  useEffect(() => {
-    if (clients && clientId !== form.getValues('client_id')) {
-      form.reset({ client_id: clientId });
-    }
-  }, [clients, clientId, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     dispatch({ type: 'SET_CLIENT_ID', payload: values.client_id });

@@ -48,28 +48,32 @@ const AddQuote = () => {
     <div className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && <AddClient dispatch={dispatch} clientId={clientId} />}
+      {step === 'AddClient' && <AddClient dispatch={dispatch} />}
 
-      {step === 'AddProducts' && <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />}
+      {step === 'AddProducts' && (
+        <>
+          <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />
+
+          <AddProductModal
+            isModalOpen={isAddProductModalOpen}
+            dispatch={dispatch}
+            products={productsData}
+            quoteProducts={quoteProducts}
+          />
+
+          <EditProductModal
+            isModalOpen={isEditProductModalOpen}
+            products={productsData}
+            quoteProducts={quoteProducts}
+            selectedQuoteProductIndex={selectedQuoteProductIndex}
+            dispatch={dispatch}
+          />
+        </>
+      )}
 
       {step === 'QuoteSummary' && (
         <QuoteSummary clientId={clientId} quoteProducts={quoteProducts} notes={notes} dispatch={dispatch} />
       )}
-
-      <AddProductModal
-        isModalOpen={isAddProductModalOpen}
-        dispatch={dispatch}
-        products={productsData}
-        quoteProducts={quoteProducts}
-      />
-
-      <EditProductModal
-        isModalOpen={isEditProductModalOpen}
-        products={productsData}
-        quoteProducts={quoteProducts}
-        selectedQuoteProductIndex={selectedQuoteProductIndex}
-        dispatch={dispatch}
-      />
     </div>
   );
 };
