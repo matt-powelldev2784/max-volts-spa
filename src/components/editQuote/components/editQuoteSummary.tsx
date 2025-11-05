@@ -21,7 +21,6 @@ import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
 import type { Dispatch } from 'react';
-import type { AddQuoteAction } from '../../addQuote/reducer/addQuoteReducer';
 import { CardContentTab, CardDescriptionTab, CardHeaderTab, CardTab } from '@/ui/cardTab';
 import { QuoteProductCard } from '@/components/addQuote/components/quoteProductCard';
 import type { EditQuoteAction } from '../reducer/editQuoteReducer';
@@ -283,7 +282,7 @@ type ProductListProps = {
   quoteProducts: QuoteProductUpdate[];
   totalVat: number;
   totalValue: number;
-  dispatch: Dispatch<AddQuoteAction>;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
 const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductListProps) => {

@@ -3,14 +3,14 @@ import { supabase } from '@/lib/supabase';
 import ErrorCard from '@/lib/errorCard';
 import { useReducer, useEffect } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-import EditProductModal from '../addQuote/components/editProductModal';
 import StepIndicator from '../addQuote/components/stepIndicator';
 import AddClient from './components/addClient';
-import AddProductModal from '../addQuote/components/addProductModal';
 import EditQuoteSummary from './components/editQuoteSummary';
 import { editQuoteInitialState, editQuoteReducer } from './reducer/editQuoteReducer';
 import { useLocation } from 'react-router';
 import AddProducts from './components/addProducts';
+import AddProductModal from './components/addProductModal';
+import EditProductModal from './components/editProductModal';
 
 const getQuoteWithProducts = async (quoteId: number) => {
   const { data: quote, error: quoteError } = await supabase.from('quote').select('*').eq('id', quoteId).single();

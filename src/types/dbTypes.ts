@@ -28,5 +28,3 @@ export const QUOTE_STATUS_OPTIONS: QuoteStatusOption[] = [
   { value: 'accepted', label: 'Accepted' },
   { value: 'rejected', label: 'Rejected' },
 ];
-
-export type EditQuoteData = { notes: string | null; quoteId: number; clientId: number; status: QuoteStatus };

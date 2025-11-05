@@ -10,7 +10,13 @@ import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-import { QUOTE_STATUS_OPTIONS, type Client, type QuoteInsert, type QuoteProductInsert } from '@/types/dbTypes';
+import {
+  QUOTE_STATUS_OPTIONS,
+  type Client,
+  type QuoteInsert,
+  type QuoteProductInsert,
+  type QuoteStatus,
+} from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
@@ -68,10 +74,11 @@ type QuoteSummaryProps = {
   clientId: number;
   quoteProducts: QuoteProductInsert[];
   notes: string;
+  quoteStatus: QuoteStatus;
   dispatch: Dispatch<AddQuoteAction>;
 };
 
-const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummaryProps) => {
+const QuoteSummary = ({ clientId, quoteProducts, notes, quoteStatus, dispatch }: QuoteSummaryProps) => {
   const { user, loading: userIsLoading } = useAuth();
   const userEmail = user?.email;
   const navigate = useNavigate();
@@ -92,7 +99,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
     resolver: zodResolver(notesSchema),
     defaultValues: {
       notes: notes || '',
-      status: 'quoted',
+      status: quoteStatus,
     },
   });
 
@@ -162,7 +169,13 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
                     <FormLabel>Quote Status</FormLabel>
                     <FormControl>
                       <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger className="w-full " aria-invalid={Boolean(form.formState.errors.status)}>
+                        <SelectTrigger
+                          className="w-full "
+                          aria-invalid={Boolean(form.formState.errors.status)}
+                          onBlur={() => {
+                            dispatch({ type: 'SET_QUOTE_STATUS', payload: field.value });
+                          }}
+                        >
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
 

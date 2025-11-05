@@ -1,4 +1,4 @@
-import type { QuoteProductInsert } from '@/types/dbTypes';
+import type { QuoteProductInsert, QuoteStatus } from '@/types/dbTypes';
 import type { Steps } from '../components/stepIndicator';
 
 type addQuoteInitialStateType = {
@@ -6,6 +6,7 @@ type addQuoteInitialStateType = {
   quoteProducts: QuoteProductInsert[];
   selectedQuoteProductIndex: number | null;
   notes: string;
+  quoteStatus: QuoteStatus;
   step: Steps;
   isAddProductModalOpen: boolean;
   isEditProductModalOpen: boolean;
@@ -16,6 +17,7 @@ const addQuoteInitialState: addQuoteInitialStateType = {
   quoteProducts: [],
   selectedQuoteProductIndex: null,
   notes: '',
+  quoteStatus: 'quoted',
   step: 'AddClient',
   isAddProductModalOpen: false,
   isEditProductModalOpen: false,
@@ -51,6 +53,11 @@ type SetNotesAction = {
   payload: string;
 };
 
+type SetQuoteStatus = {
+  type: 'SET_QUOTE_STATUS';
+  payload: QuoteStatus;
+};
+
 type SetStepAction = {
   type: 'SET_STEP';
   payload: Steps;
@@ -73,6 +80,7 @@ export type AddQuoteAction =
   | CloseEditProductModalAction
   | SetSelectedQuoteProductIndexAction
   | SetNotesAction
+  | SetQuoteStatus
   | SetStepAction
   | SetIsAddProductModalOpenAction
   | SetIsEditProductModalOpenAction;
@@ -99,6 +107,8 @@ const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction
       };
     case 'SET_NOTES':
       return { ...state, notes: action.payload };
+    case 'SET_QUOTE_STATUS':
+      return { ...state, quoteStatus: action.payload };
     case 'SET_STEP':
       return { ...state, step: action.payload };
     case 'SET_IS_ADD_PRODUCT_MODAL_OPEN':
