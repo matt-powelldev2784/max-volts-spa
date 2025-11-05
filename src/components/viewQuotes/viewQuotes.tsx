@@ -161,7 +161,7 @@ const ViewQuotes = () => {
           {quotes?.map((quote) => (
             <TableRow key={quote.id} className="hover:bg-muted transition">
               <TableCell>
-                <Link to={`/quote/${quote.id}`} className="flexCol">
+                <Link to={`/edit/quote?quoteId=${quote.id}&clientId=${quote.client_id}`} className="flexCol">
                   <div className="w-[25px] h-[25px] bg-mv-orange rounded">
                     <ArrowRight strokeWidth={3} className="text-white p-1" />
                   </div>
@@ -223,7 +223,7 @@ const ViewQuotes = () => {
           {quotes?.map((quote) => (
             <TableRow key={quote.id} className="hover:bg-muted transition">
               <TableCell className="w-16">
-                <Link to={`/quote/${quote.id}`} className="flexCol">
+                <Link to={`/edit/quote?quoteId=${quote.id}&clientId=${quote.client_id}`} className="flexCol">
                   <div className="w-[25px] h-[25px] bg-mv-orange rounded">
                     <ArrowRight strokeWidth={3} className="text-white p-1" />
                   </div>

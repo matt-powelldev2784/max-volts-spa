@@ -10,64 +10,65 @@ import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-import type { Client, QuoteInsert, QuoteProductInsert } from '@/types/dbTypes';
+import type { Client, QuoteInsert, QuoteProductUpdate } from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
 import type { Dispatch } from 'react';
-import type { AddQuoteAction } from '../reducer/addQuoteReducer';
+import type { AddQuoteAction } from '../../addQuote/reducer/addQuoteReducer';
 import { CardContentTab, CardDescriptionTab, CardHeaderTab, CardTab } from '@/ui/cardTab';
-import { QuoteProductCard } from './quoteProductCard';
+import { QuoteProductCard } from '@/components/addQuote/components/quoteProductCard';
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
 });
 
+type UpdateQuoteProps = {
+  quoteId: number;
+  quoteInsert: QuoteInsert;
+  quoteProductsInsert: QuoteProductUpdate[];
+};
+
+const updateQuote = async ({ quoteId, quoteInsert, quoteProductsInsert }: UpdateQuoteProps) => {
+  // update quote db entry
+  const { error: quoteError } = await supabase.from('quote').update(quoteInsert).eq('id', quoteId);
+  if (quoteError) throw new Error(`Error updating quote ${quoteError.message}`);
+
+  // remove quote products
+  const { error: deleteError } = await supabase.from('quote_product').delete().eq('quote_id', quoteId);
+  if (deleteError) throw new Error(`Error deleting existing quote products: ${deleteError.message}`);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const quoteProductsNoId = quoteProductsInsert.map(({ id, ...quoteProduct }) => ({
+    ...quoteProduct,
+    quote_id: quoteId,
+  }));
+
+  // add updated quote products
+  const { error: addError } = await supabase.from('quote_product').insert(
+    quoteProductsNoId.map((quoteProduct) => ({
+      ...quoteProduct,
+      quote_id: quoteId,
+    }))
+  );
+  if (addError) throw new Error(`Error updating quote products: ${addError.message}`);
+};
+
 const getClient = async (clientId: number) => {
   const { data, error } = await supabase.from('client').select('*').eq('id', clientId).single();
   if (error) throw new Error(error.message);
-  return data; 
+  return data;
 };
 
-type CreateQuoteProps = {
-  quoteProductsInsert: QuoteProductInsert[];
-  quoteInsert: QuoteInsert;
-};
-
-const createQuote = async ({ quoteProductsInsert, quoteInsert }: CreateQuoteProps) => {
-  // add quote db entry
-  const { data: quoteData, error: quoteError } = await supabase.from('quote').insert(quoteInsert).select().single();
-  if (quoteError) throw new Error(quoteError.message);
-  const quoteId = quoteData.id;
-  if (!quoteId) throw new Error('Failed to create quote entry in database.');
-
-  // add quote products db entries
-  const { data: quoteProductData, error: QuoteProductError } = await supabase
-    .from('quote_product')
-    .insert(
-      quoteProductsInsert.map((quoteProduct) => ({
-        ...quoteProduct,
-        quote_id: quoteId,
-      }))
-    )
-    .select();
-
-  if (QuoteProductError) {
-    await supabase.from('quote').delete().eq('id', quoteId);
-    throw new Error('Failed to add quote products to database.');
-  }
-
-  return { quoteData, quoteProductData };
-};
-
-type QuoteSummaryProps = {
+type EditQuoteSummaryProps = {
+  quoteId: number;
   clientId: number;
-  quoteProducts: QuoteProductInsert[];
+  quoteProducts: QuoteProductUpdate[];
   notes: string;
   dispatch: Dispatch<AddQuoteAction>;
 };
 
-const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummaryProps) => {
+const EditQuoteSummary = ({ quoteId, clientId, quoteProducts, notes, dispatch }: EditQuoteSummaryProps) => {
   const { user, loading: userIsLoading } = useAuth();
   const userEmail = user?.email;
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
   });
 
   const mutation = useMutation({
-    mutationFn: createQuote,
+    mutationFn: updateQuote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quote'] });
       navigate('/view-quotes');
@@ -114,6 +115,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
 
   const onSubmit = (values: z.infer<typeof notesSchema>) => {
     mutation.mutate({
+      quoteId,
       quoteInsert: {
         client_id: clientId,
         total_value: totalValue,
@@ -145,7 +147,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
 
           <CardContentTab>
             <CardDescription className="text-center">
-              Check quote details, add notes if required and then click create quote.
+              Check quote details, add notes if required and then click update quote.
             </CardDescription>
 
             <Form {...form}>
@@ -178,9 +180,8 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, dispatch }: QuoteSummary
                   <Button variant="ghost" size="formButton" onClick={goToPreviousStep}>
                     Go Back
                   </Button>
-
                   <Button type="submit" size="formButton" disabled={mutation.isPending} className="px-4 md:px-6">
-                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Create Quote'}
+                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Update Quote'}
                   </Button>
                 </div>
               </form>
@@ -238,7 +239,7 @@ const ClientCard = ({ client }: ClientCardProps) => {
 };
 
 type ProductListProps = {
-  quoteProducts: QuoteProductInsert[];
+  quoteProducts: QuoteProductUpdate[];
   totalVat: number;
   totalValue: number;
   dispatch: Dispatch<AddQuoteAction>;
@@ -287,4 +288,4 @@ const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductL
   );
 };
 
-export default QuoteSummary;
+export default EditQuoteSummary;

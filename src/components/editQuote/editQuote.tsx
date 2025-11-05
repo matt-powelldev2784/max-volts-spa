@@ -1,0 +1,118 @@
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import ErrorCard from '@/lib/errorCard';
+import { useReducer, useEffect } from 'react';
+import LoadingSpinner from '@/ui/LoadingSpinner';
+import EditProductModal from '../addQuote/components/editProductModal';
+import AddProducts from '../addQuote/components/addProducts';
+import StepIndicator from '../addQuote/components/stepIndicator';
+import AddClient from './components/addClient';
+import AddProductModal from '../addQuote/components/addProductModal';
+import EditQuoteSummary from './components/editQuoteSummary';
+import { editQuoteInitialState, editQuoteReducer } from './reducer/editQuoteReducer';
+import { useLocation } from 'react-router';
+
+const getQuoteWithProducts = async (quoteId: number) => {
+  const { data: quote, error: quoteError } = await supabase.from('quote').select('*').eq('id', quoteId).single();
+  if (quoteError) throw new Error(quoteError.message);
+
+  const { data: quoteProducts, error: productsError } = await supabase
+    .from('quote_product')
+    .select('*')
+    .eq('quote_id', quoteId);
+  if (productsError) throw new Error(productsError.message);
+
+  return { quote, quoteProducts };
+};
+
+const getProducts = async () => {
+  const { data, error } = await supabase.from('product').select('*').order('name', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+const EditQuote = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const quoteId = Number(searchParams.get('quoteId'));
+
+  const [state, dispatch] = useReducer(editQuoteReducer, editQuoteInitialState);
+  const {
+    clientId,
+    quoteProducts,
+    selectedQuoteProductIndex,
+    notes,
+    step,
+    isAddProductModalOpen,
+    isEditProductModalOpen,
+  } = state;
+
+  const {
+    data: quoteData,
+    isLoading: isLoadingQuote,
+    isError: isQuoteError,
+  } = useQuery({
+    queryKey: ['quote', quoteId],
+    queryFn: () => getQuoteWithProducts(quoteId),
+  });
+
+  const {
+    data: productsData,
+    isLoading: isLoadingProducts,
+    isError: isProductsError,
+  } = useQuery({
+    queryKey: ['products'],
+    queryFn: getProducts,
+  });
+
+  // populate reducer state when quote data loads
+  useEffect(() => {
+    if (quoteData) {
+      dispatch({ type: 'SET_CLIENT_ID', payload: quoteData.quote.client_id });
+      dispatch({ type: 'SET_QUOTE_PRODUCTS', payload: quoteData.quoteProducts });
+      dispatch({ type: 'SET_NOTES', payload: quoteData.quote.notes || '' });
+      dispatch({ type: 'SET_STEP', payload: 'AddClient' });
+    }
+  }, [quoteData]);
+
+  if (isLoadingQuote || isLoadingProducts) return <LoadingSpinner />;
+  if (isQuoteError || !quoteData) return <ErrorCard message={'Failed to load quote.'} />;
+  if (isProductsError || !productsData) return <ErrorCard message={'Failed to load products.'} />;
+
+  return (
+    <div className="md:bg-gray-50">
+      <StepIndicator activeStep={step} />
+
+      {step === 'AddClient' && <AddClient dispatch={dispatch} />}
+
+      {step === 'AddProducts' && <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />}
+
+      {step === 'QuoteSummary' && (
+        <EditQuoteSummary
+          quoteId={quoteData.quote.id}
+          clientId={clientId}
+          quoteProducts={quoteProducts}
+          notes={notes}
+          dispatch={dispatch}
+        />
+      )}
+
+      <AddProductModal
+        isModalOpen={isAddProductModalOpen}
+        dispatch={dispatch}
+        products={productsData}
+        quoteProducts={quoteProducts}
+      />
+
+      <EditProductModal
+        isModalOpen={isEditProductModalOpen}
+        products={productsData}
+        quoteProducts={quoteProducts}
+        selectedQuoteProductIndex={selectedQuoteProductIndex}
+        dispatch={dispatch}
+      />
+    </div>
+  );
+};
+
+export default EditQuote;
