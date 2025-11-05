@@ -1,11 +1,11 @@
 import type { Steps } from '@/components/addQuote/components/stepIndicator';
-import type { QuoteProductUpdate } from '@/types/dbTypes';
+import type { Quote, QuoteProductUpdate } from '@/types/dbTypes';
 
 type EditQuoteInitialStateType = {
   clientId: number;
   quoteProducts: QuoteProductUpdate[];
   selectedQuoteProductIndex: number | null;
-  notes: string;
+  editQuoteData: Quote;
   step: Steps;
   isAddProductModalOpen: boolean;
   isEditProductModalOpen: boolean;
@@ -15,7 +15,7 @@ const editQuoteInitialState: EditQuoteInitialStateType = {
   clientId: 0,
   quoteProducts: [],
   selectedQuoteProductIndex: null,
-  notes: '',
+  editQuoteData: {} as Quote,
   step: 'AddClient',
   isAddProductModalOpen: false,
   isEditProductModalOpen: false,
@@ -46,14 +46,19 @@ type SetSelectedQuoteProductIndexAction = {
   payload: number | null;
 };
 
-type SetNotesAction = {
-  type: 'SET_NOTES';
-  payload: string;
+type SetQuoteData = {
+  type: 'SET_QUOTE_DATA';
+  payload: Quote;
 };
 
 type SetStepAction = {
   type: 'SET_STEP';
   payload: Steps;
+};
+
+type SetNotesAction = {
+  type: 'SET_NOTES';
+  payload: string;
 };
 
 type SetIsAddProductModalOpenAction = {
@@ -72,6 +77,7 @@ export type EditQuoteAction =
   | OpenEditProductModalAction
   | CloseEditProductModalAction
   | SetSelectedQuoteProductIndexAction
+  | SetQuoteData
   | SetNotesAction
   | SetStepAction
   | SetIsAddProductModalOpenAction
@@ -97,8 +103,10 @@ const editQuoteReducer = (state: EditQuoteInitialStateType, action: EditQuoteAct
         selectedQuoteProductIndex: null,
         isEditProductModalOpen: false,
       };
+    case 'SET_QUOTE_DATA':
+      return { ...state, editQuoteData: { ...state.editQuoteData, ...action.payload } };
     case 'SET_NOTES':
-      return { ...state, notes: action.payload };
+      return { ...state, editQuoteData: { ...state.editQuoteData, notes: action.payload } };
     case 'SET_STEP':
       return { ...state, step: action.payload };
     case 'SET_IS_ADD_PRODUCT_MODAL_OPEN':

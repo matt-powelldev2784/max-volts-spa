@@ -4,13 +4,13 @@ import ErrorCard from '@/lib/errorCard';
 import { useReducer, useEffect } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import EditProductModal from '../addQuote/components/editProductModal';
-import AddProducts from '../addQuote/components/addProducts';
 import StepIndicator from '../addQuote/components/stepIndicator';
 import AddClient from './components/addClient';
 import AddProductModal from '../addQuote/components/addProductModal';
 import EditQuoteSummary from './components/editQuoteSummary';
 import { editQuoteInitialState, editQuoteReducer } from './reducer/editQuoteReducer';
 import { useLocation } from 'react-router';
+import AddProducts from './components/addProducts';
 
 const getQuoteWithProducts = async (quoteId: number) => {
   const { data: quote, error: quoteError } = await supabase.from('quote').select('*').eq('id', quoteId).single();
@@ -38,10 +38,9 @@ const EditQuote = () => {
 
   const [state, dispatch] = useReducer(editQuoteReducer, editQuoteInitialState);
   const {
-    clientId,
     quoteProducts,
     selectedQuoteProductIndex,
-    notes,
+    editQuoteData,
     step,
     isAddProductModalOpen,
     isEditProductModalOpen,
@@ -70,7 +69,7 @@ const EditQuote = () => {
     if (quoteData) {
       dispatch({ type: 'SET_CLIENT_ID', payload: quoteData.quote.client_id });
       dispatch({ type: 'SET_QUOTE_PRODUCTS', payload: quoteData.quoteProducts });
-      dispatch({ type: 'SET_NOTES', payload: quoteData.quote.notes || '' });
+      dispatch({ type: 'SET_QUOTE_DATA', payload: quoteData.quote });
       dispatch({ type: 'SET_STEP', payload: 'AddClient' });
     }
   }, [quoteData]);
@@ -88,13 +87,7 @@ const EditQuote = () => {
       {step === 'AddProducts' && <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />}
 
       {step === 'QuoteSummary' && (
-        <EditQuoteSummary
-          quoteId={quoteData.quote.id}
-          clientId={clientId}
-          quoteProducts={quoteProducts}
-          notes={notes}
-          dispatch={dispatch}
-        />
+        <EditQuoteSummary quoteProducts={quoteProducts} quoteData={editQuoteData} dispatch={dispatch} />
       )}
 
       <AddProductModal

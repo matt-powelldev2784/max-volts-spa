@@ -10,7 +10,13 @@ import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
 import { useNavigate } from 'react-router';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-import type { Client, QuoteInsert, QuoteProductUpdate } from '@/types/dbTypes';
+import {
+  QUOTE_STATUS_OPTIONS,
+  type Client,
+  type Quote,
+  type QuoteInsert,
+  type QuoteProductUpdate,
+} from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
@@ -18,9 +24,14 @@ import type { Dispatch } from 'react';
 import type { AddQuoteAction } from '../../addQuote/reducer/addQuoteReducer';
 import { CardContentTab, CardDescriptionTab, CardHeaderTab, CardTab } from '@/ui/cardTab';
 import { QuoteProductCard } from '@/components/addQuote/components/quoteProductCard';
+import type { EditQuoteAction } from '../reducer/editQuoteReducer';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
+  status: z.enum(['new', 'quoted', 'accepted', 'rejected'], {
+    error: 'Status is required',
+  }),
 });
 
 type UpdateQuoteProps = {
@@ -61,14 +72,12 @@ const getClient = async (clientId: number) => {
 };
 
 type EditQuoteSummaryProps = {
-  quoteId: number;
-  clientId: number;
   quoteProducts: QuoteProductUpdate[];
-  notes: string;
-  dispatch: Dispatch<AddQuoteAction>;
+  quoteData: Quote;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
-const EditQuoteSummary = ({ quoteId, clientId, quoteProducts, notes, dispatch }: EditQuoteSummaryProps) => {
+const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSummaryProps) => {
   const { user, loading: userIsLoading } = useAuth();
   const userEmail = user?.email;
   const navigate = useNavigate();
@@ -81,14 +90,15 @@ const EditQuoteSummary = ({ quoteId, clientId, quoteProducts, notes, dispatch }:
     isLoading: isLoadingClient,
     isError: isClientError,
   } = useQuery({
-    queryKey: ['client', clientId],
-    queryFn: () => getClient(clientId),
+    queryKey: ['client', quoteData.client_id],
+    queryFn: () => getClient(quoteData.client_id),
   });
 
   const form = useForm<z.infer<typeof notesSchema>>({
     resolver: zodResolver(notesSchema),
     defaultValues: {
-      notes: notes || '',
+      notes: quoteData.notes || '',
+      status: quoteData.status,
     },
   });
 
@@ -115,15 +125,15 @@ const EditQuoteSummary = ({ quoteId, clientId, quoteProducts, notes, dispatch }:
 
   const onSubmit = (values: z.infer<typeof notesSchema>) => {
     mutation.mutate({
-      quoteId,
+      quoteId: quoteData.id,
       quoteInsert: {
-        client_id: clientId,
+        client_id: quoteData.client_id,
         total_value: totalValue,
         total_vat: totalVat,
         user_id: user.id,
         user_email: userEmail,
         notes: values.notes,
-        status: 'quoted',
+        status: values.status,
       },
       quoteProductsInsert: quoteProducts.map((product) => ({
         ...product,
@@ -151,6 +161,37 @@ const EditQuoteSummary = ({ quoteId, clientId, quoteProducts, notes, dispatch }:
             </CardDescription>
 
             <Form {...form}>
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quote Status</FormLabel>
+                    <FormControl>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger
+                          className="w-full"
+                          aria-invalid={Boolean(form.formState.errors.status)}
+                          onBlur={() => {
+                            dispatch({ type: 'SET_QUOTE_DATA', payload: { ...quoteData, status: field.value } });
+                          }}
+                        >
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {QUOTE_STATUS_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
                 <FormField
                   control={form.control}

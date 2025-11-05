@@ -9,8 +9,8 @@ import ErrorCard from '@/lib/errorCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import { type Dispatch } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { AddQuoteAction } from '@/components/addQuote/reducer/addQuoteReducer';
 import { useLocation } from 'react-router';
+import type { EditQuoteAction } from '../reducer/editQuoteReducer';
 
 const getClients = async () => {
   const { data, error } = await supabase.from('client').select('id, name, company').order('name', { ascending: true });
@@ -23,7 +23,7 @@ const formSchema = z.object({
 });
 
 type AddClientProps = {
-  dispatch: Dispatch<AddQuoteAction>;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
 const AddClient = ({ dispatch }: AddClientProps) => {
