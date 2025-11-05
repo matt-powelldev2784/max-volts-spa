@@ -266,6 +266,7 @@ const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductL
             product={product}
             onEditProduct={() => onEditProduct(index)}
             onRemoveProduct={() => onRemoveProduct(index)}
+            disabled={true}
           />
         ))}
 

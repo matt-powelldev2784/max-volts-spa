@@ -6,14 +6,15 @@ type QuoteProductCardProps = {
   product: QuoteProductInsert;
   onEditProduct: () => void;
   onRemoveProduct: () => void;
+  disabled?: boolean;
 };
-export const QuoteProductCard = ({ product, onEditProduct, onRemoveProduct }: QuoteProductCardProps) => (
+export const QuoteProductCard = ({ product, onEditProduct, onRemoveProduct, disabled }: QuoteProductCardProps) => (
   <article className="relative flex items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm pl-2 pr-4 md:pr-10 py-4 transition hover:shadow-md">
     <div className="flex flex-col items-center mr-2 md:mr-4">
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild disabled={disabled}>
           <button className="rounded-full" aria-label="Product actions">
-            <EllipsisVertical className="h-6 w-6 md:h-8 md:w-8 text-mv-orange" />
+            <EllipsisVertical className={`h-6 w-6 md:h-8 md:w-8  ${disabled ? 'text-gray-500' : 'text-mv-orange'}`} />
           </button>
         </DropdownMenuTrigger>
 
