@@ -23,15 +23,28 @@ const ITEMS_PER_PAGE = 10;
 const getQuotes = async (sortBy: SortField, sortOrder: SortOrder, page: number, searchTerm: string) => {
   const from = page * ITEMS_PER_PAGE;
   const to = from + ITEMS_PER_PAGE - 1;
+  const clientIdsForSearch: number[] = [];
 
   let query = supabase
     .from('quote')
     .select('*, client(name, company)', { count: 'exact' })
     .order(sortBy, { ascending: sortOrder === 'asc' });
 
+  // apply filter to search by client name if searchTerm is provided
   if (searchTerm) {
-    query = query.ilike('client.name', `%${searchTerm}%`);
+    clientIdsForSearch.length = 0;
+
+    const clientQueryResult = await supabase.from('client').select('id').ilike('name', `%${searchTerm}%`);
+
+    if (clientQueryResult.error) {
+      throw new Error(clientQueryResult.error.message);
+    }
+
+    clientQueryResult.data?.forEach((client) => clientIdsForSearch.push(client.id));
+
+    query = query.in('client_id', clientIdsForSearch);
   }
+
 
   const { data, error, count } = await query.range(from, to);
 
