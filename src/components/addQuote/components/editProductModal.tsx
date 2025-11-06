@@ -94,7 +94,7 @@ const EditProductModal = ({
 
   const handleClose = () => {
     form.reset();
-    dispatch({ type: 'CLOSE_EDIT_PRODUCT_MODAL', payload: { isOpen: false, selectedQuoteProductIndex: null } });
+    dispatch({ type: 'CLOSE_EDIT_PRODUCT_MODAL' });
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
@@ -112,7 +112,7 @@ const EditProductModal = ({
 
     dispatch({
       type: 'SET_QUOTE_PRODUCTS',
-      payload: updatedQuoteProducts,
+      quoteProducts: updatedQuoteProducts,
     });
 
     handleClose();

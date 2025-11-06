@@ -22,9 +22,8 @@ const AddQuote = () => {
   const {
     clientId,
     quoteProducts,
+    quoteData,
     selectedQuoteProductIndex,
-    notes,
-    quoteStatus,
     step,
     isAddProductModalOpen,
     isEditProductModalOpen,
@@ -73,13 +72,7 @@ const AddQuote = () => {
       )}
 
       {step === 'QuoteSummary' && (
-        <QuoteSummary
-          clientId={clientId}
-          quoteProducts={quoteProducts}
-          notes={notes}
-          quoteStatus={quoteStatus}
-          dispatch={dispatch}
-        />
+        <QuoteSummary clientId={clientId} quoteProducts={quoteProducts} quoteData={quoteData} dispatch={dispatch} />
       )}
     </div>
   );

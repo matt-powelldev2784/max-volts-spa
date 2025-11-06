@@ -21,7 +21,7 @@ import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
 import type { Dispatch } from 'react';
-import type { AddQuoteAction } from '../reducer/addQuoteReducer';
+import type { AddQuoteAction, QuoteData } from '../reducer/addQuoteReducer';
 import { CardContentTab, CardDescriptionTab, CardHeaderTab, CardTab } from '@/ui/cardTab';
 import { QuoteProductCard } from './quoteProductCard';
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '@/ui/select';
@@ -73,12 +73,11 @@ const createQuote = async ({ quoteProductsInsert, quoteInsert }: CreateQuoteProp
 type QuoteSummaryProps = {
   clientId: number;
   quoteProducts: QuoteProductInsert[];
-  notes: string;
-  quoteStatus: QuoteStatus;
+  quoteData: QuoteData;
   dispatch: Dispatch<AddQuoteAction>;
 };
 
-const QuoteSummary = ({ clientId, quoteProducts, notes, quoteStatus, dispatch }: QuoteSummaryProps) => {
+const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSummaryProps) => {
   const { user, loading: userIsLoading } = useAuth();
   const userEmail = user?.email;
   const navigate = useNavigate();
@@ -98,8 +97,8 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, quoteStatus, dispatch }:
   const form = useForm<z.infer<typeof notesSchema>>({
     resolver: zodResolver(notesSchema),
     defaultValues: {
-      notes: notes || '',
-      status: quoteStatus,
+      notes: quoteData.notes || '',
+      status: quoteData.quoteStatus,
     },
   });
 
@@ -112,11 +111,15 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, quoteStatus, dispatch }:
   });
 
   const setNotes = (notes: string) => {
-    dispatch({ type: 'SET_NOTES', payload: notes });
+    dispatch({ type: 'SET_QUOTE_DATA', payload: { notes } });
+  };
+
+  const setQuoteStatus = (status: QuoteStatus) => {
+    dispatch({ type: 'SET_QUOTE_DATA', payload: { quoteStatus: status } });
   };
 
   const goToPreviousStep = () => {
-    dispatch({ type: 'SET_STEP', payload: 'AddProducts' });
+    dispatch({ type: 'SET_STEP', step: 'AddProducts' });
   };
 
   if (isLoadingClient) return <LoadingSpinner />;
@@ -173,7 +176,7 @@ const QuoteSummary = ({ clientId, quoteProducts, notes, quoteStatus, dispatch }:
                           className="w-full "
                           aria-invalid={Boolean(form.formState.errors.status)}
                           onBlur={() => {
-                            dispatch({ type: 'SET_QUOTE_STATUS', payload: field.value });
+                            setQuoteStatus(field.value);
                           }}
                         >
                           <SelectValue placeholder="Select status" />
@@ -290,11 +293,11 @@ type ProductListProps = {
 
 const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductListProps) => {
   const onEditProduct = (index: number) => {
-    dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', payload: { index, isOpen: true } });
+    dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', index });
   };
 
   const onRemoveProduct = (index: number) => {
-    dispatch({ type: 'SET_QUOTE_PRODUCTS', payload: quoteProducts.filter((_, i) => i !== index) });
+    dispatch({ type: 'SET_QUOTE_PRODUCTS', quoteProducts: quoteProducts.filter((_, i) => i !== index) });
   };
 
   return (
