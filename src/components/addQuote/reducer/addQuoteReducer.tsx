@@ -88,7 +88,6 @@ export type AddQuoteAction =
   | CloseAddProductModalAction;
 
 const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction) => {
-  console.log('quoteData.total_value', state.quoteData.total_value);
   switch (action.type) {
     case 'SET_CLIENT_ID':
       return { ...state, clientId: action.clientId };

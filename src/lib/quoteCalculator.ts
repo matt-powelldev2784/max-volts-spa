@@ -8,7 +8,7 @@ type GetTotalValueProps = {
 };
 
 export const getTotalProductValue = ({ quantity, value, markup, vat_rate }: GetTotalValueProps) => {
-  return quantity * value * (markup / 100) * (1 + vat_rate / 100);
+  return quantity * value * (1 + markup / 100) * (1 + vat_rate / 100);
 };
 
 export const getTotalProductVat = ({ quantity, value, markup, vat_rate }: GetTotalValueProps) => {
