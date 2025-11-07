@@ -38,6 +38,7 @@ const EditQuote = () => {
 
   const [state, dispatch] = useReducer(editQuoteReducer, editQuoteInitialState);
   const {
+    clientId,
     quoteProducts,
     selectedQuoteProductIndex,
     editQuoteData,
@@ -64,6 +65,8 @@ const EditQuote = () => {
     queryFn: getProducts,
   });
 
+  const selectedClientId = clientId || quoteData?.quote.client_id || 0;
+
   // populate reducer state when quote data loads
   useEffect(() => {
     if (quoteData) {
@@ -82,7 +85,7 @@ const EditQuote = () => {
     <div className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && <AddClient dispatch={dispatch} />}
+      {step === 'AddClient' && <AddClient clientId={selectedClientId} dispatch={dispatch} />}
 
       {step === 'AddProducts' && <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />}
 
