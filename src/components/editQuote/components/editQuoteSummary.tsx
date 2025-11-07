@@ -13,25 +13,56 @@ import LoadingSpinner from '@/ui/LoadingSpinner';
 import {
   QUOTE_STATUS_OPTIONS,
   type Client,
+  type Quote,
   type QuoteInsert,
   type QuoteProductInsert,
-  type QuoteStatus,
 } from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
 import FormError from '@/lib/formError';
 import type { Dispatch } from 'react';
-import type { AddQuoteAction, QuoteData } from '../reducer/addQuoteReducer';
 import { CardContentTab, CardDescriptionTab, CardHeaderTab, CardTab } from '@/ui/cardTab';
-import { QuoteProductCard } from './quoteProductCard';
-import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '@/ui/select';
+import { QuoteProductCard } from '@/components/addQuote/components/quoteProductCard';
+import type { EditQuoteAction } from '../reducer/editQuoteReducer';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 
 const notesSchema = z.object({
-  notes: z.string(),
+  notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
   status: z.enum(['new', 'quoted', 'accepted', 'rejected'], {
     error: 'Status is required',
   }),
 });
+
+type UpdateQuoteProps = {
+  quoteId: number;
+  quoteInsert: QuoteInsert;
+  quoteProductsInsert: QuoteProductInsert[];
+};
+
+const updateQuote = async ({ quoteId, quoteInsert, quoteProductsInsert }: UpdateQuoteProps) => {
+  // update quote db entry
+  const { error: quoteError } = await supabase.from('quote').update(quoteInsert).eq('id', quoteId);
+  if (quoteError) throw new Error(`Error updating quote ${quoteError.message}`);
+
+  // remove quote products
+  const { error: deleteError } = await supabase.from('quote_product').delete().eq('quote_id', quoteId);
+  if (deleteError) throw new Error(`Error deleting existing quote products: ${deleteError.message}`);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const quoteProductsNoId = quoteProductsInsert.map(({ id, ...quoteProduct }) => ({
+    ...quoteProduct,
+    quote_id: quoteId,
+  }));
+
+  // add updated quote products
+  const { error: addError } = await supabase.from('quote_product').insert(
+    quoteProductsNoId.map((quoteProduct) => ({
+      ...quoteProduct,
+      quote_id: quoteId,
+    }))
+  );
+  if (addError) throw new Error(`Error updating quote products: ${addError.message}`);
+};
 
 const getClient = async (clientId: number) => {
   const { data, error } = await supabase.from('client').select('*').eq('id', clientId).single();
@@ -39,45 +70,13 @@ const getClient = async (clientId: number) => {
   return data;
 };
 
-type CreateQuoteProps = {
-  quoteProductsInsert: QuoteProductInsert[];
-  quoteInsert: QuoteInsert;
-};
-
-const createQuote = async ({ quoteProductsInsert, quoteInsert }: CreateQuoteProps) => {
-  // add quote db entry
-  const { data: quoteData, error: quoteError } = await supabase.from('quote').insert(quoteInsert).select().single();
-  if (quoteError) throw new Error(quoteError.message);
-  const quoteId = quoteData.id;
-  if (!quoteId) throw new Error('Failed to create quote entry in database.');
-
-  // add quote products db entries
-  const { data: quoteProductData, error: QuoteProductError } = await supabase
-    .from('quote_product')
-    .insert(
-      quoteProductsInsert.map((quoteProduct) => ({
-        ...quoteProduct,
-        quote_id: quoteId,
-      }))
-    )
-    .select();
-
-  if (QuoteProductError) {
-    await supabase.from('quote').delete().eq('id', quoteId);
-    throw new Error('Failed to add quote products to database.');
-  }
-
-  return { quoteData, quoteProductData };
-};
-
-type QuoteSummaryProps = {
-  clientId: number;
+type EditQuoteSummaryProps = {
   quoteProducts: QuoteProductInsert[];
-  quoteData: QuoteData;
-  dispatch: Dispatch<AddQuoteAction>;
+  quoteData: Quote;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
-const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSummaryProps) => {
+const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSummaryProps) => {
   const { user, loading: userIsLoading } = useAuth();
   const userEmail = user?.email;
   const navigate = useNavigate();
@@ -90,20 +89,20 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
     isLoading: isLoadingClient,
     isError: isClientError,
   } = useQuery({
-    queryKey: ['client', clientId],
-    queryFn: () => getClient(clientId),
+    queryKey: ['client', quoteData.client_id],
+    queryFn: () => getClient(quoteData.client_id),
   });
 
   const form = useForm<z.infer<typeof notesSchema>>({
     resolver: zodResolver(notesSchema),
     defaultValues: {
       notes: quoteData.notes || '',
-      status: quoteData.quoteStatus,
+      status: quoteData.status,
     },
   });
 
   const mutation = useMutation({
-    mutationFn: createQuote,
+    mutationFn: updateQuote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quote'] });
       navigate('/view-quotes');
@@ -111,11 +110,7 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
   });
 
   const setNotes = (notes: string) => {
-    dispatch({ type: 'SET_QUOTE_DATA', payload: { notes } });
-  };
-
-  const setQuoteStatus = (status: QuoteStatus) => {
-    dispatch({ type: 'SET_QUOTE_DATA', payload: { quoteStatus: status } });
+    dispatch({ type: 'SET_NOTES', notes });
   };
 
   const goToPreviousStep = () => {
@@ -129,8 +124,9 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
 
   const onSubmit = (values: z.infer<typeof notesSchema>) => {
     mutation.mutate({
+      quoteId: quoteData.id,
       quoteInsert: {
-        client_id: clientId,
+        client_id: quoteData.client_id,
         total_value: totalValue,
         total_vat: totalVat,
         user_id: user.id,
@@ -160,7 +156,7 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
 
           <CardContentTab>
             <CardDescription className="text-center">
-              Check quote details, add notes if required and then click create quote.
+              Check quote details, add notes if required and then click update quote.
             </CardDescription>
 
             <Form {...form}>
@@ -173,15 +169,14 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
                     <FormControl>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger
-                          className="w-full "
+                          className="w-full"
                           aria-invalid={Boolean(form.formState.errors.status)}
                           onBlur={() => {
-                            setQuoteStatus(field.value);
+                            dispatch({ type: 'SET_QUOTE_DATA', editQuoteData: { ...quoteData, status: field.value } });
                           }}
                         >
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
-
                         <SelectContent>
                           {QUOTE_STATUS_OPTIONS.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
@@ -225,9 +220,8 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
                   <Button variant="ghost" size="formButton" onClick={goToPreviousStep}>
                     Go Back
                   </Button>
-
                   <Button type="submit" size="formButton" disabled={mutation.isPending} className="px-4 md:px-6">
-                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Create Quote'}
+                    {mutation.isPending ? <Loader2 className="text-white" /> : 'Update Quote'}
                   </Button>
                 </div>
               </form>
@@ -288,7 +282,7 @@ type ProductListProps = {
   quoteProducts: QuoteProductInsert[];
   totalVat: number;
   totalValue: number;
-  dispatch: Dispatch<AddQuoteAction>;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
 const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductListProps) => {
@@ -335,4 +329,4 @@ const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductL
   );
 };
 
-export default QuoteSummary;
+export default EditQuoteSummary;

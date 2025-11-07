@@ -9,8 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import { StretchHorizontal } from 'lucide-react';
-import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 import { getTotalValue, getTotalVat } from '@/lib/quoteCalculator';
+import type { EditQuoteAction } from '../reducer/editQuoteReducer';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -28,17 +28,10 @@ type AddProductModalProps = {
   isModalOpen: boolean;
   products: Product[];
   quoteProducts: QuoteProductInsert[];
-  selectedQuoteProductIndex: number | null;
-  dispatch: Dispatch<AddQuoteAction>;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
-const EditProductModal = ({
-  isModalOpen,
-  quoteProducts,
-  products,
-  selectedQuoteProductIndex,
-  dispatch,
-}: AddProductModalProps) => {
+const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: AddProductModalProps) => {
   const form = useForm<z.infer<typeof addProductSchema>>({
     resolver: zodResolver(addProductSchema),
     defaultValues: {
@@ -54,29 +47,31 @@ const EditProductModal = ({
     },
   });
 
-  // populate the form with the current values when editing a product
+  const [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, watchedTotalValue] = form.watch([
+    'product_id',
+    'quantity',
+    'markup',
+    'vat_rate',
+    'total_value',
+  ]);
+
+  // Set default form values when a product is selected
   useEffect(() => {
-    if (selectedQuoteProductIndex != null) {
-      const quoteProduct = quoteProducts[selectedQuoteProductIndex];
-
-      form.setValue('product_id', quoteProduct.product_id);
-      form.setValue('name', quoteProduct.name);
-      form.setValue('quantity', quoteProduct.quantity || 1);
-      form.setValue('value', quoteProduct.value || 0);
-      form.setValue('markup', quoteProduct.markup || 0);
-      form.setValue('vat_rate', quoteProduct.vat_rate || 0);
-      form.setValue('description', quoteProduct.description || '');
+    const selectedProduct = products.find((product) => product.id === Number(watchedProductId));
+    if (selectedProduct) {
+      form.setValue('description', selectedProduct.description ?? '');
+      form.setValue('name', selectedProduct.name);
+      form.setValue('value', selectedProduct.value);
+      form.setValue('markup', selectedProduct.markup);
+      form.setValue('vat_rate', selectedProduct.vat);
     }
-  }, [selectedQuoteProductIndex, form, quoteProducts]);
-
-  const [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, watchedValue, watchedTotalValue] =
-    form.watch(['product_id', 'quantity', 'markup', 'vat_rate', 'value', 'total_value']);
+  }, [watchedProductId, products, form]);
 
   // Recalculate total value and total VAT when the related product values change
   useEffect(() => {
     const total_value = getTotalValue({
       quantity: watchedQuantity,
-      value: watchedValue,
+      value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
@@ -90,43 +85,35 @@ const EditProductModal = ({
 
     form.setValue('total_value', total_value);
     form.setValue('total_vat', total_vat);
-  }, [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, form, products]);
+  }, [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, form, products]);
 
   const handleClose = () => {
     form.reset();
-    dispatch({ type: 'CLOSE_EDIT_PRODUCT_MODAL' });
+    dispatch({ type: 'CLOSE_ADD_PRODUCT_MODAL' });
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
     const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
 
-    const updatedQuoteProduct = {
+    const quoteProductInsert = {
       ...values,
       value: value,
-
     };
-
-    const updatedQuoteProducts = quoteProducts.map((quoteProduct, index) =>
-      index === selectedQuoteProductIndex ? updatedQuoteProduct : quoteProduct
-    );
 
     dispatch({
       type: 'SET_QUOTE_PRODUCTS',
-      quoteProducts: updatedQuoteProducts,
+      quoteProducts: [...quoteProducts, quoteProductInsert],
     });
 
     handleClose();
   };
-
-  if (selectedQuoteProductIndex === null) return;
-  const selectedProductId = quoteProducts[selectedQuoteProductIndex].product_id.toString();
 
   return (
     <Dialog open={isModalOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="w-full h-full max-w-none rounded-none overflow-y-auto sm:max-w-lg sm:rounded-2xl sm:h-auto">
         <DialogHeader className="flexCol">
           <StretchHorizontal className="h-6 w-6 md:h-8 md:w-8 text-mv-orange" />
-          <DialogTitle>Edit Product</DialogTitle>
+          <DialogTitle>Add Product</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -134,16 +121,21 @@ const EditProductModal = ({
             <FormField
               control={form.control}
               name="product_id"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Product</FormLabel>
                   <FormControl>
-                    <Select value={selectedProductId} disabled={selectedQuoteProductIndex !== null}>
+                    <Select
+                      value={field.value ? String(field.value) : ''}
+                      onValueChange={(val) => {
+                        field.onChange(Number(val));
+                      }}
+                    >
                       <SelectTrigger
                         className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
                         aria-invalid={form.formState.errors.product_id ? true : false}
                       >
-                        <SelectValue placeholder={quoteProducts[selectedQuoteProductIndex].name} />
+                        <SelectValue placeholder="Select a product" />
                       </SelectTrigger>
                       <SelectContent>
                         {products.map((product) => (
@@ -246,7 +238,7 @@ const EditProductModal = ({
               </Button>
 
               <Button type="submit" size="formButton">
-                Save Changes
+                Add Product
               </Button>
             </div>
           </form>
@@ -256,4 +248,4 @@ const EditProductModal = ({
   );
 };
 
-export default EditProductModal;
+export default AddProductModal;

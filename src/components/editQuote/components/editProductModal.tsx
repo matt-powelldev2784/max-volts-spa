@@ -9,8 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import { StretchHorizontal } from 'lucide-react';
-import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 import { getTotalValue, getTotalVat } from '@/lib/quoteCalculator';
+import type { EditQuoteAction } from '../reducer/editQuoteReducer';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -29,7 +29,7 @@ type AddProductModalProps = {
   products: Product[];
   quoteProducts: QuoteProductInsert[];
   selectedQuoteProductIndex: number | null;
-  dispatch: Dispatch<AddQuoteAction>;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
 const EditProductModal = ({
@@ -103,7 +103,6 @@ const EditProductModal = ({
     const updatedQuoteProduct = {
       ...values,
       value: value,
-
     };
 
     const updatedQuoteProducts = quoteProducts.map((quoteProduct, index) =>

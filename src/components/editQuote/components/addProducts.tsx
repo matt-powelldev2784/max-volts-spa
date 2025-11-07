@@ -3,12 +3,12 @@ import { EllipsisVertical } from 'lucide-react';
 import { type Dispatch } from 'react';
 import type { QuoteProductInsert } from '@/types/dbTypes';
 import { Card, CardContent } from '@/ui/card';
-import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 import { QuoteProductCard } from './quoteProductCard';
+import type { EditQuoteAction } from '../reducer/editQuoteReducer';
 
 type AddProductProps = {
   quoteProducts: QuoteProductInsert[];
-  dispatch: Dispatch<AddQuoteAction>;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
 export const AddProducts = ({ quoteProducts, dispatch }: AddProductProps) => {
@@ -106,6 +106,3 @@ export const AddProducts = ({ quoteProducts, dispatch }: AddProductProps) => {
 };
 
 export default AddProducts;
-
-
-

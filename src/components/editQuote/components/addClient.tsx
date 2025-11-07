@@ -9,7 +9,8 @@ import ErrorCard from '@/lib/errorCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import { type Dispatch } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { AddQuoteAction } from '../reducer/addQuoteReducer';
+import { useLocation } from 'react-router';
+import type { EditQuoteAction } from '../reducer/editQuoteReducer';
 
 const getClients = async () => {
   const { data, error } = await supabase.from('client').select('id, name, company').order('name', { ascending: true });
@@ -22,10 +23,14 @@ const formSchema = z.object({
 });
 
 type AddClientProps = {
-  dispatch: Dispatch<AddQuoteAction>;
+  dispatch: Dispatch<EditQuoteAction>;
 };
 
 const AddClient = ({ dispatch }: AddClientProps) => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const clientId = Number(searchParams.get('clientId'));
+
   const {
     data: clients,
     isLoading: clientsLoading,
@@ -38,7 +43,7 @@ const AddClient = ({ dispatch }: AddClientProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      client_id: 0,
+      client_id: Number(clientId) || 0,
     },
   });
   const watchedClientId = form.watch('client_id');
@@ -50,6 +55,7 @@ const AddClient = ({ dispatch }: AddClientProps) => {
   };
 
   if (isClientsError) return <ErrorCard message={'Failed to load clients.'} />;
+  if (!clientId) return <ErrorCard message={'Failed to parse client ID'} />;
 
   return (
     <div className="flex min-h-screen items-start justify-center md:p-4 pb-24 md:pb-24">
@@ -57,7 +63,7 @@ const AddClient = ({ dispatch }: AddClientProps) => {
         <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl">
           <CardHeader className="rounded-t-xl ">
             <CardDescription className="text-center">
-              Select a client and click next to start your quote.
+              Click next step to confirm the client selection or select a different client.
             </CardDescription>
           </CardHeader>
 

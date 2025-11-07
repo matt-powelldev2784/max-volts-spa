@@ -1,29 +1,21 @@
-import type { QuoteProductInsert, QuoteStatus } from '@/types/dbTypes';
-import type { Steps } from '../components/stepIndicator';
+import type { Steps } from '@/components/addQuote/components/stepIndicator';
+import type { Quote, QuoteProductInsert } from '@/types/dbTypes';
 
-export type QuoteData = {
-  notes?: string;
-  quoteStatus?: QuoteStatus;
-};
-
-type addQuoteInitialStateType = {
+type EditQuoteInitialStateType = {
   clientId: number;
   quoteProducts: QuoteProductInsert[];
-  quoteData: QuoteData;
   selectedQuoteProductIndex: number | null;
+  editQuoteData: Quote;
   step: Steps;
   isAddProductModalOpen: boolean;
   isEditProductModalOpen: boolean;
 };
 
-const addQuoteInitialState: addQuoteInitialStateType = {
+const editQuoteInitialState: EditQuoteInitialStateType = {
   clientId: 0,
   quoteProducts: [],
-  quoteData: {
-    notes: '',
-    quoteStatus: 'quoted',
-  },
   selectedQuoteProductIndex: null,
+  editQuoteData: {} as Quote,
   step: 'AddClient',
   isAddProductModalOpen: false,
   isEditProductModalOpen: false,
@@ -48,14 +40,14 @@ type CloseEditProductModalAction = {
   type: 'CLOSE_EDIT_PRODUCT_MODAL';
 };
 
-type SetQuoteData = {
-  type: 'SET_QUOTE_DATA';
-  payload: QuoteData;
+type SetSelectedQuoteProductIndexAction = {
+  type: 'SET_SELECTED_QUOTE_PRODUCT_INDEX';
+  quoteProductIndex: number | null;
 };
 
-type SetSelectedQuoteProductIndex = {
-  type: 'SET_SELECTED_QUOTE_PRODUCT_INDEX';
-  index: number | null;
+type SetQuoteData = {
+  type: 'SET_QUOTE_DATA';
+  editQuoteData: Quote;
 };
 
 type SetStepAction = {
@@ -63,31 +55,39 @@ type SetStepAction = {
   step: Steps;
 };
 
+type SetNotesAction = {
+  type: 'SET_NOTES';
+  notes: string;
+};
+
 type OpenAddProductModalAction = {
   type: 'OPEN_ADD_PRODUCT_MODAL';
 };
 
-type CloseAddProductModalAction = {
+type CloseAddProductModal = {
   type: 'CLOSE_ADD_PRODUCT_MODAL';
 };
 
-export type AddQuoteAction =
+export type EditQuoteAction =
   | SetClientIdAction
   | SetQuoteProductsAction
   | OpenEditProductModalAction
   | CloseEditProductModalAction
+  | SetSelectedQuoteProductIndexAction
   | SetQuoteData
-  | SetSelectedQuoteProductIndex
+  | SetNotesAction
   | SetStepAction
   | OpenAddProductModalAction
-  | CloseAddProductModalAction;
+  | CloseAddProductModal;
 
-const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction) => {
+const editQuoteReducer = (state: EditQuoteInitialStateType, action: EditQuoteAction) => {
   switch (action.type) {
     case 'SET_CLIENT_ID':
       return { ...state, clientId: action.clientId };
     case 'SET_QUOTE_PRODUCTS':
       return { ...state, quoteProducts: action.quoteProducts };
+    case 'SET_SELECTED_QUOTE_PRODUCT_INDEX':
+      return { ...state, selectedQuoteProductIndex: action.quoteProductIndex };
     case 'OPEN_EDIT_PRODUCT_MODAL':
       return {
         ...state,
@@ -101,15 +101,9 @@ const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction
         isEditProductModalOpen: false,
       };
     case 'SET_QUOTE_DATA':
-      return {
-        ...state,
-        quoteData: {
-          notes: action.payload.notes || state.quoteData.notes,
-          quoteStatus: action.payload.quoteStatus || state.quoteData.quoteStatus,
-        },
-      };
-    case 'SET_SELECTED_QUOTE_PRODUCT_INDEX':
-      return { ...state, selectedQuoteProductIndex: action.index };
+      return { ...state, editQuoteData: { ...state.editQuoteData, ...action.editQuoteData } };
+    case 'SET_NOTES':
+      return { ...state, editQuoteData: { ...state.editQuoteData, notes: action.notes } };
     case 'SET_STEP':
       return { ...state, step: action.step };
     case 'OPEN_ADD_PRODUCT_MODAL':
@@ -121,4 +115,4 @@ const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction
   }
 };
 
-export { addQuoteInitialState, addQuoteReducer };
+export { editQuoteInitialState, editQuoteReducer };

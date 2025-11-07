@@ -153,7 +153,7 @@ const ViewClients = () => {
           {clients?.map((client) => (
             <TableRow key={client.id} className="hover:bg-muted transition">
               <TableCell>
-                <Link to={`/client/${client.id}`} className="flexCol">
+                <Link to={`/edit/client/${client.id}`} className="flexCol">
                   <div className="w-[25px] h-[25px] bg-mv-orange rounded">
                     <ArrowRight strokeWidth={3} className="text-white p-1" />
                   </div>
@@ -212,7 +212,7 @@ const ViewClients = () => {
           {clients?.map((client) => (
             <TableRow key={client.id} className="hover:bg-muted transition">
               <TableCell className="w-16">
-                <Link to={`/client/${client.id}`} className="flexCol">
+                <Link to={`/edit/client/${client.id}`} className="flexCol">
                   <div className="w-[25px] h-[25px] bg-mv-orange rounded">
                     <ArrowRight strokeWidth={3} className="text-white p-1" />
                   </div>
