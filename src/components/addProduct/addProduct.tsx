@@ -37,7 +37,7 @@ const AddProduct = () => {
       name: '',
       value: '',
       description: '',
-      markup: 100,
+      markup: 200,
       vat: 20,
     },
   });
