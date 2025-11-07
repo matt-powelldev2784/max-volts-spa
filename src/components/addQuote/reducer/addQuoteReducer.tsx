@@ -1,19 +1,12 @@
 import type { QuoteProductInsert, QuoteStatus } from '@/types/dbTypes';
 import type { Steps } from '../components/stepIndicator';
+import { getQuoteTotalValue, getQuoteTotalVat } from '@/lib/quoteCalculator';
 
 export type QuoteData = {
   notes: string;
   status: QuoteStatus;
   total_value: number;
   total_vat: number;
-};
-
-const getTotalValue = (quoteProducts: QuoteProductInsert[]) => {
-  return quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
-};
-
-const getTotalVat = (quoteProducts: QuoteProductInsert[]) => {
-  return quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 };
 
 type addQuoteInitialStateType = {
@@ -105,8 +98,8 @@ const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction
         quoteProducts: action.quoteProducts,
         quoteData: {
           ...state.quoteData,
-          total_value: getTotalValue(action.quoteProducts),
-          total_vat: getTotalVat(action.quoteProducts),
+          total_value: getQuoteTotalValue(action.quoteProducts),
+          total_vat: getQuoteTotalVat(action.quoteProducts),
         },
       };
     case 'OPEN_EDIT_PRODUCT_MODAL':

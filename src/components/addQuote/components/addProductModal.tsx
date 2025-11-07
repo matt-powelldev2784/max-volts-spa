@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import { StretchHorizontal } from 'lucide-react';
 import type { AddQuoteAction } from '../reducer/addQuoteReducer';
-import { getTotalValue, getTotalVat } from '@/lib/quoteCalculator';
+import { getTotalProductValue, getTotalProductVat } from '@/lib/quoteCalculator';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -69,14 +69,14 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
 
   // Recalculate total value and total VAT when the related product values change
   useEffect(() => {
-    const total_value = getTotalValue({
+    const total_value = getTotalProductValue({
       quantity: watchedQuantity,
       value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
-    const total_vat = getTotalVat({
+    const total_vat = getTotalProductVat({
       quantity: watchedQuantity,
       value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
       markup: watchedMarkup,

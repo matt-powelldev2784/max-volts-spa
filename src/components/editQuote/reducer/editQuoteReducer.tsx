@@ -1,4 +1,5 @@
 import type { Steps } from '@/components/addQuote/components/stepIndicator';
+import { getQuoteTotalValue, getQuoteTotalVat } from '@/lib/quoteCalculator';
 import type { Quote, QuoteProductInsert } from '@/types/dbTypes';
 
 type EditQuoteInitialStateType = {
@@ -9,14 +10,6 @@ type EditQuoteInitialStateType = {
   step: Steps;
   isAddProductModalOpen: boolean;
   isEditProductModalOpen: boolean;
-};
-
-const getTotalValue = (quoteProducts: QuoteProductInsert[]) => {
-  return quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
-};
-
-const getTotalVat = (quoteProducts: QuoteProductInsert[]) => {
-  return quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 };
 
 const editQuoteInitialState: EditQuoteInitialStateType = {
@@ -98,8 +91,8 @@ const editQuoteReducer = (state: EditQuoteInitialStateType, action: EditQuoteAct
         quoteProducts: action.quoteProducts,
         editQuoteData: {
           ...state.editQuoteData,
-          total_value: getTotalValue(action.quoteProducts),
-          total_vat: getTotalVat(action.quoteProducts),
+          total_value: getQuoteTotalValue(action.quoteProducts),
+          total_vat: getQuoteTotalVat(action.quoteProducts),
         },
       };
     case 'SET_SELECTED_QUOTE_PRODUCT_INDEX':

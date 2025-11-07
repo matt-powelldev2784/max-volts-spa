@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import { StretchHorizontal } from 'lucide-react';
-import { getTotalValue, getTotalVat } from '@/lib/quoteCalculator';
+import { getTotalProductValue, getTotalProductVat } from '@/lib/quoteCalculator';
 import type { EditQuoteAction } from '../reducer/editQuoteReducer';
 
 const addProductSchema = z.object({
@@ -74,14 +74,14 @@ const EditProductModal = ({
 
   // Recalculate total value and total VAT when the related product values change
   useEffect(() => {
-    const total_value = getTotalValue({
+    const total_value = getTotalProductValue({
       quantity: watchedQuantity,
       value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
-    const total_vat = getTotalVat({
+    const total_vat = getTotalProductVat({
       quantity: watchedQuantity,
       value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
       markup: watchedMarkup,
