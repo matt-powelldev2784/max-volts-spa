@@ -11,6 +11,14 @@ type EditQuoteInitialStateType = {
   isEditProductModalOpen: boolean;
 };
 
+const getTotalValue = (quoteProducts: QuoteProductInsert[]) => {
+  return quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
+};
+
+const getTotalVat = (quoteProducts: QuoteProductInsert[]) => {
+  return quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
+};
+
 const editQuoteInitialState: EditQuoteInitialStateType = {
   clientId: 0,
   quoteProducts: [],
@@ -85,7 +93,15 @@ const editQuoteReducer = (state: EditQuoteInitialStateType, action: EditQuoteAct
     case 'SET_CLIENT_ID':
       return { ...state, clientId: action.clientId };
     case 'SET_QUOTE_PRODUCTS':
-      return { ...state, quoteProducts: action.quoteProducts };
+      return {
+        ...state,
+        quoteProducts: action.quoteProducts,
+        editQuoteData: {
+          ...state.editQuoteData,
+          total_value: getTotalValue(action.quoteProducts),
+          total_vat: getTotalVat(action.quoteProducts),
+        },
+      };
     case 'SET_SELECTED_QUOTE_PRODUCT_INDEX':
       return { ...state, selectedQuoteProductIndex: action.quoteProductIndex };
     case 'OPEN_EDIT_PRODUCT_MODAL':
@@ -101,7 +117,13 @@ const editQuoteReducer = (state: EditQuoteInitialStateType, action: EditQuoteAct
         isEditProductModalOpen: false,
       };
     case 'SET_QUOTE_DATA':
-      return { ...state, editQuoteData: { ...state.editQuoteData, ...action.editQuoteData } };
+      return {
+        ...state,
+        editQuoteData: {
+          ...state.editQuoteData,
+          ...action.editQuoteData,
+        },
+      };
     case 'SET_NOTES':
       return { ...state, editQuoteData: { ...state.editQuoteData, notes: action.notes } };
     case 'SET_STEP':

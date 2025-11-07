@@ -14,8 +14,8 @@ import {
   QUOTE_STATUS_OPTIONS,
   type Client,
   type Quote,
-  type QuoteInsert,
   type QuoteProductInsert,
+  type QuoteStatus,
 } from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
@@ -34,31 +34,30 @@ const notesSchema = z.object({
 });
 
 type UpdateQuoteProps = {
-  quoteId: number;
-  quoteInsert: QuoteInsert;
+  quoteInsert: Quote;
   quoteProductsInsert: QuoteProductInsert[];
 };
 
-const updateQuote = async ({ quoteId, quoteInsert, quoteProductsInsert }: UpdateQuoteProps) => {
+const updateQuote = async ({ quoteInsert, quoteProductsInsert }: UpdateQuoteProps) => {
   // update quote db entry
-  const { error: quoteError } = await supabase.from('quote').update(quoteInsert).eq('id', quoteId);
+  const { error: quoteError } = await supabase.from('quote').update(quoteInsert).eq('id', quoteInsert.id);
   if (quoteError) throw new Error(`Error updating quote ${quoteError.message}`);
 
   // remove quote products
-  const { error: deleteError } = await supabase.from('quote_product').delete().eq('quote_id', quoteId);
+  const { error: deleteError } = await supabase.from('quote_product').delete().eq('quote_id', quoteInsert.id);
   if (deleteError) throw new Error(`Error deleting existing quote products: ${deleteError.message}`);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const quoteProductsNoId = quoteProductsInsert.map(({ id, ...quoteProduct }) => ({
     ...quoteProduct,
-    quote_id: quoteId,
+    quote_id: quoteInsert.id,
   }));
 
   // add updated quote products
   const { error: addError } = await supabase.from('quote_product').insert(
     quoteProductsNoId.map((quoteProduct) => ({
       ...quoteProduct,
-      quote_id: quoteId,
+      quote_id: quoteInsert.id,
     }))
   );
   if (addError) throw new Error(`Error updating quote products: ${addError.message}`);
@@ -81,8 +80,6 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
   const userEmail = user?.email;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
-  const totalVat = quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 
   const {
     data: client,
@@ -113,6 +110,10 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
     dispatch({ type: 'SET_NOTES', notes });
   };
 
+  const setStatus = (status: QuoteStatus) => {
+    dispatch({ type: 'SET_QUOTE_DATA', editQuoteData: { ...quoteData, status } });
+  };
+
   const goToPreviousStep = () => {
     dispatch({ type: 'SET_STEP', step: 'AddProducts' });
   };
@@ -122,17 +123,12 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
   if (!user) return <ErrorCard message="Unable to access user information. Please login and try again." />;
   if (isClientError) return <ErrorCard message={'Failed to load client.'} />;
 
-  const onSubmit = (values: z.infer<typeof notesSchema>) => {
+  const onSubmit = () => {
     mutation.mutate({
-      quoteId: quoteData.id,
       quoteInsert: {
-        client_id: quoteData.client_id,
-        total_value: totalValue,
-        total_vat: totalVat,
+        ...quoteData,
         user_id: user.id,
         user_email: userEmail,
-        notes: values.notes,
-        status: values.status,
       },
       quoteProductsInsert: quoteProducts.map((product) => ({
         ...product,
@@ -146,7 +142,7 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
         {client && <ClientCard client={client} />}
 
         {quoteProducts.length > 0 && (
-          <ProductList quoteProducts={quoteProducts} totalValue={totalValue} totalVat={totalVat} dispatch={dispatch} />
+          <ProductList quoteProducts={quoteProducts} quoteData={quoteData} dispatch={dispatch} />
         )}
 
         <CardTab>
@@ -172,7 +168,7 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
                           className="w-full"
                           aria-invalid={Boolean(form.formState.errors.status)}
                           onBlur={() => {
-                            dispatch({ type: 'SET_QUOTE_DATA', editQuoteData: { ...quoteData, status: field.value } });
+                            setStatus(field.value);
                           }}
                         >
                           <SelectValue placeholder="Select status" />
@@ -280,12 +276,11 @@ const ClientCard = ({ client }: ClientCardProps) => {
 
 type ProductListProps = {
   quoteProducts: QuoteProductInsert[];
-  totalVat: number;
-  totalValue: number;
+  quoteData: Quote;
   dispatch: Dispatch<EditQuoteAction>;
 };
 
-const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductListProps) => {
+const ProductList = ({ quoteProducts, quoteData, dispatch }: ProductListProps) => {
   const onEditProduct = (index: number) => {
     dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', index });
   };
@@ -315,12 +310,12 @@ const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductL
           <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end gap-4">
             <div className="flex flex-col items-end">
               <span className="text-black text-sm font-medium">VAT Total</span>
-              <span className="text-2xl font-bold text-mv-orange">{`£ ${totalVat.toFixed(2)}`}</span>
+              <span className="text-2xl font-bold text-mv-orange">{`£ ${quoteData.total_vat.toFixed(2)}`}</span>
             </div>
 
             <div className="flex flex-col items-end">
               <span className="text-black text-sm font-medium">Quote Total</span>
-              <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
+              <span className="text-2xl font-bold text-mv-orange">{`£ ${quoteData.total_value.toFixed(2)}`}</span>
             </div>
           </div>
         </div>
