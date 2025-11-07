@@ -67,10 +67,10 @@ const EditQuote = () => {
   // populate reducer state when quote data loads
   useEffect(() => {
     if (quoteData) {
-      dispatch({ type: 'SET_CLIENT_ID', payload: quoteData.quote.client_id });
-      dispatch({ type: 'SET_QUOTE_PRODUCTS', payload: quoteData.quoteProducts });
-      dispatch({ type: 'SET_QUOTE_DATA', payload: quoteData.quote });
-      dispatch({ type: 'SET_STEP', payload: 'AddClient' });
+      dispatch({ type: 'SET_CLIENT_ID', clientId: quoteData.quote.client_id });
+      dispatch({ type: 'SET_QUOTE_PRODUCTS', quoteProducts: quoteData.quoteProducts });
+      dispatch({ type: 'SET_QUOTE_DATA', editQuoteData: quoteData.quote });
+      dispatch({ type: 'SET_STEP', step: 'AddClient' });
     }
   }, [quoteData]);
 

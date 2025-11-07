@@ -16,23 +16,23 @@ export const AddProducts = ({ quoteProducts, dispatch }: AddProductProps) => {
   const totalVat = quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 
   const onSubmit = () => {
-    dispatch({ type: 'SET_STEP', payload: 'QuoteSummary' });
+    dispatch({ type: 'SET_STEP', step: 'QuoteSummary' });
   };
 
   const onRemoveProduct = (index: number) => {
-    dispatch({ type: 'SET_QUOTE_PRODUCTS', payload: quoteProducts.filter((_, i) => i !== index) });
+    dispatch({ type: 'SET_QUOTE_PRODUCTS', quoteProducts: quoteProducts.filter((_, i) => i !== index) });
   };
 
   const onAddProduct = () => {
-    dispatch({ type: 'SET_IS_ADD_PRODUCT_MODAL_OPEN', payload: true });
+    dispatch({ type: 'OPEN_ADD_PRODUCT_MODAL' });
   };
 
   const onEditProduct = (index: number) => {
-    dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', payload: { index, isOpen: true } });
+    dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', index });
   };
 
   const goToPreviousStep = () => {
-    dispatch({ type: 'SET_STEP', payload: 'AddClient' });
+    dispatch({ type: 'SET_STEP', step: 'AddClient' });
   };
 
   return (

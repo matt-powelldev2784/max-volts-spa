@@ -6,8 +6,7 @@ export type Product = Database['public']['Tables']['product']['Row'];
 export type QuoteProduct = Database['public']['Tables']['quote_product']['Row'];
 
 type QuoteProductInsertAllFields = Database['public']['Tables']['quote_product']['Insert'];
-export type QuoteProductInsert = Omit<QuoteProductInsertAllFields, 'quote_id'>;
-export type QuoteProductUpdate = Omit<QuoteProductInsertAllFields, 'quote_id' | 'created_at'>;
+export type QuoteProductInsert = Omit<QuoteProductInsertAllFields, 'quote_id' | 'created_at'>;
 
 type QuoteInsertAllFields = Database['public']['Tables']['quote']['Insert'];
 export type QuoteInsert = Omit<QuoteInsertAllFields, 'id' | 'created_at' | 'updated_at'>;

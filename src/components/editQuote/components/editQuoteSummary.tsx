@@ -15,7 +15,7 @@ import {
   type Client,
   type Quote,
   type QuoteInsert,
-  type QuoteProductUpdate,
+  type QuoteProductInsert,
 } from '@/types/dbTypes';
 import { Textarea } from '@/ui/textarea';
 import useAuth from '@/lib/useAuth';
@@ -36,7 +36,7 @@ const notesSchema = z.object({
 type UpdateQuoteProps = {
   quoteId: number;
   quoteInsert: QuoteInsert;
-  quoteProductsInsert: QuoteProductUpdate[];
+  quoteProductsInsert: QuoteProductInsert[];
 };
 
 const updateQuote = async ({ quoteId, quoteInsert, quoteProductsInsert }: UpdateQuoteProps) => {
@@ -71,7 +71,7 @@ const getClient = async (clientId: number) => {
 };
 
 type EditQuoteSummaryProps = {
-  quoteProducts: QuoteProductUpdate[];
+  quoteProducts: QuoteProductInsert[];
   quoteData: Quote;
   dispatch: Dispatch<EditQuoteAction>;
 };
@@ -110,11 +110,11 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
   });
 
   const setNotes = (notes: string) => {
-    dispatch({ type: 'SET_NOTES', payload: notes });
+    dispatch({ type: 'SET_NOTES', notes });
   };
 
   const goToPreviousStep = () => {
-    dispatch({ type: 'SET_STEP', payload: 'AddProducts' });
+    dispatch({ type: 'SET_STEP', step: 'AddProducts' });
   };
 
   if (isLoadingClient) return <LoadingSpinner />;
@@ -172,7 +172,7 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
                           className="w-full"
                           aria-invalid={Boolean(form.formState.errors.status)}
                           onBlur={() => {
-                            dispatch({ type: 'SET_QUOTE_DATA', payload: { ...quoteData, status: field.value } });
+                            dispatch({ type: 'SET_QUOTE_DATA', editQuoteData: { ...quoteData, status: field.value } });
                           }}
                         >
                           <SelectValue placeholder="Select status" />
@@ -279,7 +279,7 @@ const ClientCard = ({ client }: ClientCardProps) => {
 };
 
 type ProductListProps = {
-  quoteProducts: QuoteProductUpdate[];
+  quoteProducts: QuoteProductInsert[];
   totalVat: number;
   totalValue: number;
   dispatch: Dispatch<EditQuoteAction>;
@@ -287,11 +287,11 @@ type ProductListProps = {
 
 const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductListProps) => {
   const onEditProduct = (index: number) => {
-    dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', payload: { index, isOpen: true } });
+    dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', index });
   };
 
   const onRemoveProduct = (index: number) => {
-    dispatch({ type: 'SET_QUOTE_PRODUCTS', payload: quoteProducts.filter((_, i) => i !== index) });
+    dispatch({ type: 'SET_QUOTE_PRODUCTS', quoteProducts: quoteProducts.filter((_, i) => i !== index) });
   };
 
   return (

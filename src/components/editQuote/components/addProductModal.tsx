@@ -89,7 +89,7 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
 
   const handleClose = () => {
     form.reset();
-    dispatch({ type: 'SET_IS_ADD_PRODUCT_MODAL_OPEN', payload: false });
+    dispatch({ type: 'CLOSE_ADD_PRODUCT_MODAL' });
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
@@ -102,7 +102,7 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
 
     dispatch({
       type: 'SET_QUOTE_PRODUCTS',
-      payload: [...quoteProducts, quoteProductInsert],
+      quoteProducts: [...quoteProducts, quoteProductInsert],
     });
 
     handleClose();

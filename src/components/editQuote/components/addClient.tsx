@@ -50,8 +50,8 @@ const AddClient = ({ dispatch }: AddClientProps) => {
   const isFormInvalid = !!form.formState.errors.client_id || watchedClientId === 0;
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    dispatch({ type: 'SET_CLIENT_ID', payload: values.client_id });
-    dispatch({ type: 'SET_STEP', payload: 'AddProducts' });
+    dispatch({ type: 'SET_CLIENT_ID', clientId: values.client_id });
+    dispatch({ type: 'SET_STEP', step: 'AddProducts' });
   };
 
   if (isClientsError) return <ErrorCard message={'Failed to load clients.'} />;

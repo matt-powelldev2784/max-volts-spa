@@ -1,9 +1,9 @@
 import type { Steps } from '@/components/addQuote/components/stepIndicator';
-import type { Quote, QuoteProductUpdate } from '@/types/dbTypes';
+import type { Quote, QuoteProductInsert } from '@/types/dbTypes';
 
 type EditQuoteInitialStateType = {
   clientId: number;
-  quoteProducts: QuoteProductUpdate[];
+  quoteProducts: QuoteProductInsert[];
   selectedQuoteProductIndex: number | null;
   editQuoteData: Quote;
   step: Steps;
@@ -23,52 +23,49 @@ const editQuoteInitialState: EditQuoteInitialStateType = {
 
 type SetClientIdAction = {
   type: 'SET_CLIENT_ID';
-  payload: number;
+  clientId: number;
 };
 
 type SetQuoteProductsAction = {
   type: 'SET_QUOTE_PRODUCTS';
-  payload: QuoteProductUpdate[];
+  quoteProducts: QuoteProductInsert[];
 };
 
 type OpenEditProductModalAction = {
   type: 'OPEN_EDIT_PRODUCT_MODAL';
-  payload: { index: number; isOpen: boolean };
+  index: number;
 };
 
 type CloseEditProductModalAction = {
   type: 'CLOSE_EDIT_PRODUCT_MODAL';
-  payload: { isOpen: boolean; selectedQuoteProductIndex: null };
 };
 
 type SetSelectedQuoteProductIndexAction = {
   type: 'SET_SELECTED_QUOTE_PRODUCT_INDEX';
-  payload: number | null;
+  quoteProductIndex: number | null;
 };
 
 type SetQuoteData = {
   type: 'SET_QUOTE_DATA';
-  payload: Quote;
+  editQuoteData: Quote;
 };
 
 type SetStepAction = {
   type: 'SET_STEP';
-  payload: Steps;
+  step: Steps;
 };
 
 type SetNotesAction = {
   type: 'SET_NOTES';
-  payload: string;
+  notes: string;
 };
 
-type SetIsAddProductModalOpenAction = {
-  type: 'SET_IS_ADD_PRODUCT_MODAL_OPEN';
-  payload: boolean;
+type OpenAddProductModalAction = {
+  type: 'OPEN_ADD_PRODUCT_MODAL';
 };
 
-type SetIsEditProductModalOpenAction = {
-  type: 'SET_IS_EDIT_PRODUCT_MODAL_OPEN';
-  payload: boolean;
+type CloseAddProductModal = {
+  type: 'CLOSE_ADD_PRODUCT_MODAL';
 };
 
 export type EditQuoteAction =
@@ -80,22 +77,22 @@ export type EditQuoteAction =
   | SetQuoteData
   | SetNotesAction
   | SetStepAction
-  | SetIsAddProductModalOpenAction
-  | SetIsEditProductModalOpenAction;
+  | OpenAddProductModalAction
+  | CloseAddProductModal;
 
 const editQuoteReducer = (state: EditQuoteInitialStateType, action: EditQuoteAction) => {
   switch (action.type) {
     case 'SET_CLIENT_ID':
-      return { ...state, clientId: action.payload };
+      return { ...state, clientId: action.clientId };
     case 'SET_QUOTE_PRODUCTS':
-      return { ...state, quoteProducts: action.payload };
+      return { ...state, quoteProducts: action.quoteProducts };
     case 'SET_SELECTED_QUOTE_PRODUCT_INDEX':
-      return { ...state, selectedQuoteProductIndex: action.payload };
+      return { ...state, selectedQuoteProductIndex: action.quoteProductIndex };
     case 'OPEN_EDIT_PRODUCT_MODAL':
       return {
         ...state,
-        selectedQuoteProductIndex: action.payload.index,
-        isEditProductModalOpen: action.payload.isOpen,
+        selectedQuoteProductIndex: action.index,
+        isEditProductModalOpen: true,
       };
     case 'CLOSE_EDIT_PRODUCT_MODAL':
       return {
@@ -104,15 +101,15 @@ const editQuoteReducer = (state: EditQuoteInitialStateType, action: EditQuoteAct
         isEditProductModalOpen: false,
       };
     case 'SET_QUOTE_DATA':
-      return { ...state, editQuoteData: { ...state.editQuoteData, ...action.payload } };
+      return { ...state, editQuoteData: { ...state.editQuoteData, ...action.editQuoteData } };
     case 'SET_NOTES':
-      return { ...state, editQuoteData: { ...state.editQuoteData, notes: action.payload } };
+      return { ...state, editQuoteData: { ...state.editQuoteData, notes: action.notes } };
     case 'SET_STEP':
-      return { ...state, step: action.payload };
-    case 'SET_IS_ADD_PRODUCT_MODAL_OPEN':
-      return { ...state, isAddProductModalOpen: action.payload };
-    case 'SET_IS_EDIT_PRODUCT_MODAL_OPEN':
-      return { ...state, isEditProductModalOpen: action.payload };
+      return { ...state, step: action.step };
+    case 'OPEN_ADD_PRODUCT_MODAL':
+      return { ...state, isAddProductModalOpen: true };
+    case 'CLOSE_ADD_PRODUCT_MODAL':
+      return { ...state, isAddProductModalOpen: false };
     default:
       return state;
   }
