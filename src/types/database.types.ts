@@ -159,7 +159,7 @@ export type Database = {
           quote_id: number
           total_value: number
           total_vat: number
-          value?: number
+          value: number
           vat_rate?: number | null
         }
         Update: {
