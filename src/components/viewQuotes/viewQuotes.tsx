@@ -164,7 +164,7 @@ const ViewQuotes = () => {
         <TableHeader>
           <TableRow className="bg-neutral-100">
             <TableHead className="w-10"></TableHead>
-            <TableHead className="w-14">Num</TableHead>
+            <TableHead className="w-14">Quote</TableHead>
             <TableHead className="w-1/2">Client</TableHead>
             <TableHead className="w-24 pr-4">Total</TableHead>
           </TableRow>
@@ -211,9 +211,9 @@ const ViewQuotes = () => {
             </TableHead>
 
             <TableHead>
-              <button className="flex items-center">Client Name</button>
+              <button className="flex items-center">Client</button>
             </TableHead>
-            <TableHead>Client Company</TableHead>
+            <TableHead>Company</TableHead>
 
             <TableHead>
               <button className="flex items-center">Status</button>
