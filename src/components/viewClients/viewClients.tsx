@@ -20,6 +20,7 @@ const getClients = async (sortBy: SortField, sortOrder: SortOrder, page: number,
   let query = supabase
     .from('client')
     .select('*', { count: 'exact' })
+    .eq('is_visible_to_user', true)
     .order(sortBy, { ascending: sortOrder === 'asc' });
 
   if (searchTerm) {
