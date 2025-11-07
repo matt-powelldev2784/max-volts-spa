@@ -1,9 +1,12 @@
 import type { QuoteProductInsert, QuoteStatus } from '@/types/dbTypes';
 import type { Steps } from '../components/stepIndicator';
+import { getQuoteTotalValue, getQuoteTotalVat } from '@/lib/quoteCalculator';
 
 export type QuoteData = {
-  notes?: string;
-  quoteStatus?: QuoteStatus;
+  notes: string;
+  status: QuoteStatus;
+  total_value: number;
+  total_vat: number;
 };
 
 type addQuoteInitialStateType = {
@@ -21,7 +24,9 @@ const addQuoteInitialState: addQuoteInitialStateType = {
   quoteProducts: [],
   quoteData: {
     notes: '',
-    quoteStatus: 'quoted',
+    status: 'quoted',
+    total_value: 0,
+    total_vat: 0,
   },
   selectedQuoteProductIndex: null,
   step: 'AddClient',
@@ -87,7 +92,15 @@ const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction
     case 'SET_CLIENT_ID':
       return { ...state, clientId: action.clientId };
     case 'SET_QUOTE_PRODUCTS':
-      return { ...state, quoteProducts: action.quoteProducts };
+      return {
+        ...state,
+        quoteProducts: action.quoteProducts,
+        quoteData: {
+          ...state.quoteData,
+          total_value: getQuoteTotalValue(action.quoteProducts),
+          total_vat: getQuoteTotalVat(action.quoteProducts),
+        },
+      };
     case 'OPEN_EDIT_PRODUCT_MODAL':
       return {
         ...state,
@@ -104,8 +117,9 @@ const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction
       return {
         ...state,
         quoteData: {
+          ...state.quoteData,
           notes: action.payload.notes || state.quoteData.notes,
-          quoteStatus: action.payload.quoteStatus || state.quoteData.quoteStatus,
+          status: action.payload.status || state.quoteData.status,
         },
       };
     case 'SET_SELECTED_QUOTE_PRODUCT_INDEX':

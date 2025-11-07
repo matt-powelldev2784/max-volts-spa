@@ -94,7 +94,7 @@ export type Database = {
           id: number
           notes: string | null
           status: Database["public"]["Enums"]["quote_status_enum"]
-          total_value: number | null
+          total_value: number
           total_vat: number
           user_email: string
           user_id: string
@@ -106,7 +106,7 @@ export type Database = {
           id?: number
           notes?: string | null
           status: Database["public"]["Enums"]["quote_status_enum"]
-          total_value?: number | null
+          total_value?: number
           total_vat: number
           user_email?: string
           user_id: string
@@ -118,7 +118,7 @@ export type Database = {
           id?: number
           notes?: string | null
           status?: Database["public"]["Enums"]["quote_status_enum"]
-          total_value?: number | null
+          total_value?: number
           total_vat?: number
           user_email?: string
           user_id?: string
