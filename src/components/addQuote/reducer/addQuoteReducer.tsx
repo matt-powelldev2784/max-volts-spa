@@ -2,8 +2,18 @@ import type { QuoteProductInsert, QuoteStatus } from '@/types/dbTypes';
 import type { Steps } from '../components/stepIndicator';
 
 export type QuoteData = {
-  notes?: string;
-  quoteStatus?: QuoteStatus;
+  notes: string;
+  status: QuoteStatus;
+  total_value: number;
+  total_vat: number;
+};
+
+const getTotalValue = (quoteProducts: QuoteProductInsert[]) => {
+  return quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
+};
+
+const getTotalVat = (quoteProducts: QuoteProductInsert[]) => {
+  return quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 };
 
 type addQuoteInitialStateType = {
@@ -21,7 +31,9 @@ const addQuoteInitialState: addQuoteInitialStateType = {
   quoteProducts: [],
   quoteData: {
     notes: '',
-    quoteStatus: 'quoted',
+    status: 'quoted',
+    total_value: 0,
+    total_vat: 0,
   },
   selectedQuoteProductIndex: null,
   step: 'AddClient',
@@ -83,11 +95,20 @@ export type AddQuoteAction =
   | CloseAddProductModalAction;
 
 const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction) => {
+  console.log('quoteData.total_value', state.quoteData.total_value);
   switch (action.type) {
     case 'SET_CLIENT_ID':
       return { ...state, clientId: action.clientId };
     case 'SET_QUOTE_PRODUCTS':
-      return { ...state, quoteProducts: action.quoteProducts };
+      return {
+        ...state,
+        quoteProducts: action.quoteProducts,
+        quoteData: {
+          ...state.quoteData,
+          total_value: getTotalValue(action.quoteProducts),
+          total_vat: getTotalVat(action.quoteProducts),
+        },
+      };
     case 'OPEN_EDIT_PRODUCT_MODAL':
       return {
         ...state,
@@ -104,8 +125,9 @@ const addQuoteReducer = (state: addQuoteInitialStateType, action: AddQuoteAction
       return {
         ...state,
         quoteData: {
+          ...state.quoteData,
           notes: action.payload.notes || state.quoteData.notes,
-          quoteStatus: action.payload.quoteStatus || state.quoteData.quoteStatus,
+          status: action.payload.status || state.quoteData.status,
         },
       };
     case 'SET_SELECTED_QUOTE_PRODUCT_INDEX':

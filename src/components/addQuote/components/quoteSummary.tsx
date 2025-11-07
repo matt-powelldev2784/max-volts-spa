@@ -82,8 +82,6 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
   const userEmail = user?.email;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const totalValue = quoteProducts.reduce((acc, curr) => acc + (curr.total_value || 0), 0);
-  const totalVat = quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
 
   const {
     data: client,
@@ -98,7 +96,7 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
     resolver: zodResolver(notesSchema),
     defaultValues: {
       notes: quoteData.notes || '',
-      status: quoteData.quoteStatus,
+      status: quoteData.status,
     },
   });
 
@@ -111,11 +109,11 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
   });
 
   const setNotes = (notes: string) => {
-    dispatch({ type: 'SET_QUOTE_DATA', payload: { notes } });
+    dispatch({ type: 'SET_QUOTE_DATA', payload: { ...quoteData, notes } });
   };
 
   const setQuoteStatus = (status: QuoteStatus) => {
-    dispatch({ type: 'SET_QUOTE_DATA', payload: { quoteStatus: status } });
+    dispatch({ type: 'SET_QUOTE_DATA', payload: { ...quoteData, status } });
   };
 
   const goToPreviousStep = () => {
@@ -127,16 +125,13 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
   if (!user) return <ErrorCard message="Unable to access user information. Please login and try again." />;
   if (isClientError) return <ErrorCard message={'Failed to load client.'} />;
 
-  const onSubmit = (values: z.infer<typeof notesSchema>) => {
+  const onSubmit = () => {
     mutation.mutate({
       quoteInsert: {
+        ...quoteData,
         client_id: clientId,
-        total_value: totalValue,
-        total_vat: totalVat,
         user_id: user.id,
         user_email: userEmail,
-        notes: values.notes,
-        status: values.status,
       },
       quoteProductsInsert: quoteProducts.map((product) => ({
         ...product,
@@ -150,7 +145,7 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
         {client && <ClientCard client={client} />}
 
         {quoteProducts.length > 0 && (
-          <ProductList quoteProducts={quoteProducts} totalValue={totalValue} totalVat={totalVat} dispatch={dispatch} />
+          <ProductList quoteProducts={quoteProducts} quoteData={quoteData} dispatch={dispatch} />
         )}
 
         <CardTab>
@@ -285,13 +280,12 @@ const ClientCard = ({ client }: ClientCardProps) => {
 };
 
 type ProductListProps = {
+  quoteData: QuoteData;
   quoteProducts: QuoteProductInsert[];
-  totalVat: number;
-  totalValue: number;
   dispatch: Dispatch<AddQuoteAction>;
 };
 
-const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductListProps) => {
+const ProductList = ({ quoteData, quoteProducts, dispatch }: ProductListProps) => {
   const onEditProduct = (index: number) => {
     dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', index });
   };
@@ -321,12 +315,12 @@ const ProductList = ({ quoteProducts, totalVat, totalValue, dispatch }: ProductL
           <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end gap-4">
             <div className="flex flex-col items-end">
               <span className="text-black text-sm font-medium">VAT Total</span>
-              <span className="text-2xl font-bold text-mv-orange">{`£ ${totalVat.toFixed(2)}`}</span>
+              <span className="text-2xl font-bold text-mv-orange">{`£ ${quoteData.total_vat.toFixed(2)}`}</span>
             </div>
 
             <div className="flex flex-col items-end">
               <span className="text-black text-sm font-medium">Quote Total</span>
-              <span className="text-2xl font-bold text-mv-orange">{`£ ${totalValue.toFixed(2)}`}</span>
+              <span className="text-2xl font-bold text-mv-orange">{`£ ${quoteData.total_value.toFixed(2)}`}</span>
             </div>
           </div>
         </div>
