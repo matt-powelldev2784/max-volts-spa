@@ -24,6 +24,7 @@ export type Database = {
           created_at: string | null
           email: string | null
           id: number
+          is_visible_to_user: boolean
           name: string
           post_code: string | null
           telephone: string | null
@@ -37,6 +38,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: number
+          is_visible_to_user?: boolean
           name: string
           post_code?: string | null
           telephone?: string | null
@@ -50,6 +52,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: number
+          is_visible_to_user?: boolean
           name?: string
           post_code?: string | null
           telephone?: string | null
@@ -61,6 +64,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: number
+          is_visible_to_user: boolean
           markup: number
           name: string
           value: number
@@ -70,6 +74,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: number
+          is_visible_to_user?: boolean
           markup?: number
           name: string
           value: number
@@ -79,6 +84,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: number
+          is_visible_to_user?: boolean
           markup?: number
           name?: string
           value?: number
@@ -159,7 +165,7 @@ export type Database = {
           quote_id: number
           total_value: number
           total_vat: number
-          value?: number
+          value: number
           vat_rate?: number | null
         }
         Update: {

@@ -52,6 +52,12 @@
   }
 }
 
+@media (max-width: 359px) {
+  .hide-xs {
+    display: none !important;
+  }
+}
+
 @layer utilities {
   .flexCol {
     @apply flex flex-col items-center justify-center;

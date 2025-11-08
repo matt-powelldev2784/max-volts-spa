@@ -10,15 +10,17 @@ import { Input } from '@/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import FormError from '@/lib/formError';
-import { ArrowLeft, Loader2, UserPlus } from 'lucide-react';
-import { useEffect } from 'react';
+import { ArrowLeft, EllipsisVertical, Loader2, Trash, UserPlus } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import type { ClientInsert } from '@/types/dbTypes';
 import ErrorCard from '@/lib/errorCard';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from '@/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 
 const formSchema = z.object({
   name: z.string().nonempty({ message: 'Name is required' }),
   company: z.string().optional(),
-  email: z.string().email({ message: 'Invalid email address' }).optional().or(z.literal('')),
+  email: z.email({ message: 'Invalid email address' }).optional().or(z.literal('')),
   telephone: z.string().optional(),
   address1: z.string().optional(),
   address2: z.string().optional(),
@@ -30,6 +32,12 @@ const formSchema = z.object({
 const getClientById = async (clientId: number) => {
   const { data, error } = await supabase.from('client').select('*').eq('id', clientId).single();
   if (error) throw new Error(error.message);
+  return data;
+};
+
+const deleteClient = async (clientId: number) => {
+  const { data, error } = await supabase.from('client').delete().eq('id', clientId);
+  if (error) throw new Error('Server Error. Client deletion failed. Please try again later.');
   return data;
 };
 
@@ -256,7 +264,9 @@ const EditClient = ({ clientId }: EditClientProps) => {
 
                 {/* Buttons */}
                 <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
-                  <LinkButton variant="ghost" size="formButton" to="/view-clients">
+                  <DeleteClientDropDown clientId={clientId} />
+
+                  <LinkButton variant="ghost" size="formButton" to="/view-clients" className="hide-xs">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Cancel
                   </LinkButton>
@@ -271,6 +281,104 @@ const EditClient = ({ clientId }: EditClientProps) => {
         </Card>
       </div>
     </div>
+  );
+};
+
+type DeleteClientDropDownProps = {
+  clientId: number;
+};
+
+const DeleteClientDropDown = ({ clientId }: DeleteClientDropDownProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  return (
+    <>
+      <div className="w-full flex items-center">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button aria-label="Delete client actions">
+              <EllipsisVertical className="h-6 w-6 md:h-8 md:w-8 text-mv-orange" />
+            </button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent side="right" align="center" className="p-1 min-w-[90px]">
+            <div className="flex flex-col">
+              <DropdownMenuItem className="flex items-center gap-5 px-4 py-2" onClick={handleOpenModal}>
+                <Trash className="size-6 text-mv-orange" />
+                <p className="text-xl mr-2">Delete Client</p>
+              </DropdownMenuItem>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <ConfirmDeleteClientModal isOpen={isModalOpen} clientId={clientId} handleCloseModal={handleCloseModal} />
+    </>
+  );
+};
+
+type ConfirmDeleteClientModalProps = {
+  isOpen: boolean;
+  clientId: number;
+  handleCloseModal: () => void;
+};
+
+const ConfirmDeleteClientModal = ({ isOpen, clientId, handleCloseModal }: ConfirmDeleteClientModalProps) => {
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: () => deleteClient(clientId),
+    onSuccess: () => {
+      navigate('/view-clients');
+    },
+  });
+
+  const handleDelete = () => {
+    mutation.mutate();
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) handleCloseModal();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-none rounded-2xl overflow-y-auto w-11/12 md:w-auto">
+        <DialogHeader className="flexCol">
+          <Trash className="h-6 w-6 md:h-8 md:w-8 text-mv-orange" />
+          <DialogTitle>Delete Client</DialogTitle>
+        </DialogHeader>
+
+        <p className="py-4 text-center">Are you sure you want to delete this client? This action cannot be undone.</p>
+
+        {mutation.isError && <FormError message={mutation.error.message} />}
+
+        <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
+          <Button
+            type="button"
+            variant="ghost"
+            size="formButton"
+            onClick={handleCloseModal}
+            disabled={mutation.isPending}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            type="button"
+            size="formButton"
+            onClick={handleDelete}
+            disabled={mutation.isPending}
+            isLoading={mutation.isPending}
+          >
+            Delete
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

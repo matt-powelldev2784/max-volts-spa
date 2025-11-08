@@ -10,15 +10,23 @@ import { Input } from '@/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import FormError from '@/lib/formError';
-import { ArrowLeft, Loader2, StretchHorizontal } from 'lucide-react';
+import { ArrowLeft, EllipsisVertical, Loader2, StretchHorizontal, Trash } from 'lucide-react';
 import type { ProductInsert } from '@/types/dbTypes';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Textarea } from '@/ui/textarea';
 import ErrorCard from '@/lib/errorCard';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from '@/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 
 const getProductById = async (productId: number) => {
   const { data, error } = await supabase.from('product').select('*').eq('id', productId).single();
   if (error) throw new Error(error.message);
+  return data;
+};
+
+const deleteProduct = async (productId: number) => {
+  const { data, error } = await supabase.from('product').delete().eq('id', productId);
+  if (error) throw new Error('Server Error. Product deletion failed. Please try again later.');
   return data;
 };
 
@@ -103,7 +111,7 @@ const EditProduct = ({ productId }: EditProductProps) => {
     <div className="flex min-h-screen items-start justify-center bg-none md:bg-gray-50 md:p-4 pb-24 md:pb-24">
       <div className="w-full flexCol md:max-w-[600px]">
         {/*  Title */}
-        <div className="flexRow gap-4 mt-4 mb-6 md:bg-transparent w-full">
+        <div className="flexRow gap-4 mt-4 mb-6 md:bg-transparent w-full ">
           <div className="rounded-full bg-mv-orange w-10 h-10 flexCol">
             <StretchHorizontal className="h-5 w-5 text-white" />
           </div>
@@ -112,7 +120,7 @@ const EditProduct = ({ productId }: EditProductProps) => {
 
         {/* Form */}
         <Card className="border-0 md:border-2 border-transparent md:border-gray-200 shadow-none md:shadow-lg w-full rounded-none md:rounded-3xl -translate-y-6 md:-translate-y-0">
-          <CardHeader className="rounded-t-xl">
+          <CardHeader className="rounded-t-xl ">
             <CardDescription className="text-center">
               Update the product details below and click save to apply changes.
             </CardDescription>
@@ -231,7 +239,9 @@ const EditProduct = ({ productId }: EditProductProps) => {
 
                 {/*  Buttons */}
                 <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
-                  <LinkButton variant="ghost" size="formButton" to="/view-products">
+                  <DeleteProductDropDown productId={productId} />
+
+                  <LinkButton variant="ghost" size="formButton" to="/view-products" className="hide-xs">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Cancel
                   </LinkButton>
@@ -246,6 +256,104 @@ const EditProduct = ({ productId }: EditProductProps) => {
         </Card>
       </div>
     </div>
+  );
+};
+
+type DeleteProductDropDownProps = {
+  productId: number;
+};
+
+const DeleteProductDropDown = ({ productId }: DeleteProductDropDownProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  return (
+    <>
+      <div className="w-full flex items-center">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button aria-label="Delete product actions">
+              <EllipsisVertical className="h-6 w-6 md:h-8 md:w-8 text-mv-orange" />
+            </button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent side="right" align="center" className="p-1 min-w-[90px]">
+            <div className="flex flex-col">
+              <DropdownMenuItem className="flex items-center gap-5 px-4 py-2" onClick={handleOpenModal}>
+                <Trash className="size-6 text-mv-orange" />
+                <p className="text-xl mr-2">Delete Product</p>
+              </DropdownMenuItem>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <ConfirmDeleteProductModal isOpen={isModalOpen} productId={productId} handleCloseModal={handleCloseModal} />
+    </>
+  );
+};
+
+type ConfirmDeleteProductModalProps = {
+  isOpen: boolean;
+  productId: number;
+  handleCloseModal: () => void;
+};
+
+const ConfirmDeleteProductModal = ({ isOpen, productId, handleCloseModal }: ConfirmDeleteProductModalProps) => {
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: () => deleteProduct(productId),
+    onSuccess: () => {
+      navigate('/view-products');
+    },
+  });
+
+  const handleDelete = () => {
+    mutation.mutate();
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) handleCloseModal();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-none rounded-2xl overflow-y-auto w-11/12 md:w-auto">
+        <DialogHeader className="flexCol">
+          <Trash className="h-6 w-6 md:h-8 md:w-8 text-mv-orange" />
+          <DialogTitle>Delete Product</DialogTitle>
+        </DialogHeader>
+
+        <p className="py-4 text-center">Are you sure you want to delete this product? This action cannot be undone.</p>
+
+        {mutation.isError && <FormError message={mutation.error.message} />}
+
+        <div className="relative w-full flex flex-row justify-end gap-2 px-1 md:px-0 pt-4">
+          <Button
+            type="button"
+            variant="ghost"
+            size="formButton"
+            onClick={handleCloseModal}
+            disabled={mutation.isPending}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            type="button"
+            size="formButton"
+            onClick={handleDelete}
+            disabled={mutation.isPending}
+            isLoading={mutation.isPending}
+          >
+            Delete
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -12,7 +12,11 @@ import EditProductModal from './components/editProductModal';
 import { addQuoteInitialState, addQuoteReducer } from './reducer/addQuoteReducer';
 
 const getProducts = async () => {
-  const { data, error } = await supabase.from('product').select('*').order('name', { ascending: true });
+  const { data, error } = await supabase
+    .from('product')
+    .select('*')
+    .eq('is_visible_to_user', true)
+    .order('name', { ascending: true });
   if (error) throw new Error(error.message);
   return data;
 };
@@ -48,7 +52,7 @@ const AddQuote = () => {
     <div className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && <AddClient dispatch={dispatch} />}
+      {step === 'AddClient' && <AddClient clientId={clientId} dispatch={dispatch} />}
 
       {step === 'AddProducts' && (
         <>

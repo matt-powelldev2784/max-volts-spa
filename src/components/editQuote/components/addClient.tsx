@@ -9,7 +9,6 @@ import ErrorCard from '@/lib/errorCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import { type Dispatch } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useLocation } from 'react-router';
 import type { EditQuoteAction } from '../reducer/editQuoteReducer';
 
 const getClients = async () => {
@@ -23,14 +22,11 @@ const formSchema = z.object({
 });
 
 type AddClientProps = {
+  clientId: number;
   dispatch: Dispatch<EditQuoteAction>;
 };
 
-const AddClient = ({ dispatch }: AddClientProps) => {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const clientId = Number(searchParams.get('clientId'));
-
+const AddClient = ({ clientId, dispatch }: AddClientProps) => {
   const {
     data: clients,
     isLoading: clientsLoading,
@@ -43,15 +39,22 @@ const AddClient = ({ dispatch }: AddClientProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      client_id: Number(clientId) || 0,
+      client_id: clientId,
     },
   });
+
   const watchedClientId = form.watch('client_id');
   const isFormInvalid = !!form.formState.errors.client_id || watchedClientId === 0;
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     dispatch({ type: 'SET_CLIENT_ID', clientId: values.client_id });
     dispatch({ type: 'SET_STEP', step: 'AddProducts' });
+  };
+
+  const showFieldValueOrPlaceholder = (value: number) => {
+    // if field value is truthy show the field value
+    // if field value is a empty string show the placeholder
+    return value ? String(value) : '';
   };
 
   if (isClientsError) return <ErrorCard message={'Failed to load clients.'} />;
@@ -82,8 +85,8 @@ const AddClient = ({ dispatch }: AddClientProps) => {
 
                         <FormControl>
                           <Select
-                            value={Number(field.value) > 0 ? String(field.value) : ''}
-                            onValueChange={(val) => field.onChange(val === '' ? 0 : Number(val))}
+                            value={showFieldValueOrPlaceholder(field.value)}
+                            onValueChange={(clientId) => field.onChange(Number(clientId))}
                             disabled={clientsLoading}
                           >
                             <SelectTrigger

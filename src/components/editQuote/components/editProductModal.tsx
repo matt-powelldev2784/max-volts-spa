@@ -24,7 +24,7 @@ const addProductSchema = z.object({
   description: z.string().optional(),
 });
 
-type AddProductModalProps = {
+type EditProductModalProps = {
   isModalOpen: boolean;
   products: Product[];
   quoteProducts: QuoteProductInsert[];
@@ -38,7 +38,7 @@ const EditProductModal = ({
   products,
   selectedQuoteProductIndex,
   dispatch,
-}: AddProductModalProps) => {
+}: EditProductModalProps) => {
   const form = useForm<z.infer<typeof addProductSchema>>({
     resolver: zodResolver(addProductSchema),
     defaultValues: {

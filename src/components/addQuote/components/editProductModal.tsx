@@ -59,7 +59,6 @@ const EditProductModal = ({
     if (selectedQuoteProductIndex != null) {
       const quoteProduct = quoteProducts[selectedQuoteProductIndex];
 
-      form.setValue('product_id', quoteProduct.product_id);
       form.setValue('name', quoteProduct.name);
       form.setValue('quantity', quoteProduct.quantity || 1);
       form.setValue('value', quoteProduct.value || 0);
