@@ -342,8 +342,14 @@ const ConfirmDeleteProductModal = ({ isOpen, productId, handleCloseModal }: Conf
             Cancel
           </Button>
 
-          <Button type="button" size="formButton" onClick={handleDelete} disabled={mutation.isPending}>
-            {mutation.isPending ? <LoadingSpinner /> : 'Delete'}
+          <Button
+            type="button"
+            size="formButton"
+            onClick={handleDelete}
+            disabled={mutation.isPending}
+            isLoading={mutation.isPending}
+          >
+            Delete
           </Button>
         </div>
       </DialogContent>
