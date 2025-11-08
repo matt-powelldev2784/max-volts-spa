@@ -5,9 +5,11 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
+const isTest = process.env.VITEST;
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [reactRouter(), tsconfigPaths(), tailwindcss()],
+  plugins: [!isTest && reactRouter(), tsconfigPaths(), tailwindcss()].filter(Boolean),
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
