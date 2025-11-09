@@ -17,15 +17,15 @@ Tables
 
 - I want to log in and log out securely.
 
-## Client Management
+# Client Management
 - I want to view a list of clients.
 - I want to add, edit, and delete clients.
 
-## Product Management
+# Product Management
 - I want to view a list of products.
 - I want to add, edit, and delete products.
 
-## Quote Management
+# Quote Management
 - I want to create, view, edit, and delete quotes.
 - I want to see the total price of a quote based on selected products.
 - I want to filter quotes by client and date.
