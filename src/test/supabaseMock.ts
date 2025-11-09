@@ -41,7 +41,7 @@ const defaultRecords: TableDataMap = {
       id: 1,
       name: 'Test Product',
       value: 100,
-      markup: 10,
+      markup: 100,
       vat: 20,
       is_visible_to_user: true,
       created_at: null,
