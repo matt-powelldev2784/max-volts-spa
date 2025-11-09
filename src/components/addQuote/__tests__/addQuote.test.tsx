@@ -234,6 +234,69 @@ describe('addQuote', () => {
       expect(quotesListHeading).toBeInTheDocument();
     });
   });
+
+  test('should be able to fill in all quote details and navigate back to previous steps with data persisted', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestProviders>
+        <AddQuote />
+      </TestProviders>
+    );
+
+    // select a client
+    // fireEvent used instead of userEvent due to issues with select component
+    const selectClientDropdownMenu = await screen.findByRole('combobox');
+    fireEvent.click(selectClientDropdownMenu);
+
+    // select a client from the dropdown and check that it is selected
+    // fireEvent used instead of userEvent due to issues with select component
+    const testClientOption = await screen.findByRole('option', { name: /Test Client Test Company/i });
+    fireEvent.click(testClientOption);
+    waitFor(() => {
+      expect(selectClientDropdownMenu).toHaveTextContent(/Test Client Test Company/i);
+    });
+
+    // click the next button and check that the add products step is rendered
+    const nextButton = screen.getByRole('button', { name: /Next Step/i });
+    await user.click(nextButton);
+    expect(await screen.findByText(/No products added./i)).toBeInTheDocument();
+
+    // click the add product button and check that the add product modal is opened
+    const addProductButton = screen.getByRole('button', { name: /Add Product/i });
+    await user.click(addProductButton);
+    const addProductModalTotalText = screen.getByText(/Total:/i);
+    expect(addProductModalTotalText).toBeInTheDocument();
+
+    // fill in product details and add the product
+    // fireEvent used instead of userEvent due to issues with select component
+    const selectProductDropDown = await screen.findByRole('combobox');
+    fireEvent.click(selectProductDropDown);
+    const firstProductOption = await screen.findByRole('option', { name: /Test Product/i });
+    fireEvent.click(firstProductOption);
+    const addSelectedProductButton = screen.getByRole('button', { name: /Add Product/i });
+    await user.click(addSelectedProductButton);
+
+    // check that the product is added to the quote products list
+    const testProductItem = await screen.findByText(/Test Product/i);
+    expect(testProductItem).toBeInTheDocument();
+
+    // click the next button and check that the quote summary step is rendered
+    const nextToSummaryButton = screen.getByRole('button', { name: /Next Step/i });
+    await user.click(nextToSummaryButton);
+
+    // navigate back to add products step and check product is listed
+    const backToProductsButton = screen.getByRole('button', { name: /Back/i });
+    await user.click(backToProductsButton);
+    expect(await screen.findByText(/Test Product/i)).toBeInTheDocument();
+
+    // navigate back to add client step and check client is listed
+    const backToClientButton = screen.getByRole('button', { name: /Back/i });
+    await user.click(backToClientButton);
+    expect(await screen.findByText(/Select a client/i)).toBeInTheDocument();
+    const selectClientDropdownMenuAfterNavigate = screen.getByRole('combobox');
+    expect(selectClientDropdownMenuAfterNavigate).toHaveTextContent(/Test Client Test Company/i);
+  });
 }); 
 
   
