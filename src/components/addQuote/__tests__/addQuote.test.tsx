@@ -315,4 +315,42 @@ describe('addQuote', () => {
     const addClientTitle = await screen.findByText(/Select a client and click next to start your quote./i);
     expect(addClientTitle).toBeInTheDocument();
   });
+
+    test('should not be able to proceed to quote summary step if no products are added', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <TestProviders>
+          <AddQuote />
+        </TestProviders>
+      );
+
+      // select a client
+      // fireEvent used instead of userEvent due to issues with select component
+      const selectClientDropdownMenu = await screen.findByRole('combobox');
+      fireEvent.click(selectClientDropdownMenu);
+
+      // select a client from the dropdown and check that it is selected
+      // fireEvent used instead of userEvent due to issues with select component
+      const testClientOption = await screen.findByRole('option', { name: /Test Client Test Company/i });
+      fireEvent.click(testClientOption);
+      waitFor(() => {
+        expect(selectClientDropdownMenu).toHaveTextContent(/Test Client Test Company/i);
+      });
+
+      // click the next button and check that the add products step is rendered
+      const nextButton = screen.getByRole('button', { name: /Next Step/i });
+      await user.click(nextButton);
+
+      const addProductsTitle = await screen.findByText(/No products added/i);
+      expect(addProductsTitle).toBeInTheDocument();
+
+      // click the next button without adding any products
+      const nextStepToSummaryButton = screen.getByRole('button', { name: /Next Step/i });
+      await user.click(nextStepToSummaryButton);
+
+      // check that the validation error is shown
+      const addProductsTitleAfterButtonClick = await screen.findByText(/No products added./i);
+      expect(addProductsTitleAfterButtonClick).toBeInTheDocument();
+    });
 });
