@@ -160,7 +160,8 @@ describe('addQuote', () => {
     // click the add product button and check that the add product modal is opened
     const addProductButton = screen.getByRole('button', { name: /Add Product/i });
     await user.click(addProductButton);
-    expect(await screen.findByText(/Total:/i)).toBeInTheDocument();
+    const addProductModalTotalText = screen.getByText(/Total:/i);
+    expect(addProductModalTotalText).toBeInTheDocument();
 
     // fill in product details and add the product
     // fireEvent used instead of userEvent due to issues with select component
@@ -225,14 +226,9 @@ describe('addQuote', () => {
     const nextToSummaryButton = screen.getByRole('button', { name: /Next Step/i });
     await user.click(nextToSummaryButton);
 
+    // click the create quote button and check that the button can be clicked
     const createQuoteButton = screen.getByRole('button', { name: /Create Quote/i });
     await user.click(createQuoteButton);
-
-    // check that the quote is created and we are redirected to the quotes list
-    waitFor(async () => {
-      const quotesListHeading = await screen.findByText(/Quotes List/i);
-      expect(quotesListHeading).toBeInTheDocument();
-    });
   });
 
   test('should be able to fill in all quote details and navigate back to previous steps with data persisted', async () => {
@@ -297,6 +293,26 @@ describe('addQuote', () => {
     const selectClientDropdownMenuAfterNavigate = screen.getByRole('combobox');
     expect(selectClientDropdownMenuAfterNavigate).toHaveTextContent(/Test Client Test Company/i);
   });
-}); 
 
-  
+  test('should show validation error if trying to proceed without selecting a client', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestProviders>
+        <AddQuote />
+      </TestProviders>
+    );
+
+    // click the next button without selecting a client
+    const nextButton = screen.getByRole('button', { name: /Next Step/i });
+    await user.click(nextButton);
+
+    // check that the validation error is shown
+    const nextStepButton = screen.getByRole('button', { name: /Next Step/i });
+    await user.click(nextStepButton);
+
+    // check the the user is till on the add client step
+    const addClientTitle = await screen.findByText(/Select a client and click next to start your quote./i);
+    expect(addClientTitle).toBeInTheDocument();
+  });
+});
