@@ -31,12 +31,14 @@ describe('addQuote', () => {
     // click the select client dropdown
     // fireEvent used instead of userEvent due to issues with select component
     const selectClientDropdownMenu = await screen.findByRole('combobox');
+
     fireEvent.click(selectClientDropdownMenu);
 
     // select a client from the dropdown and check that it is selected
     // fireEvent used instead of userEvent due to issues with select component
     const testClientOption = await screen.findByRole('option', { name: /Test Client Test Company/i });
     fireEvent.click(testClientOption);
+
     waitFor(() => {
       expect(selectClientDropdownMenu).toHaveTextContent(/Test Client Test Company/i);
     });
@@ -45,7 +47,5 @@ describe('addQuote', () => {
     const nextButton = screen.getByRole('button', { name: /Next Step/i });
     await user.click(nextButton);
     expect(await screen.findByText(/No products added./i)).toBeInTheDocument();
-
-    screen.debug(document.body, 100000);
   });
 });
