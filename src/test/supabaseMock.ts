@@ -5,7 +5,7 @@ type TableName = keyof Tables;
 type TableDataMap = { [K in TableName]: Tables[K]['Row'][] };
 type SupabaseMockOverrides = Partial<TableDataMap>;
 
-const defaultRecords: TableDataMap = {
+export const defaultRecords: TableDataMap = {
   client: [
     {
       id: 1,
