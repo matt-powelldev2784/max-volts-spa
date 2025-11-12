@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { TestProviders } from '@/test/testProviders';
 import { defaultRecords } from '@/test/supabaseMock';
 import userEvent from '@testing-library/user-event';
@@ -21,11 +21,11 @@ vi.mock('@/lib/useAuth', () => ({
   }),
 }));
 
-describe('quoteSummary component', () => {
-  test('should render client, products and submit sections', async () => {
-    const dispatch = vi.fn();
-    const quoteData = { notes: 'Test notes', status: 'quoted' as QuoteStatus, total_value: 350, total_vat: 70 };
+const dispatch = vi.fn();
+const quoteData = { notes: '', status: 'quoted' as QuoteStatus, total_value: 350, total_vat: 70 };
 
+describe('quoteSummary component', () => {
+  beforeEach(() => {
     render(
       <TestProviders>
         <QuoteSummary
@@ -36,7 +36,9 @@ describe('quoteSummary component', () => {
         />
       </TestProviders>
     );
+  });
 
+  test('should render client, products and submit sections', async () => {
     // check for client, products and submit sections
     await waitFor(() => {
       expect(screen.getByText('Client Details')).toBeInTheDocument();
@@ -59,20 +61,6 @@ describe('quoteSummary component', () => {
   });
 
   test('user should be able to change quote status', async () => {
-    const dispatch = vi.fn();
-    const quoteData = { notes: 'Test notes', status: 'new' as QuoteStatus, total_value: 350, total_vat: 70 };
-
-    render(
-      <TestProviders>
-        <QuoteSummary
-          clientId={defaultRecords.client[0].id}
-          quoteProducts={defaultRecords.quote_product}
-          quoteData={quoteData}
-          dispatch={dispatch}
-        />
-      </TestProviders>
-    );
-
     // change quote status and check the dropdown value changes
     // fireEvent used instead of userEvent due to issues with select component
     const statusSelect = await screen.findByRole('combobox');
@@ -83,20 +71,7 @@ describe('quoteSummary component', () => {
   });
 
   test('user should be able to click create quote button', async () => {
-    const dispatch = vi.fn();
-    const quoteData = { notes: 'Test notes', status: 'new' as QuoteStatus, total_value: 350, total_vat: 70 };
-
-    render(
-      <TestProviders>
-        <QuoteSummary
-          clientId={defaultRecords.client[0].id}
-          quoteProducts={defaultRecords.quote_product}
-          quoteData={quoteData}
-          dispatch={dispatch}
-        />
-      </TestProviders>
-    );
-
+    // check that create quote button is rendered and enabled
     const createQuoteButton = screen.getByRole('button', { name: /Create Quote/i });
     expect(createQuoteButton).toBeInTheDocument();
     expect(createQuoteButton).not.toBeDisabled();
@@ -104,24 +79,15 @@ describe('quoteSummary component', () => {
 
   test('should call dispatch to add notes ', async () => {
     const user = userEvent.setup();
-    const dispatch = vi.fn();
-    const quoteData = { notes: '', status: 'quoted' as QuoteStatus, total_value: 350, total_vat: 70 };
 
-    render(
-      <TestProviders>
-        <QuoteSummary
-          clientId={defaultRecords.client[0].id}
-          quoteProducts={defaultRecords.quote_product}
-          quoteData={quoteData}
-          dispatch={dispatch}
-        />
-      </TestProviders>
-    );
-
+    // type in the notes textarea
     const notesTextarea = screen.getByLabelText('Notes');
     await user.type(notesTextarea, 'These are some test notes.');
-    await user.click(document.body); // click outside to trigger onBlur
 
+    // click outside to notes textarea to trigger onBlur function
+    await user.click(document.body);
+
+    // check that dispatch was called with the correct payload
     expect(dispatch).toHaveBeenCalledWith({
       type: 'SET_QUOTE_DATA',
       payload: { ...quoteData, notes: 'These are some test notes.' },
@@ -130,23 +96,10 @@ describe('quoteSummary component', () => {
 
   test('should go to previous step when Back button is clicked', async () => {
     const user = userEvent.setup();
-    const dispatch = vi.fn();
-    const quoteData = { notes: '', status: 'quoted' as QuoteStatus, total_value: 350, total_vat: 70 };
 
-    render(
-      <TestProviders>
-        <QuoteSummary
-          clientId={defaultRecords.client[0].id}
-          quoteProducts={defaultRecords.quote_product}
-          quoteData={quoteData}
-          dispatch={dispatch}
-        />
-      </TestProviders>
-    );
-
+    // click the back button and check that dispatch was called with the correct step
     const backButton = screen.getByRole('button', { name: /Back/i });
     await user.click(backButton);
-
     expect(dispatch).toHaveBeenCalledWith({ type: 'SET_STEP', step: 'AddProducts' });
   });
 });
