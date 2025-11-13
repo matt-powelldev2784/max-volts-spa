@@ -34,10 +34,10 @@ describe('Add Client with data fetch success', () => {
       </TestProviders>
     );
 
-    // total value should be 120 + 230 = 350
-    expect(screen.getByText('£ 350.00')).toBeInTheDocument();
-    // total VAT should be 24 + 46 = 70
-    expect(screen.getByText('£ 70.00')).toBeInTheDocument();
+    // total value should be 124 + 552 = 676
+    expect(screen.getByText('£ 676.00')).toBeInTheDocument();
+    // total VAT should be 24 + 92 = 116
+    expect(screen.getByText('£ 116.00')).toBeInTheDocument();
   });
 
   test('should call dispatch to move to next step when Next button is clicked', async () => {
