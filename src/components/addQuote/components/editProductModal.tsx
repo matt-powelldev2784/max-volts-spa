@@ -177,13 +177,13 @@ const EditProductModal = ({
               name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cost</FormLabel>
+                  <FormLabel htmlFor='cost-input'>Cost</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-[12.75px] text-gray-700 pointer-events-none">
                         £
                       </span>
-                      <Input {...field} type="number" disabled className="bg-gray-100 text-black pl-6" />
+                      <Input {...field} type="number" id="cost-input" disabled className="bg-gray-100 text-black pl-6" />
                     </div>
                   </FormControl>
                   <FormMessage />
