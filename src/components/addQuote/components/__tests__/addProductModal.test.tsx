@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { TestProviders } from '@/test/testProviders';
 import { defaultRecords } from '@/test/supabaseMock';
 import AddProductModal from '../addProductModal';
+import userEvent from '@testing-library/user-event';
 
 vi.mock('@/lib/supabase', async () => {
   const { createSupabaseMock } = await import('@/test/supabaseMock');
@@ -10,6 +11,7 @@ vi.mock('@/lib/supabase', async () => {
 });
 
 const dispatch = vi.fn();
+const user = userEvent.setup();
 
 describe('Add Client with data fetch success', () => {
   beforeEach(() => {
@@ -45,57 +47,59 @@ describe('Add Client with data fetch success', () => {
   });
 
   test('should be able to set the quantity', async () => {
-    // find quantity input and change value and check value is updated
+    // select quantity input, change value and check value is updated
     const quantityInput = await screen.findByLabelText(/Quantity/i);
-    fireEvent.change(quantityInput, { target: { value: '5' } });
+    await user.clear(quantityInput);
+    await user.type(quantityInput, '5');
     expect((quantityInput as HTMLInputElement).value).toBe('5');
   });
 
   test('should be able to enter a description', async () => {
-    // find description input and change value and check value is updated
+    // select description input, change value and check value is updated
     const descriptionInput = await screen.findByLabelText(/Description/i);
-    fireEvent.change(descriptionInput, { target: { value: 'This is a test description' } });
+    await user.clear(descriptionInput);
+    await user.type(descriptionInput, 'This is a test description');
     expect((descriptionInput as HTMLInputElement).value).toBe('This is a test description');
   });
 
   test('should be able to change markup', async () => {
-    // find markup input and change value and check value is updated
+    // select markup input, change value and check value is updated
     const markupInput = await screen.findByLabelText(/Markup/i);
-    fireEvent.change(markupInput, { target: { value: '25' } });
+    await user.clear(markupInput);
+    await user.type(markupInput, '25');
     expect((markupInput as HTMLInputElement).value).toBe('25');
   });
 
   test('should be able to change VAT rate', async () => {
-    // find VAT rate input and change value and check value is updated
+    // select VAT rate input, change value and check value is updated
     const vatRateInput = await screen.findByLabelText(/VAT Rate/i);
-    fireEvent.change(vatRateInput, { target: { value: '15' } });
+    await user.clear(vatRateInput);
+    await user.type(vatRateInput, '15');
     expect((vatRateInput as HTMLInputElement).value).toBe('15');
   });
 
   test('the total value should update when quantity, markup or VAT rate are changed', async () => {
-    // select first product
+    // combobox interaction: use fireEvent
     const selectClientDropdownMenu = await screen.findByRole('combobox');
     fireEvent.click(selectClientDropdownMenu);
     const options = await screen.findAllByRole('option');
     const firstOption = options[0];
     fireEvent.click(firstOption);
 
-    // change quantity
     const quantityInput = await screen.findByLabelText(/Quantity/i);
-    fireEvent.change(quantityInput, { target: { value: '2' } });
+    await user.clear(quantityInput);
+    await user.type(quantityInput, '2');
     expect((quantityInput as HTMLInputElement).value).toBe('2');
 
-    // change markup
     const markupInput = await screen.findByLabelText(/Markup/i);
-    fireEvent.change(markupInput, { target: { value: '100' } });
+    await user.clear(markupInput);
+    await user.type(markupInput, '100');
     expect((markupInput as HTMLInputElement).value).toBe('100');
 
-    // change VAT rate
     const vatRateInput = await screen.findByLabelText(/VAT Rate/i);
-    fireEvent.change(vatRateInput, { target: { value: '30' } });
+    await user.clear(vatRateInput);
+    await user.type(vatRateInput, '30');
     expect((vatRateInput as HTMLInputElement).value).toBe('30');
-
-    screen.debug(document.body, 1000000);
 
     // check total value is updated correctly
     const totalValueText = await screen.findByText(/Total: £520.00/i);
@@ -104,7 +108,7 @@ describe('Add Client with data fetch success', () => {
 
   test('should close modal when cancel button is clicked', async () => {
     const cancelButton = await screen.findByRole('button', { name: /Cancel/i });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     await waitFor(() => {
       expect(dispatch).toHaveBeenCalledWith({ type: 'CLOSE_ADD_PRODUCT_MODAL' });
@@ -122,7 +126,7 @@ describe('Add Client with data fetch success', () => {
     const firstOption = options[0];
     fireEvent.click(firstOption);
 
-    // check the markup, value and vat inputs are populated correctly
+    // check that markup, value and vat rate fields are populated correctly
     const markupInput = await screen.findByLabelText(/Markup/i);
     expect((markupInput as HTMLInputElement).value).toBe('100');
 
@@ -134,17 +138,24 @@ describe('Add Client with data fetch success', () => {
   });
 
   test('should be able to click the add product button', async () => {
-    // select first product
+    // combobox interaction: use fireEvent
     const selectClientDropdownMenu = await screen.findByRole('combobox');
     fireEvent.click(selectClientDropdownMenu);
+
     const options = await screen.findAllByRole('option');
     const firstOption = options[0];
     fireEvent.click(firstOption);
 
-    // click the add product button
+    // click add product button
     const addProductButton = await screen.findByRole('button', { name: /Add Product/i });
-    fireEvent.click(addProductButton);
-    expect(addProductButton).toBeInTheDocument();
-    expect(addProductButton).not.toBeDisabled();
+    await user.click(addProductButton);
+
+    await waitFor(() => {
+      expect(dispatch).toHaveBeenCalledWith({
+        type: 'SET_QUOTE_PRODUCTS',
+        quoteProducts: expect.any(Array),
+      });
+      expect(dispatch).toHaveBeenCalledWith({ type: 'CLOSE_ADD_PRODUCT_MODAL' });
+    });
   });
 });
