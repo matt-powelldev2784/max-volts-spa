@@ -96,7 +96,7 @@ export const defaultRecords: TableDataMap = {
       total_value: 120,
       total_vat: 24,
       quantity: 1,
-      description: null,
+      description: 'Description for test product',
       created_at: null,
     },
     {
