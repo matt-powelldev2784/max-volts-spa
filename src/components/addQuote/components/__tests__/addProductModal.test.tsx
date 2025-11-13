@@ -107,9 +107,11 @@ describe('Add Client with data fetch success', () => {
   });
 
   test('should close modal when cancel button is clicked', async () => {
+    // click cancel button
     const cancelButton = await screen.findByRole('button', { name: /Cancel/i });
     await user.click(cancelButton);
 
+    // check dispatch is called with correct params
     await waitFor(() => {
       expect(dispatch).toHaveBeenCalledWith({ type: 'CLOSE_ADD_PRODUCT_MODAL' });
     });
@@ -138,7 +140,8 @@ describe('Add Client with data fetch success', () => {
   });
 
   test('should be able to click the add product button', async () => {
-    // combobox interaction: use fireEvent
+    // click on drop down menu
+    // fireEvent used instead of userEvent due to issues with select component
     const selectClientDropdownMenu = await screen.findByRole('combobox');
     fireEvent.click(selectClientDropdownMenu);
 
@@ -150,6 +153,7 @@ describe('Add Client with data fetch success', () => {
     const addProductButton = await screen.findByRole('button', { name: /Add Product/i });
     await user.click(addProductButton);
 
+    // check dispatch is called with correct params
     await waitFor(() => {
       expect(dispatch).toHaveBeenCalledWith({
         type: 'SET_QUOTE_PRODUCTS',
