@@ -82,7 +82,7 @@ const EditQuote = () => {
   if (isProductsError || !productsData) return <ErrorCard message={'Failed to load products.'} />;
 
   return (
-    <div className="md:bg-gray-50">
+    <section className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
       {step === 'AddClient' && <AddClient clientId={selectedClientId} dispatch={dispatch} />}
@@ -107,7 +107,7 @@ const EditQuote = () => {
         selectedQuoteProductIndex={selectedQuoteProductIndex}
         dispatch={dispatch}
       />
-    </div>
+    </section>
   );
 };
 

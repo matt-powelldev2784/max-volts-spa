@@ -49,7 +49,7 @@ const AddQuote = () => {
   }
 
   return (
-    <div className="md:bg-gray-50">
+    <section className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
       {step === 'AddClient' && <AddClient clientId={clientId} dispatch={dispatch} />}
@@ -78,7 +78,7 @@ const AddQuote = () => {
       {step === 'QuoteSummary' && (
         <QuoteSummary clientId={clientId} quoteProducts={quoteProducts} quoteData={quoteData} dispatch={dispatch} />
       )}
-    </div>
+    </section>
   );
 };
 
