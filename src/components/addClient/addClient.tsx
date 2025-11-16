@@ -94,11 +94,11 @@ const AddClient = () => {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
+                        <FormLabel htmlFor="name">
                           Name <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Name" {...field} />
+                          <Input placeholder="Name" id="name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -110,9 +110,9 @@ const AddClient = () => {
                     name="company"
                     render={({ field }) => (
                       <FormItem className="relative pb-2">
-                        <FormLabel>Company</FormLabel>
+                        <FormLabel htmlFor="company">Company</FormLabel>
                         <FormControl>
-                          <Input placeholder="Company" {...field} />
+                          <Input placeholder="Company" id="company" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -124,9 +124,9 @@ const AddClient = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem className="relative pb-2">
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel htmlFor="email">Email</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="Email" {...field} />
+                          <Input type="email" placeholder="Email" id="email" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -138,9 +138,9 @@ const AddClient = () => {
                     name="telephone"
                     render={({ field }) => (
                       <FormItem className="relative pb-2">
-                        <FormLabel>Telephone</FormLabel>
+                        <FormLabel htmlFor="telephone">Telephone</FormLabel>
                         <FormControl>
-                          <Input type="tel" placeholder="Telephone" {...field} />
+                          <Input type="tel" placeholder="Telephone" id="telephone" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -152,9 +152,9 @@ const AddClient = () => {
                     name="address1"
                     render={({ field }) => (
                       <FormItem className="relative pb-2">
-                        <FormLabel>Address Line 1</FormLabel>
+                        <FormLabel htmlFor="address1">Address Line 1</FormLabel>
                         <FormControl>
-                          <Input placeholder="Address Line 1" {...field} />
+                          <Input placeholder="Address Line 1" id="address1" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -166,9 +166,9 @@ const AddClient = () => {
                     name="address2"
                     render={({ field }) => (
                       <FormItem className="relative pb-2">
-                        <FormLabel>Address Line 2</FormLabel>
+                        <FormLabel htmlFor="address2">Address Line 2</FormLabel>
                         <FormControl>
-                          <Input placeholder="Address Line 2" {...field} />
+                          <Input placeholder="Address Line 2" id="address2" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -180,9 +180,9 @@ const AddClient = () => {
                     name="city"
                     render={({ field }) => (
                       <FormItem className="relative pb-2">
-                        <FormLabel>City</FormLabel>
+                        <FormLabel htmlFor="city">City</FormLabel>
                         <FormControl>
-                          <Input placeholder="City" {...field} />
+                          <Input placeholder="City" id="city" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -194,9 +194,9 @@ const AddClient = () => {
                     name="county"
                     render={({ field }) => (
                       <FormItem className="relative pb-2">
-                        <FormLabel>County</FormLabel>
+                        <FormLabel htmlFor="county">County</FormLabel>
                         <FormControl>
-                          <Input placeholder="County" {...field} />
+                          <Input placeholder="County" id="county" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -208,9 +208,9 @@ const AddClient = () => {
                     name="post_code"
                     render={({ field }) => (
                       <FormItem className="relative pb-2">
-                        <FormLabel>Post Code</FormLabel>
+                        <FormLabel htmlFor="post_code">Post Code</FormLabel>
                         <FormControl>
-                          <Input placeholder="Post Code" {...field} />
+                          <Input placeholder="Post Code" id="post_code" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
