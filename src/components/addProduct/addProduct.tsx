@@ -82,11 +82,11 @@ const AddProduct = () => {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
+                        <FormLabel htmlFor="name">
                           Name <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Name" {...field} />
+                          <Input placeholder="Name" id="name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -98,10 +98,11 @@ const AddProduct = () => {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel htmlFor="description">Description</FormLabel>
                         <FormControl>
                           <Textarea
                             className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
+                            id="description"
                             placeholder="Description"
                             rows={3}
                             {...field}
@@ -117,7 +118,7 @@ const AddProduct = () => {
                     name="value"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
+                        <FormLabel htmlFor="value">
                           Value<span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
@@ -126,6 +127,7 @@ const AddProduct = () => {
                             <Input
                               {...field}
                               type="number"
+                              id="value"
                               className="pl-6 "
                               placeholder="Value"
                               aria-invalid={!!form.formState.errors.value}
@@ -142,13 +144,14 @@ const AddProduct = () => {
                     name="markup"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
+                        <FormLabel htmlFor="markup">
                           Default Markup % <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
                             placeholder="Markup"
+                            id="markup"
                             {...field}
                             min={0}
                             step="any"
@@ -167,13 +170,14 @@ const AddProduct = () => {
                     name="vat"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
+                        <FormLabel htmlFor="vat">
                           Default VAT % <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
                             placeholder="VAT"
+                            id="vat"
                             {...field}
                             value={field.value}
                             onChange={(e) => field.onChange(Number(e.target.value))}

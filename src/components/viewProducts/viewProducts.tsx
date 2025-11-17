@@ -103,7 +103,7 @@ const ViewProducts = () => {
               className="w-full md:w-64 pl-10 pr-4 py-1 h-[36px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-mv-orange focus:border-transparent"
             />
 
-            <Button type="submit" variant="default" size="sm" className="text-sm h-[34px]">
+            <Button type="submit" variant="default" aria-label="Search Products" size="sm" className="text-sm h-[34px]">
               <Search />
             </Button>
           </form>
