@@ -42,7 +42,7 @@ export const AddProducts = ({ quoteProducts, dispatch }: AddProductProps) => {
           <CardContent className="px-4 md:px-8 pb-6 pt-4">
             {/* Add Product Button */}
             <div className="flex justify-end items-end gap-4 mb-4">
-              <Button onClick={onAddProduct} className="text-sm h-[34px]">
+              <Button onClick={onAddProduct} className="text-sm h-[34px]" aria-label="Add Product">
                 Add Product
               </Button>
             </div>

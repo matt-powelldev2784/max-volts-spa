@@ -123,7 +123,7 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
               name="product_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Product</FormLabel>
+                  <FormLabel htmlFor="product">Product</FormLabel>
                   <FormControl>
                     <Select
                       value={field.value ? String(field.value) : ''}
@@ -134,6 +134,7 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
                       <SelectTrigger
                         className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
                         aria-invalid={form.formState.errors.product_id ? true : false}
+                        id="product"
                       >
                         <SelectValue placeholder="Select a product" />
                       </SelectTrigger>
@@ -156,14 +157,21 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
               name="quantity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity</FormLabel>
+                  <FormLabel htmlFor="quantity">Quantity</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" min={1} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      {...field}
+                      id="quantity"
+                      type="number"
+                      min={1}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="value"
@@ -194,10 +202,11 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel htmlFor="description">Description</FormLabel>
                   <FormControl>
                     <textarea
                       className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
+                      id="description"
                       placeholder="Description"
                       rows={3}
                       {...field}
@@ -213,9 +222,15 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
               name="markup"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Markup (%)</FormLabel>
+                  <FormLabel htmlFor="markup">Markup (%)</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" min={0} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      {...field}
+                      type="number"
+                      id="markup"
+                      min={0}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -227,9 +242,15 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
               name="vat_rate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>VAT Rate (%)</FormLabel>
+                  <FormLabel htmlFor="vat">VAT Rate (%)</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" min={0} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      {...field}
+                      id="vat"
+                      type="number"
+                      min={0}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

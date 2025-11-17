@@ -81,7 +81,7 @@ const AddClient = ({ clientId, dispatch }: AddClientProps) => {
                     name="client_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
+                        <FormLabel htmlFor="client_id">
                           Client <span className="text-red-500">*</span>
                         </FormLabel>
 
@@ -94,6 +94,7 @@ const AddClient = ({ clientId, dispatch }: AddClientProps) => {
                             <SelectTrigger
                               className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
                               aria-invalid={Boolean(form.formState.errors.client_id)}
+                              id="client_id"
                             >
                               <SelectValue placeholder={clientsLoading ? 'Loading clients...' : 'Select a client'} />
                             </SelectTrigger>

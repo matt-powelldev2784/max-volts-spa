@@ -164,12 +164,13 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quote Status</FormLabel>
+                    <FormLabel htmlFor="status">Quote Status</FormLabel>
                     <FormControl>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger
                           className="w-full "
                           aria-invalid={Boolean(form.formState.errors.status)}
+                          id="status"
                           onBlur={() => {
                             setQuoteStatus(field.value);
                           }}
@@ -197,10 +198,11 @@ const QuoteSummary = ({ clientId, quoteProducts, quoteData, dispatch }: QuoteSum
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Notes</FormLabel>
+                      <FormLabel htmlFor="notes">Notes</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
+                          id="notes"
                           rows={4}
                           placeholder="Notes"
                           onBlur={() => {
