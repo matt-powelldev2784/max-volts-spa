@@ -29,43 +29,26 @@ test('should be able to edit a client', async ({ page }, testInfo) => {
     await addClientLink.click();
   }
 
+  // click the edit link for the first client in the list
   const editLink = page.locator('tbody a:visible').first();
   await expect(editLink).toBeVisible();
   await editLink.click();
 
-  // // fill out the add client form
-  // const newClientName = `E2E Test Client ${Date.now()}`;
+  const nameInput = page.getByLabel('name');
+  const updatedClientName = `Updated E2E Test Client ${Date.now()}`;
+  await nameInput.fill(updatedClientName);
 
-  // const nameInput = page.getByLabel('name');
-  // await nameInput.fill(newClientName);
-  // const companyInput = page.getByLabel('company');
-  // await companyInput.fill('E2E Test Company');
-  // const emailClientInput = page.getByLabel('email');
-  // await emailClientInput.fill('test@test.com');
-  // const telephoneInput = page.getByLabel('telephone');
-  // await telephoneInput.fill('1234567890');
-  // const address1Input = page.getByLabel('Address Line 1');
-  // await address1Input.fill('123 Test Street');
-  // const address2Input = page.getByLabel('Address Line 2');
-  // await address2Input.fill('Flat 101');
-  // const cityInput = page.getByLabel('city');
-  // await cityInput.fill('Test City');
-  // const countyInput = page.getByLabel('county');
-  // await countyInput.fill('Surrey');
-  // const postcodeInput = page.getByLabel('Post Code');
-  // await postcodeInput.fill('SW1 1AA');
+  // submit the form
+  const submitClientButton = page.getByRole('button', { name: 'Save Changes' });
+  await submitClientButton.click();
 
-  // // submit the form
-  // const submitClientButton = page.getByRole('button', { name: 'Add Client' });
-  // await submitClientButton.click();
+  // search for the new client in the client list
+  const searchInput = page.getByPlaceholder('Search by name...');
+  await searchInput.fill(updatedClientName);
+  const searchButton = page.getByRole('button', { name: 'Search Clients' });
+  await searchButton.click();
 
-  // // search for the new client in the client list
-  // const searchInput = page.getByPlaceholder('Search by name...');
-  // await searchInput.fill(newClientName);
-  // const searchButton = page.getByRole('button', { name: 'Search Clients' });
-  // await searchButton.click();
-
-  // // check the new client appears in the list
-  // const newClientMatches = page.getByRole('cell', { name: newClientName });
-  // await expect(newClientMatches).toBeVisible();
+  // check the new client appears in the list
+  const newClientMatches = page.getByRole('cell', { name: updatedClientName });
+  await expect(newClientMatches).toBeVisible();
 });
