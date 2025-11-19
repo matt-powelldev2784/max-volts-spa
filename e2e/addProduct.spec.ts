@@ -30,7 +30,7 @@ test('should be able to add a product', async ({ page }, testInfo) => {
   }
 
   // fill out the add product form
-  const newProductName = `E2E Test Product ${Date.now()}`;
+  const newProductName = `__Test Suite Product ${Date.now()}`;
 
   const nameInput = page.getByLabel('name');
   await nameInput.fill(newProductName);

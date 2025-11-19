@@ -30,7 +30,7 @@ test('should be able to add a client', async ({ page }, testInfo) => {
   }
 
   // fill out the add client form
-  const newClientName = `E2E Test Client ${Date.now()}`;
+  const newClientName = `__Test Suite Client ${Date.now()}`;
 
   const nameInput = page.getByLabel('name');
   await nameInput.fill(newClientName);

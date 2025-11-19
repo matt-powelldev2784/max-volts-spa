@@ -13,7 +13,7 @@ const demoUserId = process.env.VITE_DEMO_USER_ID!;
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
 const dummyClient: ClientInsert = {
-  name: 'Dummy Client',
+  name: '__Test Dummy Client',
   company: 'Dummy Company',
   email: 'dummy@example.com',
   telephone: '1234567890',
@@ -26,11 +26,11 @@ const dummyClient: ClientInsert = {
 };
 
 const dummyProduct: ProductInsert = {
-  name: 'Dummy Product',
+  name: '__Test Dummy Product',
   value: 100,
   vat: 20,
   markup: 10,
-  description: 'A dummy product for testing',
+  description: '__Test A dummy product for testing',
   is_visible_to_user: true,
 };
 
@@ -39,7 +39,7 @@ const dummyQuote = {
   total_vat: 80,
   user_email: 'dummy@example.com',
   user_id: demoUserId,
-  notes: 'Dummy quote for testing',
+  notes: '__Test Dummy quote for testing',
 };
 
 const dummyQuoteProduct = {

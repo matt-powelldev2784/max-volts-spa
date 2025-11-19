@@ -8,23 +8,30 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
-type TableName = 'client' | 'product' | 'quote' | 'quote_product';
+const deleteTestDbRecords = async () => {
+  // quote_product: name contains __Test
+  const { error: quoteProductError } = await supabase.from('quote_product').delete().like('name', '%__Test%');
+  if (quoteProductError) {
+    console.error('Error deleting from quote_product:', quoteProductError.message);
+  }
 
-const clearTable = async (table: TableName) => {
-  const { error } = await supabase.from(table).delete().neq('id', 0); // delete all rows
-  if (error) {
-    console.error(`Error deleting from ${table}:`, error.message);
-  } else {
-    console.log(`Cleared table: ${table}`);
+  // quote: notes contains __Test
+  const { error: quoteError } = await supabase.from('quote').delete().like('notes', '%__Test%');
+  if (quoteError) {
+    console.error('Error deleting from quote:', quoteError.message);
+  }
+
+  // product: name contains __Test
+  const { error: productsError } = await supabase.from('product').delete().like('name', '%__Test%');
+  if (productsError) {
+    console.error('Error deleting from product:', productsError.message);
+  }
+
+  // client: name contains __Test
+  const { error: clientError } = await supabase.from('client').delete().like('name', '%__Test%');
+  if (clientError) {
+    console.error('Error deleting from client:', clientError.message);
   }
 };
 
-const clearTestDb = async () => {
-  await clearTable('quote_product');
-  await clearTable('quote');
-  await clearTable('product');
-  await clearTable('client');
-  console.log('All tables cleared.');
-};
-
-clearTestDb().catch(console.error);
+deleteTestDbRecords().catch(console.error);

@@ -35,7 +35,7 @@ test('should be able to edit a client', async ({ page }, testInfo) => {
   await editLink.click();
 
   const nameInput = page.getByLabel('name');
-  const updatedClientName = `Updated E2E Test Client ${Date.now()}`;
+  const updatedClientName = `__Test Suite Client ${Date.now()}`;
   await nameInput.fill(updatedClientName);
 
   // submit the form

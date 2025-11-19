@@ -16,7 +16,7 @@
     "format:check": "prettier --check .",
     "update:types": "npx supabase gen types typescript --project-id djladasdtsrswxsvjtcw --schema public > src/types/database.types.ts",
     "tsc": "npx tsc -p tsconfig.app.json --noEmit",
-    "clear:test:db": "npx ts-node src/db/clearDatabase.ts",
+    "clear:db:test:records": "npx ts-node src/db/clearDatabase.ts",
     "seed:db": "npx ts-node src/db/seedDatabase.ts"
   },
   "dependencies": {

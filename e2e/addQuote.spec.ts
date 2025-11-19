@@ -33,8 +33,7 @@ test('should be able to add a quote', async ({ page }, testInfo) => {
   }
 
   // fill out the add client form
-  const newClientName = `E2E Test Client ${Date.now()}`;
-  console.log('newClientName', newClientName);
+  const newClientName = `__Test Suite Client ${Date.now()}`;
 
   const nameInput = page.getByLabel('name');
   await nameInput.fill(newClientName);
@@ -102,7 +101,7 @@ test('should be able to add a quote', async ({ page }, testInfo) => {
   const quantityInput = page.getByLabel('quantity');
   await quantityInput.fill('2');
   const descriptionInput = page.getByLabel('description');
-  await descriptionInput.fill('E2E Test Description for Quote Product');
+  await descriptionInput.fill('__Test Description for Quote Product');
   const markupInput = page.getByLabel('markup');
   await markupInput.fill('100');
   const vatInput = page.getByLabel('vat');
