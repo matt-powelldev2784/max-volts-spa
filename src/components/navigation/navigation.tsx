@@ -114,7 +114,7 @@ const MobileMenu = () => {
   return (
     <div className="md:hidden">
       <DropdownMenu>
-        <DropdownMenuTrigger className="p-2 mr-2 rounded">
+        <DropdownMenuTrigger className="p-2 mr-2 rounded" aria-label="Open Menu">
           <Menu className="w-8 h-8 text-gray-600" />
         </DropdownMenuTrigger>
 

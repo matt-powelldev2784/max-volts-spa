@@ -71,11 +71,11 @@ const ViewClients = () => {
   if (isError) return <ErrorCard message={error?.message || 'An unknown error occurred.'} />;
 
   return (
-    <div className="w-11/12 mx-auto flexCol">
+    <section className="w-11/12 mx-auto flexCol">
       {/* Pagination and search */}
       <div className="flex flex-col md:flex-row w-full justify-between items-start md:items-end px-0 md:px-2 mb-4 gap-2 md:gap-8 mt-4 md:mt-4">
         <div className="flexRow gap-4  mb-4 md:mb-0">
-          <p className="text-2xl text-gray-800 ">Client List</p>
+          <h1 className="text-2xl text-gray-800 ">Client List</h1>
           <Button
             onClick={() => setSearchTerm('')}
             type="submit"
@@ -103,7 +103,7 @@ const ViewClients = () => {
               className="w-full md:w-64 pl-10 pr-4 py-1 h-[36px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-mv-orange focus:border-transparent"
             />
 
-            <Button type="submit" variant="default" size="sm" className="text-sm h-[34px]">
+            <Button type="submit" variant="default" size="sm" className="text-sm h-[34px]" aria-label="Search Clients">
               <Search />
             </Button>
           </form>
@@ -243,7 +243,7 @@ const ViewClients = () => {
           )}
         </TableBody>
       </Table>
-    </div>
+    </section>
   );
 };
 

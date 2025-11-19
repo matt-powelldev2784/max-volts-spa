@@ -98,10 +98,8 @@ const AddClient = ({ clientId, dispatch }: AddClientProps) => {
 
                             <SelectContent>
                               {clients?.map((client) => (
-                                <SelectItem key={client.id} value={String(client.id)}>
-                                  <span className="block max-w-[230px] md:max-w-[700px] truncate">
-                                    {`${client.name} ${client.company}`}
-                                  </span>
+                                <SelectItem key={client.id} value={String(client.id)} className="truncate ">
+                                  {`${client.name} ${client.company}`}
                                 </SelectItem>
                               ))}
                             </SelectContent>

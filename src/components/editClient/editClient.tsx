@@ -116,7 +116,7 @@ const EditClient = ({ clientId }: EditClientProps) => {
   if (!clientId) return <ErrorCard message="No client ID provided." />;
 
   return (
-    <div className="flex min-h-screen items-start justify-center bg-none md:bg-gray-50 md:p-4 pb-24 md:pb-24">
+    <section className="flex min-h-screen items-start justify-center bg-none md:bg-gray-50 md:p-4 pb-24 md:pb-24">
       <div className="w-full flexCol md:max-w-[600px]">
         {/* Title */}
         <div className="flexRow gap-4 mt-4 mb-6 md:bg-transparent w-full">
@@ -280,7 +280,7 @@ const EditClient = ({ clientId }: EditClientProps) => {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </section>
   );
 };
 
