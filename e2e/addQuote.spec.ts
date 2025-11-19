@@ -122,7 +122,7 @@ test('should be able to add a quote', async ({ page }, testInfo) => {
 
   // add notes
   const notesTextarea = page.getByLabel('notes');
-  await notesTextarea.fill('These are E2E test notes for the quote.');
+  await notesTextarea.fill('__Test These are E2E test notes for the quote.');
 
   // submit the quote
   const submitQuoteButton = page.getByRole('button', { name: 'Create Quote' });

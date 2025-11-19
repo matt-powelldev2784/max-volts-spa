@@ -8,7 +8,7 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
-const deleteTestDbRecords = async () => {
+const deleteTestRecords = async () => {
   // quote_product: name contains __Test
   const { error: quoteProductError } = await supabase.from('quote_product').delete().like('name', '%__Test%');
   if (quoteProductError) {
@@ -34,4 +34,4 @@ const deleteTestDbRecords = async () => {
   }
 };
 
-deleteTestDbRecords().catch(console.error);
+deleteTestRecords().catch(console.error);
