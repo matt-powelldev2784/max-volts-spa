@@ -18,7 +18,7 @@
     "tsc": "npx tsc -p tsconfig.app.json --noEmit",
     "clear:db:test:records": "npx ts-node src/db/deleteTestRecords.ts",
     "seed:db": "npx ts-node src/db/seedDatabase.ts",
-    "e2e:test": "npx playwright test && npm run clear:db:test:records"
+    "e2e:test": "npm run seed:db && npx playwright test && npm run clear:db:test:records"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
