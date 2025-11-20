@@ -25,8 +25,30 @@ const dummyClient: ClientInsert = {
   is_visible_to_user: true,
 };
 
+const dummyClient2: ClientInsert = {
+  name: '__Test Dummy Client 2',
+  company: 'Dummy Company',
+  email: 'dummy@example.com',
+  telephone: '1234567890',
+  address1: '123 Dummy Street',
+  address2: 'Dummy Address Line 2',
+  city: 'Dummy City',
+  county: 'Dummy County',
+  post_code: 'DU1 1MM',
+  is_visible_to_user: true,
+};
+
 const dummyProduct: ProductInsert = {
   name: '__Test Dummy Product',
+  value: 100,
+  vat: 20,
+  markup: 10,
+  description: '__Test A dummy product for testing',
+  is_visible_to_user: true,
+};
+
+const dummyProduct2: ProductInsert = {
+  name: '__Test Dummy Product 2',
   value: 100,
   vat: 20,
   markup: 10,
@@ -50,20 +72,22 @@ const dummyQuoteProduct = {
 };
 
 const seedDatabase = async () => {
-  // add client
-  const { data: clientData, error: clientError } = await supabase.from('client').insert(dummyClient).select().single();
+  // add clients
+  const { data: clientsData, error: clientsError } = await supabase
+    .from('client')
+    .insert([dummyClient, dummyClient2])
+    .select();
 
-  if (clientError) {
-    console.error('Error inserting client:', clientError.message);
+  if (clientsError) {
+    console.error('Error inserting client:', clientsError.message);
     return;
   }
 
   // add product
-  const { data: productData, error: productError } = await supabase
+  const { data: productsData, error: productError } = await supabase
     .from('product')
-    .insert(dummyProduct)
-    .select()
-    .single();
+    .insert([dummyProduct, dummyProduct2])
+    .select();
 
   if (productError) {
     console.error('Error inserting product:', productError.message);
@@ -71,7 +95,7 @@ const seedDatabase = async () => {
   }
 
   // add quote
-  const quoteToInsert: QuoteInsert = { ...dummyQuote, status: 'new', client_id: clientData.id };
+  const quoteToInsert: QuoteInsert = { ...dummyQuote, status: 'new', client_id: clientsData[0].id };
   const { data: quoteData, error: quoteError } = await supabase.from('quote').insert(quoteToInsert).select().single();
 
   if (quoteError) {
@@ -88,11 +112,11 @@ const seedDatabase = async () => {
   const quoteProductToInsert: QuoteProductWithQuoteId = {
     ...dummyQuoteProduct,
     quote_id: quoteData.id,
-    product_id: productData.id,
-    name: productData.name,
-    value: productData.value,
-    vat_rate: productData.vat,
-    markup: productData.markup,
+    product_id: productsData[0].id,
+    name: productsData[0].name,
+    value: productsData[0].value,
+    vat_rate: productsData[0].vat,
+    markup: productsData[0].markup,
   };
   const { error: quoteProductError } = await supabase
     .from('quote_product')
