@@ -1,12 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { ArrowRight, ChevronsUpDown, ArrowUpDown, ChevronLeft, ChevronRight, Search, RotateCcw } from 'lucide-react';
+import {
+  ArrowRight,
+  ChevronsUpDown,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  RotateCcw,
+  Pencil,
+} from 'lucide-react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/ui/table';
 import { Button, LinkButton } from '@/ui/button';
 import ErrorCard from '@/lib/errorCard';
-import { Link } from 'react-router';
 import { useRef, useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
+import DownloadQuoteMenuItem from '../pdfQuote/pdfQuote';
 
 const quoteStatusStyle: Record<string, string> = {
   new: 'bg-blue-500 text-white',
@@ -44,7 +54,6 @@ const getQuotes = async (sortBy: SortField, sortOrder: SortOrder, page: number, 
 
     query = query.in('client_id', clientIdsForSearch);
   }
-
 
   const { data, error, count } = await query.range(from, to);
 
@@ -174,11 +183,7 @@ const ViewQuotes = () => {
           {quotes?.map((quote) => (
             <TableRow key={quote.id} className="hover:bg-muted transition">
               <TableCell>
-                <Link to={`/edit/quote?quoteId=${quote.id}&clientId=${quote.client_id}`} className="flexCol">
-                  <div className="w-[25px] h-[25px] bg-mv-orange rounded">
-                    <ArrowRight strokeWidth={3} className="text-white p-1" />
-                  </div>
-                </Link>
+                <DropDownMenu quoteId={quote.id} clientId={quote.client_id} />
               </TableCell>
 
               <TableCell className="truncate">{quote.id}</TableCell>
@@ -236,11 +241,7 @@ const ViewQuotes = () => {
           {quotes?.map((quote) => (
             <TableRow key={quote.id} className="hover:bg-muted transition">
               <TableCell className="w-16">
-                <Link to={`/edit/quote?quoteId=${quote.id}&clientId=${quote.client_id}`} className="flexCol">
-                  <div className="w-[25px] h-[25px] bg-mv-orange rounded">
-                    <ArrowRight strokeWidth={3} className="text-white p-1" />
-                  </div>
-                </Link>
+                <DropDownMenu quoteId={quote.id} clientId={quote.client_id} />
               </TableCell>
 
               <TableCell className="truncate">{quote.id}</TableCell>
@@ -279,6 +280,37 @@ const ViewQuotes = () => {
         </TableBody>
       </Table>
     </section>
+  );
+};
+
+type DropDownMenuProps = {
+  quoteId: number;
+  clientId: number;
+};
+
+const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="rounded-full" aria-label="Quote actions">
+          <ArrowRight strokeWidth={3} className="bg-mv-orange rounded text-white p-1" />
+        </button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent side="right" align="center" className="p-1 min-w-[120px]">
+        <div className="flex flex-col">
+          <DropdownMenuItem
+            className="flex items-center gap-5 px-4 py-2"
+            onClick={() => (window.location.href = `/edit/quote?quoteId=${quoteId}&clientId=${clientId}`)}
+          >
+            <Pencil className="size-6 text-mv-orange" />
+            <span className="text-xl mr-2">Edit Quote</span>
+          </DropdownMenuItem>
+
+          <DownloadQuoteMenuItem quoteId={quoteId} />
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
