@@ -51,7 +51,7 @@ const DownloadQuoteMenuItem = ({ quoteId }: DownloadQuoteMenuItemProps) => {
     }
   }, [quoteData, updateQuotePDF]);
 
-  if (isQuoteDataError || quotePDF.error) {
+  if (isQuoteDataError) {
     return (
       <div className="flex items-center gap-5 px-4 py-2 w-full bg-red-500 rounded">
         <AlertCircle className="size-6 text-white" />
