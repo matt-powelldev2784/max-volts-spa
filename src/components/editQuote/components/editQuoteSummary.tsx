@@ -8,7 +8,6 @@ import { Loader2 } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/ui/form';
 import ErrorCard from '@/lib/errorCard';
 import { supabase } from '@/lib/supabase';
-import { useNavigate } from 'react-router';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import {
   QUOTE_STATUS_OPTIONS,
@@ -72,13 +71,13 @@ const getClient = async (clientId: number) => {
 type EditQuoteSummaryProps = {
   quoteProducts: QuoteProductInsert[];
   quoteData: Quote;
+  clientId: number;
   dispatch: Dispatch<EditQuoteAction>;
 };
 
-const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSummaryProps) => {
+const EditQuoteSummary = ({ quoteProducts, quoteData, clientId, dispatch }: EditQuoteSummaryProps) => {
   const { user, loading: userIsLoading } = useAuth();
   const userEmail = user?.email;
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const {
@@ -86,8 +85,8 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
     isLoading: isLoadingClient,
     isError: isClientError,
   } = useQuery({
-    queryKey: ['client', quoteData.client_id],
-    queryFn: () => getClient(quoteData.client_id),
+    queryKey: ['client', clientId],
+    queryFn: () => getClient(clientId),
   });
 
   const form = useForm<z.infer<typeof notesSchema>>({
@@ -102,7 +101,7 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
     mutationFn: updateQuote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quote'] });
-      navigate('/view-quotes');
+      window.location.assign('/view-quotes');
     },
   });
 
@@ -129,6 +128,7 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, dispatch }: EditQuoteSumma
         ...quoteData,
         user_id: user.id,
         user_email: userEmail,
+        client_id: clientId,
       },
       quoteProductsInsert: quoteProducts.map((product) => ({
         ...product,
