@@ -73,7 +73,7 @@ const ViewInvoices = () => {
   const searchTermRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['invoices', sortBy, sortOrder, page, searchTerm],
+    queryKey: ['invoice', sortBy, sortOrder, page, searchTerm],
     queryFn: () => getInvoices(sortBy, sortOrder, page, searchTerm),
   });
 
