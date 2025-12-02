@@ -16,8 +16,8 @@ import ErrorCard from '@/lib/errorCard';
 import { useRef, useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
-import DownloadQuoteMenuItem from '../pdfQuote/pdfQuote';
 import { useNavigate } from 'react-router';
+import DownloadInvoiceMenuItem from '../pdfInvoice/pdfInvoice';
 
 const invoiceStatusStyle = {
   new: 'bg-blue-500 text-white',
@@ -311,7 +311,7 @@ const DropDownMenu = ({ invoiceId, clientId }: DropDownMenuProps) => {
             <span className="text-xl mr-2">Edit Invoice</span>
           </DropdownMenuItem>
 
-          <DownloadQuoteMenuItem quoteId={invoiceId} />
+          <DownloadInvoiceMenuItem invoiceId={invoiceId} />
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

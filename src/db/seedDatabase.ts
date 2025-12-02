@@ -72,8 +72,8 @@ const dummyQuoteProduct = {
 };
 
 const dummyInvoice = {
-  total_value: 880,
-  total_vat: 80,
+  total_value: 240,
+  total_vat: 40,
   user_email: 'dummy@example.com',
   user_id: demoUserId,
   notes: '__Test Dummy invoice for testing',
