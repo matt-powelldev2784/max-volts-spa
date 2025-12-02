@@ -16,8 +16,8 @@
     "format:check": "prettier --check .",
     "update:types": "npx supabase gen types typescript --project-id djladasdtsrswxsvjtcw --schema public > src/types/database.types.ts",
     "tsc": "npx tsc -p tsconfig.app.json --noEmit",
-    "clear:db": "npx ts-node src/db/deleteTestRecords.ts",
-    "seed:db": "npx ts-node src/db/seedDatabase.ts",
+    "db:clean": "npx ts-node src/db/deleteTestRecords.ts",
+    "db:seed": "npx ts-node src/db/seedDatabase.ts",
     "e2e:test": "npm run seed:db && npx playwright test && npm run clear:db"
   },
   "dependencies": {

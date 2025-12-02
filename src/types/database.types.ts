@@ -59,6 +59,113 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice: {
+        Row: {
+          client_id: number
+          created_at: string | null
+          date: string | null
+          id: number
+          notes: string | null
+          status: Database["public"]["Enums"]["quote_status_enum"]
+          total_value: number
+          total_vat: number
+          user_email: string
+          user_id: string
+        }
+        Insert: {
+          client_id: number
+          created_at?: string | null
+          date?: string | null
+          id?: number
+          notes?: string | null
+          status: Database["public"]["Enums"]["quote_status_enum"]
+          total_value?: number
+          total_vat: number
+          user_email?: string
+          user_id: string
+        }
+        Update: {
+          client_id?: number
+          created_at?: string | null
+          date?: string | null
+          id?: number
+          notes?: string | null
+          status?: Database["public"]["Enums"]["quote_status_enum"]
+          total_value?: number
+          total_vat?: number
+          user_email?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_product: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: number
+          invoice_id: number
+          markup: number | null
+          name: string
+          product_id: number
+          quantity: number | null
+          total_value: number
+          total_vat: number
+          value: number
+          vat_rate: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          invoice_id: number
+          markup?: number | null
+          name: string
+          product_id: number
+          quantity?: number | null
+          total_value: number
+          total_vat: number
+          value: number
+          vat_rate?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          invoice_id?: number
+          markup?: number | null
+          name?: string
+          product_id?: number
+          quantity?: number | null
+          total_value?: number
+          total_vat?: number
+          value?: number
+          vat_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_product_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoice"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_product_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product: {
         Row: {
           created_at: string | null
