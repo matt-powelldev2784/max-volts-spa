@@ -1,4 +1,13 @@
-import { CirclePlus, FilePlus, FileText, LogOut, StretchHorizontal, UserPlus, UserRound } from 'lucide-react';
+import {
+  CirclePlus,
+  FilePlus,
+  FileSpreadsheet,
+  FileText,
+  LogOut,
+  StretchHorizontal,
+  UserPlus,
+  UserRound,
+} from 'lucide-react';
 
 export const menuItems = [
   {
@@ -6,6 +15,13 @@ export const menuItems = [
     items: [
       { name: 'View Quotes', href: '/view-quotes', icon: FileText },
       { name: 'Add Quote', href: '/add-quote', icon: FilePlus },
+    ],
+  },
+  {
+    name: 'Invoice',
+    items: [
+      { name: 'View Invoices', href: '/view-invoices', icon: FileSpreadsheet },
+      { name: 'Add Invoice', href: '/add-invoice', icon: FilePlus },
     ],
   },
   {
