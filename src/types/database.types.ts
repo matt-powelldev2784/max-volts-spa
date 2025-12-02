@@ -66,7 +66,7 @@ export type Database = {
           date: string | null
           id: number
           notes: string | null
-          status: Database["public"]["Enums"]["quote_status_enum"]
+          status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value: number
           total_vat: number
           user_email: string
@@ -78,7 +78,7 @@ export type Database = {
           date?: string | null
           id?: number
           notes?: string | null
-          status: Database["public"]["Enums"]["quote_status_enum"]
+          status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat: number
           user_email?: string
@@ -90,7 +90,7 @@ export type Database = {
           date?: string | null
           id?: number
           notes?: string | null
-          status?: Database["public"]["Enums"]["quote_status_enum"]
+          status?: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat?: number
           user_email?: string
@@ -314,6 +314,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      invoice_status_enum: "new" | "invoiced" | "query" | "paid"
       quote_status_enum: "new" | "quoted" | "accepted" | "rejected"
     }
     CompositeTypes: {
@@ -442,6 +443,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      invoice_status_enum: ["new", "invoiced", "query", "paid"],
       quote_status_enum: ["new", "quoted", "accepted", "rejected"],
     },
   },

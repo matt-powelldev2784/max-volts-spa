@@ -130,7 +130,7 @@ export const defaultRecords: TableDataMap = {
     {
       id: 2,
       client_id: 2,
-      status: 'quoted',
+      status: 'paid',
       total_value: 220,
       total_vat: 44,
       user_id: 'user2',
