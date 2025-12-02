@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-// add a client first, then add a quote for that client
+// add a client first, then change the quote to use that client
 // this is to allow the test to assert than the client for the quote can be changed
 
 test('should be able to edit a quote', async ({ page }, testInfo) => {
@@ -68,7 +68,7 @@ test('should be able to edit a quote', async ({ page }, testInfo) => {
   const newClientMatches = page.getByRole('cell', { name: newClientName });
   await expect(newClientMatches).toBeVisible();
 
-  // navigate to the products page
+  // navigate to the view quotes page
   if (testInfo.project.name === 'Mobile Safari' || testInfo.project.name === 'Mobile Chrome') {
     const mobileMenuButton = nav.getByLabel('Open Menu');
     await mobileMenuButton.click();
@@ -81,8 +81,15 @@ test('should be able to edit a quote', async ({ page }, testInfo) => {
     await addProductLink.click();
   }
 
-  // click the edit link for the first product in the list
-  const editLink = page.locator('tbody a:visible').first();
+  // click the edit link for the first quote in the list
+  await expect(page).toHaveURL(/\/view-quotes$/);
+  const firstDataRow = page.getByRole('row').nth(1);
+  await expect(firstDataRow).toBeVisible();
+  const firstQuoteActionButton = firstDataRow.getByRole('button', { name: 'Quote Actions' });
+  await firstQuoteActionButton.click();
+
+  // now interact with the menu
+  const editLink = page.getByRole('menuitem', { name: 'Edit Quote' });
   await expect(editLink).toBeVisible();
   await editLink.click();
 
@@ -95,8 +102,8 @@ test('should be able to edit a quote', async ({ page }, testInfo) => {
   await nextButton.click();
 
   // edit a quote product
-  const editProductActionButton = page.getByRole('button', { name: 'Product Actions' });
-  await editProductActionButton.click();
+  const editQuoteActionButton = page.getByTestId('edit-quote-product-action-button').first();
+  await editQuoteActionButton.click();
   const editProductButton = page.getByRole('menuitem', { name: 'Edit' });
   await editProductButton.click();
 

@@ -23,13 +23,13 @@ describe('quoteCalculator', () => {
       markup: 100,
       vat_rate: 20,
     });
-    
+
     // quantity * value * markup * vat
     // totalExclVat = 2 * 100 * 2 = 400
 
     // totalExclVat * vat
-    // VAT = 400 * 0.2 = 40
-    expect(result).toBeCloseTo(40);
+    // VAT = 400 * 0.2 = 80
+    expect(result).toBeCloseTo(80);
   });
 
   test('calculates quote total value from products', () => {
