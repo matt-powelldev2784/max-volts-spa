@@ -47,8 +47,6 @@ const EditQuote = () => {
     isEditProductModalOpen,
   } = state;
 
-  console.log('clientId', clientId);
-
   const {
     data: quoteData,
     isLoading: isLoadingQuote,

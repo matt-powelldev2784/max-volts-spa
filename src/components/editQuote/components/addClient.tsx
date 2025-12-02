@@ -48,8 +48,6 @@ const AddClient = ({ clientId, dispatch }: AddClientProps) => {
     form.reset({ client_id: clientId });
   }, [clientId, clients, form]);
 
-  console.log('clientId', clientId);
-
   const watchedClientId = form.watch('client_id');
   const isFormInvalid = !!form.formState.errors.client_id || watchedClientId === 0;
 
