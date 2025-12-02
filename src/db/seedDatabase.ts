@@ -71,6 +71,21 @@ const dummyQuoteProduct = {
   description: 'Dummy quote product',
 };
 
+const dummyInvoice = {
+  total_value: 240,
+  total_vat: 40,
+  user_email: 'dummy@example.com',
+  user_id: demoUserId,
+  notes: '__Test Dummy invoice for testing',
+};
+
+const dummyInvoiceProduct = {
+  quantity: 2,
+  total_value: 200,
+  total_vat: 40,
+  description: 'Dummy invoice product',
+};
+
 const seedDatabase = async () => {
   // add clients
   const { data: clientsData, error: clientsError } = await supabase
@@ -126,6 +141,51 @@ const seedDatabase = async () => {
 
   if (quoteProductError) {
     console.error('Error inserting quote_product:', quoteProductError.message);
+    return;
+  }
+
+  // add invoice
+  const invoiceToInsert = {
+    ...dummyInvoice,
+    status: 'new' as const,
+    client_id: clientsData[0].id,
+  };
+
+  const { data: invoiceData, error: invoiceError } = await supabase
+    .from('invoice')
+    .insert(invoiceToInsert)
+    .select()
+    .single();
+
+  if (invoiceError) {
+    console.error('Error inserting invoice:', invoiceError.message);
+    return;
+  }
+
+  if (!invoiceData || !invoiceData.id) {
+    console.error('Invoice data is undefined after insertion.');
+    return;
+  }
+
+  // add invoice product
+  const invoiceProductToInsert = {
+    ...dummyInvoiceProduct,
+    invoice_id: invoiceData.id,
+    product_id: productsData[0].id,
+    name: productsData[0].name,
+    value: productsData[0].value,
+    vat_rate: productsData[0].vat,
+    markup: productsData[0].markup,
+  };
+
+  const { error: invoiceProductError } = await supabase
+    .from('invoice_product')
+    .insert(invoiceProductToInsert)
+    .select()
+    .single();
+
+  if (invoiceProductError) {
+    console.error('Error inserting invoice_product:', invoiceProductError.message);
     return;
   }
 };

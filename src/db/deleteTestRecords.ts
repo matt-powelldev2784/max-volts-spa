@@ -9,6 +9,18 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
 const deleteTestRecords = async () => {
+  // invoice_product: name contains __Test
+  const { error: invoiceProductError } = await supabase.from('invoice_product').delete().like('name', '%__Test%');
+  if (invoiceProductError) {
+    console.error('Error deleting from invoice_product:', invoiceProductError.message);
+  }
+
+  // invoice: notes contains __Test
+  const { error: invoiceError } = await supabase.from('invoice').delete().like('notes', '%__Test%');
+  if (invoiceError) {
+    console.error('Error deleting from invoice:', invoiceError.message);
+  }
+
   // quote_product: name contains __Test
   const { error: quoteProductError } = await supabase.from('quote_product').delete().like('name', '%__Test%');
   if (quoteProductError) {
