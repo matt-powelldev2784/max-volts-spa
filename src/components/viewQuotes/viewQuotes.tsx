@@ -181,7 +181,7 @@ const ViewQuotes = () => {
 
         <TableBody>
           {quotes?.map((quote) => (
-            <TableRow key={quote.id} className="hover:bg-muted transition">
+            <TableRow key={quote.id} data-testid="quote-product-row" className="hover:bg-muted transition">
               <TableCell>
                 <DropDownMenu quoteId={quote.id} clientId={quote.client_id} />
               </TableCell>
@@ -239,7 +239,7 @@ const ViewQuotes = () => {
 
         <TableBody>
           {quotes?.map((quote) => (
-            <TableRow key={quote.id} className="hover:bg-muted transition">
+            <TableRow key={quote.id} data-testid="quote-product-row" className="hover:bg-muted transition">
               <TableCell className="w-16">
                 <DropDownMenu quoteId={quote.id} clientId={quote.client_id} />
               </TableCell>
@@ -292,7 +292,7 @@ const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="rounded-full" aria-label="Quote actions">
+        <button className="rounded-full" aria-label="Quote Actions" data-testid="edit-quote-action-button">
           <ArrowRight strokeWidth={3} className="bg-mv-orange rounded text-white p-1" />
         </button>
       </DropdownMenuTrigger>
@@ -300,6 +300,7 @@ const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
       <DropdownMenuContent side="right" align="center" className="p-1 min-w-[120px]">
         <div className="flex flex-col">
           <DropdownMenuItem
+            data-testid="edit-quote-button"
             className="flex items-center gap-5 px-4 py-2"
             onClick={() => (window.location.href = `/edit/quote?quoteId=${quoteId}&clientId=${clientId}`)}
           >

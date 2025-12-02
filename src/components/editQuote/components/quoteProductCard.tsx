@@ -14,7 +14,7 @@ export const QuoteProductCard = ({ product, onEditProduct, onRemoveProduct, disa
       <div className="flex flex-col items-center mr-2 md:mr-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild disabled={disabled}>
-            <button className="rounded-full" aria-label="Product actions">
+            <button className="rounded-full" aria-label="Product actions" data-testid="edit-quote-product-action-button">
               <EllipsisVertical className={`h-6 w-6 md:h-8 md:w-8  ${disabled ? 'text-gray-500' : 'text-mv-orange'}`} />
             </button>
           </DropdownMenuTrigger>
