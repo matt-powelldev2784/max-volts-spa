@@ -11,6 +11,8 @@ describe('quoteCalculator', () => {
       vat_rate: 20,
     });
 
+    // markup is a percentage, so 100% = 2x value
+    // vat is also a percentage, so 20% = 1.2x value
     // quantity * value * markup * vat
     // 2 * 100 * 2 * 1.2 = 480
     expect(result).toBeCloseTo(480);
@@ -23,6 +25,9 @@ describe('quoteCalculator', () => {
       markup: 100,
       vat_rate: 20,
     });
+
+    // markup is a percentage, so 100% = 2x value
+    // vat is also a percentage, so 20% = 1.2x value
 
     // quantity * value * markup * vat
     // totalExclVat = 2 * 100 * 2 = 400
