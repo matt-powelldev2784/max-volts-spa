@@ -17,6 +17,7 @@ import { useRef, useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
 import DownloadQuoteMenuItem from '../pdfQuote/pdfQuote';
+import { useNavigate } from 'react-router';
 
 const quoteStatusStyle: Record<string, string> = {
   new: 'bg-blue-500 text-white',
@@ -289,6 +290,8 @@ type DropDownMenuProps = {
 };
 
 const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
+  const navigate = useNavigate();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -302,7 +305,7 @@ const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
           <DropdownMenuItem
             data-testid="edit-quote-button"
             className="flex items-center gap-5 px-4 py-2"
-            onClick={() => (window.location.href = `/edit/quote?quoteId=${quoteId}&clientId=${clientId}`)}
+            onClick={() => navigate(`/edit/quote?quoteId=${quoteId}&clientId=${clientId}`)}
           >
             <Pencil className="size-6 text-mv-orange" />
             <span className="text-xl mr-2">Edit Quote</span>
