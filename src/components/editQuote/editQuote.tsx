@@ -47,6 +47,8 @@ const EditQuote = () => {
     isEditProductModalOpen,
   } = state;
 
+  console.log('clientId', clientId);
+
   const {
     data: quoteData,
     isLoading: isLoadingQuote,
@@ -64,8 +66,6 @@ const EditQuote = () => {
     queryKey: ['products'],
     queryFn: getProducts,
   });
-
-  const selectedClientId = clientId || quoteData?.quote.client_id || 0;
 
   // populate reducer state when quote data loads
   useEffect(() => {
@@ -85,12 +85,17 @@ const EditQuote = () => {
     <section className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && <AddClient clientId={selectedClientId} dispatch={dispatch} />}
+      {step === 'AddClient' && <AddClient clientId={clientId} dispatch={dispatch} />}
 
       {step === 'AddProducts' && <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />}
 
       {step === 'QuoteSummary' && (
-        <EditQuoteSummary quoteProducts={quoteProducts} quoteData={editQuoteData} dispatch={dispatch} />
+        <EditQuoteSummary
+          quoteProducts={quoteProducts}
+          quoteData={editQuoteData}
+          clientId={clientId}
+          dispatch={dispatch}
+        />
       )}
 
       <AddProductModal
