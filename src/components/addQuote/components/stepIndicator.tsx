@@ -4,13 +4,13 @@ const stepsConfig = [
   {
     index: 0,
     key: 'AddClient',
-    label: 'Add Client',
+    label: 'Confirm Client',
     icon: <UserPlus className="h-5 w-5" />,
   },
   {
     index: 1,
     key: 'AddProducts',
-    label: 'Add Products',
+    label: 'Edit Products',
     icon: <StretchHorizontal className="h-5 w-5" />,
   },
   {
