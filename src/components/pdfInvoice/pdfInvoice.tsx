@@ -240,7 +240,7 @@ export const PdfLayout = ({ invoiceData }: PdfLayoutProps) => {
 
               <View style={pdfStyles.logoSection}>
                 <Text>Invoice Number: {invoice.id}</Text>
-                {invoice.id ? <Text>Quote Number: {invoice.id}</Text> : null}
+                {invoice.quote_id ? <Text>Quote Number: {invoice.quote_id}</Text> : null}
                 <Text>Date: {format(createdAt, 'd MMMM yyyy')}</Text>
               </View>
             </View>
@@ -338,8 +338,9 @@ type QuoteRowProps = {
 };
 
 export const QuoteRow = ({ invoiceProduct, index }: QuoteRowProps) => {
-  const { quantity, name, description, vat_rate, total_value } = invoiceProduct;
-  const priceForEach = invoiceProduct.value;
+  console.log('invoiceProduct', invoiceProduct);
+  const { quantity, name, description, vat_rate, total_value, markup } = invoiceProduct;
+  const priceForEach = (invoiceProduct.value * markup) / 100 + invoiceProduct.value;
   const backgroundColor = index % 2 === 0 ? '#ffffff' : '#dedede';
 
   return (

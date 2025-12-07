@@ -28,7 +28,7 @@ import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '@
 
 const notesSchema = z.object({
   notes: z.string(),
-  status: z.enum(['new', 'quoted', 'accepted', 'rejected'], {
+  status: z.enum(['new', 'quoted', 'accepted', 'rejected', 'invoiced'], {
     error: 'Status is required',
   }),
 });

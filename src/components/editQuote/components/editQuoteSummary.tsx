@@ -27,7 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
-  status: z.enum(['new', 'quoted', 'accepted', 'rejected'], {
+  status: z.enum(['new', 'quoted', 'accepted', 'rejected', 'invoiced'], {
     error: 'Status is required',
   }),
 });

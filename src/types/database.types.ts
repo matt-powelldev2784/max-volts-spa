@@ -66,6 +66,7 @@ export type Database = {
           date: string | null
           id: number
           notes: string | null
+          quote_id: number
           status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value: number
           total_vat: number
@@ -78,6 +79,7 @@ export type Database = {
           date?: string | null
           id?: number
           notes?: string | null
+          quote_id: number
           status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat: number
@@ -90,6 +92,7 @@ export type Database = {
           date?: string | null
           id?: number
           notes?: string | null
+          quote_id?: number
           status?: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat?: number
@@ -104,6 +107,13 @@ export type Database = {
             referencedRelation: "client"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "invoice_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote"
+            referencedColumns: ["id"]
+          },
         ]
       }
       invoice_product: {
@@ -112,42 +122,42 @@ export type Database = {
           description: string | null
           id: number
           invoice_id: number
-          markup: number | null
+          markup: number
           name: string
           product_id: number
-          quantity: number | null
+          quantity: number
           total_value: number
           total_vat: number
           value: number
-          vat_rate: number | null
+          vat_rate: number
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: number
           invoice_id: number
-          markup?: number | null
+          markup: number
           name: string
           product_id: number
-          quantity?: number | null
+          quantity: number
           total_value: number
           total_vat: number
           value: number
-          vat_rate?: number | null
+          vat_rate: number
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: number
           invoice_id?: number
-          markup?: number | null
+          markup?: number
           name?: string
           product_id?: number
-          quantity?: number | null
+          quantity?: number
           total_value?: number
           total_vat?: number
           value?: number
-          vat_rate?: number | null
+          vat_rate?: number
         }
         Relationships: [
           {
@@ -205,6 +215,7 @@ export type Database = {
           created_at: string | null
           date: string | null
           id: number
+          invoice_id: number | null
           notes: string | null
           status: Database["public"]["Enums"]["quote_status_enum"]
           total_value: number
@@ -217,6 +228,7 @@ export type Database = {
           created_at?: string | null
           date?: string | null
           id?: number
+          invoice_id?: number | null
           notes?: string | null
           status: Database["public"]["Enums"]["quote_status_enum"]
           total_value?: number
@@ -229,6 +241,7 @@ export type Database = {
           created_at?: string | null
           date?: string | null
           id?: number
+          invoice_id?: number | null
           notes?: string | null
           status?: Database["public"]["Enums"]["quote_status_enum"]
           total_value?: number
@@ -244,6 +257,13 @@ export type Database = {
             referencedRelation: "client"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "quote_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoice"
+            referencedColumns: ["id"]
+          },
         ]
       }
       quote_product: {
@@ -251,43 +271,43 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: number
-          markup: number | null
+          markup: number
           name: string
           product_id: number
-          quantity: number | null
+          quantity: number
           quote_id: number
           total_value: number
           total_vat: number
           value: number
-          vat_rate: number | null
+          vat_rate: number
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: number
-          markup?: number | null
+          markup: number
           name: string
           product_id: number
-          quantity?: number | null
+          quantity: number
           quote_id: number
           total_value: number
           total_vat: number
           value: number
-          vat_rate?: number | null
+          vat_rate: number
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: number
-          markup?: number | null
+          markup?: number
           name?: string
           product_id?: number
-          quantity?: number | null
+          quantity?: number
           quote_id?: number
           total_value?: number
           total_vat?: number
           value?: number
-          vat_rate?: number | null
+          vat_rate?: number
         }
         Relationships: [
           {
@@ -315,7 +335,7 @@ export type Database = {
     }
     Enums: {
       invoice_status_enum: "new" | "invoiced" | "query" | "paid"
-      quote_status_enum: "new" | "quoted" | "accepted" | "rejected"
+      quote_status_enum: "new" | "quoted" | "accepted" | "rejected" | "invoiced"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -444,7 +464,7 @@ export const Constants = {
   public: {
     Enums: {
       invoice_status_enum: ["new", "invoiced", "query", "paid"],
-      quote_status_enum: ["new", "quoted", "accepted", "rejected"],
+      quote_status_enum: ["new", "quoted", "accepted", "rejected", "invoiced"],
     },
   },
 } as const

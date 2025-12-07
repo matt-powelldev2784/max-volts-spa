@@ -37,6 +37,7 @@ export const QUOTE_STATUS_OPTIONS: QuoteStatusOption[] = [
   { value: 'quoted', label: 'Quoted' },
   { value: 'accepted', label: 'Accepted' },
   { value: 'rejected', label: 'Rejected' },
+  { value: 'invoiced', label: 'Invoiced' },
 ];
 
 // Invoice status enum type and options

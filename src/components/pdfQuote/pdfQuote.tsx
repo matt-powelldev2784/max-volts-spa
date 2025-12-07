@@ -82,7 +82,7 @@ const DownloadQuoteMenuItem = ({ quoteId }: DownloadQuoteMenuItemProps) => {
   }
 
   return (
-    <button className="flex items-center gap-5 px-4 py-2 w-full" onClick={() => refetch()}>
+    <button className="flex items-center gap-5 px-4 py-2 hover:bg-gray-100 rounded w-full" onClick={() => refetch()}>
       <Download className="size-6 text-mv-orange" />
       <span className="text-xl mr-2">Generate PDF</span>
     </button>

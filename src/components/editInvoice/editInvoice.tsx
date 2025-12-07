@@ -51,8 +51,6 @@ const EditInvoice = () => {
     isEditProductModalOpen,
   } = state;
 
-  console.log('clientId', clientId);
-
   const {
     data: invoiceData,
     isLoading: isLoadingInvoice,
