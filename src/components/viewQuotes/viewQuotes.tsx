@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import {
   ArrowRight,
@@ -25,6 +25,7 @@ import {
 import DownloadQuoteMenuItem from '../pdfQuote/pdfQuote';
 import { useNavigate } from 'react-router';
 import CreateInvoice from './components/createInvoice';
+import { QUOTE_STATUS_OPTIONS, type QuoteInsertWithId, type QuoteStatus } from '@/types/dbTypes';
 
 const quoteStatusStyle: Record<string, string> = {
   new: 'bg-blue-500 text-white',
@@ -264,11 +265,7 @@ const ViewQuotes = () => {
               </TableCell>
 
               <TableCell>
-                <span
-                  className={`px-2 py-1 rounded text-xs font-bold ${quoteStatusStyle[quote.status] || 'bg-gray-200 text-gray-800'}`}
-                >
-                  {quote.status?.toUpperCase()}
-                </span>
+                <StatusDropDownMenu quote={quote} />
               </TableCell>
 
               <TableCell className="truncate">£{quote.total_value?.toFixed(2) ?? '0.00'}</TableCell>
@@ -327,6 +324,80 @@ const DropDownMenu = ({ quoteId, clientId, invoiceId }: DropDownMenuProps) => {
           <CreateInvoice quoteId={quoteId} invoiceId={invoiceId} clientId={clientId} />
         </div>
       </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+type UpdateQuoteStatusParams = {
+  quoteId: number;
+  status: QuoteStatus;
+};
+
+const updateQuoteStatus = async ({ quoteId, status }: UpdateQuoteStatusParams) => {
+  const { data, error } = await supabase.from('quote').update({ status: status }).eq('id', quoteId);
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+type StatusDropDownMenuProps = {
+  quote: QuoteInsertWithId;
+};
+
+const StatusDropDownMenu = ({ quote }: StatusDropDownMenuProps) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: updateQuoteStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+    },
+    onError: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      mutation.reset();
+    },
+  });
+
+  const onStatusChange = (status: QuoteStatus) => {
+    if (!quote.id) return;
+    mutation.mutate({ quoteId: quote.id, status });
+  };
+
+  // the invoice status can only be changed when a invoice is created
+  // therefore we filter out the 'invoiced' status from the dropdown options
+  const quoteStatusOptions = QUOTE_STATUS_OPTIONS.filter((option) => option.value !== 'invoiced');
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger disabled={mutation.isError} asChild>
+        <button
+          className="rounded-full w-full flex items-start ring-none"
+          aria-label="Quote Status Actions"
+          data-testid="edit-quote-status-action-button"
+        >
+          <span
+            className={`min-w-28 px-2 py-1.5 rounded text-xs font-bold ${quoteStatusStyle[quote.status] || 'bg-gray-200 text-gray-800'}`}
+          >
+            {quote.status?.toUpperCase()}
+          </span>
+        </button>
+      </DropdownMenuTrigger>
+
+      {quote.status !== 'invoiced' && (
+        <DropdownMenuContent side="bottom" align="start" className="p-1 min-w-[120px]">
+          {quoteStatusOptions.map((statusOption) => (
+            <DropdownMenuItem
+              key={statusOption.value}
+              data-testid={`set-quote-status-${statusOption.value}-button`}
+              className="flex items-center gap-5 px-4 py-2"
+              onClick={() => {
+                onStatusChange(statusOption.value);
+              }}
+            >
+              <span className="text-xl mr-2"> {statusOption.label}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      )}
     </DropdownMenu>
   );
 };

@@ -17,6 +17,7 @@ export type ClientInsert = Omit<ClientInsertAllFields, 'id' | 'created_at' | 'up
 
 type QuoteInsertAllFields = Database['public']['Tables']['quote']['Insert'];
 export type QuoteInsert = Omit<QuoteInsertAllFields, 'id' | 'created_at' | 'updated_at'>;
+export type QuoteInsertWithId = Omit<QuoteInsertAllFields, 'created_at' | 'updated_at'>;
 
 type QuoteProductInsertAllFields = Database['public']['Tables']['quote_product']['Insert'];
 export type QuoteProductInsert = Omit<QuoteProductInsertAllFields, 'quote_id' | 'created_at'>;
