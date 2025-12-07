@@ -31,6 +31,7 @@ const quoteStatusStyle: Record<string, string> = {
   quoted: 'bg-orange-500 text-white',
   accepted: 'bg-mv-green text-white',
   rejected: 'bg-destructive text-white',
+  invoiced: 'bg-green-700 text-white',
 };
 
 type SortField = 'id' | 'created_at';

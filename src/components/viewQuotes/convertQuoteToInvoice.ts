@@ -65,7 +65,10 @@ export const convertQuoteToInvoice = async (quoteId: number) => {
   }
 
   // add related invoice id to quote
-  const { error: updateQuoteError } = await supabase.from('quote').update({ invoice_id: invoiceId }).eq('id', quoteId);
+  const { error: updateQuoteError } = await supabase
+    .from('quote')
+    .update({ invoice_id: invoiceId, status: 'invoiced' })
+    .eq('id', quoteId);
   if (updateQuoteError) {
     // rollback invoice and invoice products creation if quote update fails
     await supabase.from('invoice_product').delete().eq('invoice_id', invoiceId);
