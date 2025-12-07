@@ -17,6 +17,9 @@ const CreateInvoice = ({ quoteId }: CreateInvoiceProps) => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       navigate(`/edit/invoice?invoiceId=${invoiceId}&clientId=${clientId}`);
     },
+    onError: (error: Error) => {
+      console.error('Error creating invoice:', error.message);
+    },
   });
 
   const onSubmit = (quoteId: number) => {
