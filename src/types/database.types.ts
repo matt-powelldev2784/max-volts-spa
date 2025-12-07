@@ -66,7 +66,7 @@ export type Database = {
           date: string | null
           id: number
           notes: string | null
-          quote_id: number | null
+          quote_id: number
           status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value: number
           total_vat: number
@@ -79,7 +79,7 @@ export type Database = {
           date?: string | null
           id?: number
           notes?: string | null
-          quote_id?: number | null
+          quote_id: number
           status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat: number
@@ -92,7 +92,7 @@ export type Database = {
           date?: string | null
           id?: number
           notes?: string | null
-          quote_id?: number | null
+          quote_id?: number
           status?: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat?: number
