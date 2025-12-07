@@ -57,7 +57,7 @@ const CreateInvoice = ({ quoteId, invoiceId, clientId }: CreateInvoiceProps) => 
   return (
     <button
       data-testid="create-invoice-button"
-      className="flex items-center gap-5 px-4 py-2 hover:bg-gray-100 w-full"
+      className="flex items-center gap-5 px-4 py-2 hover:bg-gray-100 rounded w-full"
       onClick={() => onSubmit(quoteId)}
     >
       <FilePlus className="size-6 text-mv-orange" />
