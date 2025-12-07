@@ -19,6 +19,7 @@ export const convertQuoteToInvoice = async (quoteId: number) => {
     notes: quote.notes,
     total_value: quote.total_value,
     total_vat: quote.total_vat,
+    quote_id: quoteId,
   };
 
   const { data: invoice, error: invoiceError } = await supabase

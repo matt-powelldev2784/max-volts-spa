@@ -306,6 +306,9 @@ const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
             data-testid="edit-quote-button"
             className="flex items-center gap-5 px-4 py-2"
             onClick={() => navigate(`/edit/quote?quoteId=${quoteId}&clientId=${clientId}`)}
+            // onClick={() => {
+            //   convertQuoteToInvoice(quoteId);
+            // }}
           >
             <Pencil className="size-6 text-mv-orange" />
             <span className="text-xl mr-2">Edit Quote</span>

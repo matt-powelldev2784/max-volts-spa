@@ -66,6 +66,7 @@ export type Database = {
           date: string | null
           id: number
           notes: string | null
+          quote_id: number | null
           status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value: number
           total_vat: number
@@ -78,6 +79,7 @@ export type Database = {
           date?: string | null
           id?: number
           notes?: string | null
+          quote_id?: number | null
           status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat: number
@@ -90,6 +92,7 @@ export type Database = {
           date?: string | null
           id?: number
           notes?: string | null
+          quote_id?: number | null
           status?: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat?: number
@@ -102,6 +105,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote"
             referencedColumns: ["id"]
           },
         ]
