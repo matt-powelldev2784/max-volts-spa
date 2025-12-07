@@ -149,6 +149,7 @@ const seedDatabase = async () => {
     ...dummyInvoice,
     status: 'new' as const,
     client_id: clientsData[0].id,
+    quote_id: quoteData.id,
   };
 
   const { data: invoiceData, error: invoiceError } = await supabase
