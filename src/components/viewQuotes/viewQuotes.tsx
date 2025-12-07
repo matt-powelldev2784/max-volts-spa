@@ -18,6 +18,7 @@ import LoadingSpinner from '@/ui/LoadingSpinner';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
 import DownloadQuoteMenuItem from '../pdfQuote/pdfQuote';
 import { useNavigate } from 'react-router';
+import CreateInvoice from './components/createInvoice';
 
 const quoteStatusStyle: Record<string, string> = {
   new: 'bg-blue-500 text-white',
@@ -306,13 +307,12 @@ const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
             data-testid="edit-quote-button"
             className="flex items-center gap-5 px-4 py-2"
             onClick={() => navigate(`/edit/quote?quoteId=${quoteId}&clientId=${clientId}`)}
-            // onClick={() => {
-            //   convertQuoteToInvoice(quoteId);
-            // }}
           >
             <Pencil className="size-6 text-mv-orange" />
             <span className="text-xl mr-2">Edit Quote</span>
           </DropdownMenuItem>
+
+          <CreateInvoice quoteId={quoteId} />
 
           <DownloadQuoteMenuItem quoteId={quoteId} />
         </div>

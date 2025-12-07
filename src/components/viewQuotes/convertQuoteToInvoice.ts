@@ -51,5 +51,5 @@ export const convertQuoteToInvoice = async (quoteId: number) => {
     throw new Error('Failed to add invoice products to database. Invoice creation rolled back.');
   }
 
-  return { invoiceId, invoiceProductCount: invoiceProductsPayload.length };
+  return { invoiceId, clientId: invoice.client_id, invoiceProductCount: invoiceProductsPayload.length };
 };
