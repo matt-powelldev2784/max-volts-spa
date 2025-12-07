@@ -122,42 +122,42 @@ export type Database = {
           description: string | null
           id: number
           invoice_id: number
-          markup: number | null
+          markup: number
           name: string
           product_id: number
-          quantity: number | null
+          quantity: number
           total_value: number
           total_vat: number
           value: number
-          vat_rate: number | null
+          vat_rate: number
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: number
           invoice_id: number
-          markup?: number | null
+          markup: number
           name: string
           product_id: number
-          quantity?: number | null
+          quantity: number
           total_value: number
           total_vat: number
           value: number
-          vat_rate?: number | null
+          vat_rate: number
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: number
           invoice_id?: number
-          markup?: number | null
+          markup?: number
           name?: string
           product_id?: number
-          quantity?: number | null
+          quantity?: number
           total_value?: number
           total_vat?: number
           value?: number
-          vat_rate?: number | null
+          vat_rate?: number
         }
         Relationships: [
           {
@@ -261,43 +261,43 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: number
-          markup: number | null
+          markup: number
           name: string
           product_id: number
-          quantity: number | null
+          quantity: number
           quote_id: number
           total_value: number
           total_vat: number
           value: number
-          vat_rate: number | null
+          vat_rate: number
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: number
-          markup?: number | null
+          markup: number
           name: string
           product_id: number
-          quantity?: number | null
+          quantity: number
           quote_id: number
           total_value: number
           total_vat: number
           value: number
-          vat_rate?: number | null
+          vat_rate: number
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: number
-          markup?: number | null
+          markup?: number
           name?: string
           product_id?: number
-          quantity?: number | null
+          quantity?: number
           quote_id?: number
           total_value?: number
           total_vat?: number
           value?: number
-          vat_rate?: number | null
+          vat_rate?: number
         }
         Relationships: [
           {
