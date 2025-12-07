@@ -1,13 +1,16 @@
-import { AlertCircle, FilePlus, Loader2 } from 'lucide-react';
+import { AlertCircle, FilePlus, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { convertQuoteToInvoice } from '../convertQuoteToInvoice';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
+import { DropdownMenuItem } from '@/ui/dropdown-menu';
 
 type CreateInvoiceProps = {
   quoteId: number;
+  invoiceId: number | null;
+  clientId: number;
 };
 
-const CreateInvoice = ({ quoteId }: CreateInvoiceProps) => {
+const CreateInvoice = ({ quoteId, invoiceId, clientId }: CreateInvoiceProps) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -17,14 +20,23 @@ const CreateInvoice = ({ quoteId }: CreateInvoiceProps) => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       navigate(`/edit/invoice?invoiceId=${invoiceId}&clientId=${clientId}`);
     },
-    onError: (error: Error) => {
-      console.error('Error creating invoice:', error.message);
-    },
   });
 
   const onSubmit = (quoteId: number) => {
     mutation.mutate(quoteId);
   };
+
+  if (invoiceId !== null)
+    return (
+      <DropdownMenuItem
+        data-testid="edit-quote-button"
+        className="flex items-center gap-5 px-4 py-2"
+        onClick={() => navigate(`/edit/invoice?invoiceId=${invoiceId}&clientId=${clientId}`)}
+      >
+        <FileSpreadsheet className="size-6 text-mv-orange" />
+        <span className="text-xl mr-2">Edit Invoice</span>
+      </DropdownMenuItem>
+    );
 
   if (mutation.isError)
     return (
@@ -45,7 +57,7 @@ const CreateInvoice = ({ quoteId }: CreateInvoiceProps) => {
   return (
     <button
       data-testid="create-invoice-button"
-      className="flex items-center gap-5 px-4 py-2"
+      className="flex items-center gap-5 px-4 py-2 hover:bg-gray-100 w-full"
       onClick={() => onSubmit(quoteId)}
     >
       <FilePlus className="size-6 text-mv-orange" />

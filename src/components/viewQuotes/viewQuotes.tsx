@@ -15,7 +15,13 @@ import { Button, LinkButton } from '@/ui/button';
 import ErrorCard from '@/lib/errorCard';
 import { useRef, useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/ui/dropdown-menu';
 import DownloadQuoteMenuItem from '../pdfQuote/pdfQuote';
 import { useNavigate } from 'react-router';
 import CreateInvoice from './components/createInvoice';
@@ -185,7 +191,7 @@ const ViewQuotes = () => {
           {quotes?.map((quote) => (
             <TableRow key={quote.id} data-testid="quote-product-row" className="hover:bg-muted transition">
               <TableCell>
-                <DropDownMenu quoteId={quote.id} clientId={quote.client_id} />
+                <DropDownMenu quoteId={quote.id} clientId={quote.client_id} invoiceId={quote.invoice_id} />
               </TableCell>
 
               <TableCell className="truncate">{quote.id}</TableCell>
@@ -243,7 +249,7 @@ const ViewQuotes = () => {
           {quotes?.map((quote) => (
             <TableRow key={quote.id} data-testid="quote-product-row" className="hover:bg-muted transition">
               <TableCell className="w-16">
-                <DropDownMenu quoteId={quote.id} clientId={quote.client_id} />
+                <DropDownMenu quoteId={quote.id} clientId={quote.client_id} invoiceId={quote.invoice_id} />
               </TableCell>
 
               <TableCell className="truncate">{quote.id}</TableCell>
@@ -288,9 +294,10 @@ const ViewQuotes = () => {
 type DropDownMenuProps = {
   quoteId: number;
   clientId: number;
+  invoiceId: number | null;
 };
 
-const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
+const DropDownMenu = ({ quoteId, clientId, invoiceId }: DropDownMenuProps) => {
   const navigate = useNavigate();
 
   return (
@@ -312,9 +319,11 @@ const DropDownMenu = ({ quoteId, clientId }: DropDownMenuProps) => {
             <span className="text-xl mr-2">Edit Quote</span>
           </DropdownMenuItem>
 
-          <CreateInvoice quoteId={quoteId} />
-
           <DownloadQuoteMenuItem quoteId={quoteId} />
+
+          <DropdownMenuSeparator />
+
+          <CreateInvoice quoteId={quoteId} invoiceId={invoiceId} clientId={clientId} />
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
