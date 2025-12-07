@@ -301,7 +301,7 @@ const DropDownMenu = ({ quoteId, clientId, invoiceId }: DropDownMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="rounded-full" aria-label="Quote Actions" data-testid="edit-quote-action-button">
+        <button aria-label="Quote Actions" data-testid="edit-quote-action-button">
           <ArrowRight strokeWidth={3} className="bg-mv-orange rounded text-white p-1" />
         </button>
       </DropdownMenuTrigger>
@@ -370,7 +370,7 @@ const StatusDropDownMenu = ({ quote }: StatusDropDownMenuProps) => {
     <DropdownMenu>
       <DropdownMenuTrigger disabled={mutation.isError} asChild>
         <button
-          className="rounded-full w-full flex items-start ring-none"
+          className="flex items-start w-28"
           aria-label="Quote Status Actions"
           data-testid="edit-quote-status-action-button"
         >
