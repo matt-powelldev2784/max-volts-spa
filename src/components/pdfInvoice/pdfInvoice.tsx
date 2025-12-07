@@ -219,7 +219,7 @@ export const PdfLayout = ({ invoiceData }: PdfLayoutProps) => {
 
         <View style={pdfStyles.logoSection}>
           <View style={pdfStyles.imageContainer}>
-            <Image src={`/max_volts_logo.jpg`} />
+            <Image src="/max_volts_logo.png" style={{ width: 200, height: 36 }} />
           </View>
 
           <View style={{ height: 8 }}></View>
