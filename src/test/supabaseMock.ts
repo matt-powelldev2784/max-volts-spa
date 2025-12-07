@@ -70,6 +70,7 @@ export const defaultRecords: TableDataMap = {
       created_at: null,
       date: null,
       notes: null,
+      invoice_id: null,
     },
     {
       id: 2,
@@ -82,6 +83,7 @@ export const defaultRecords: TableDataMap = {
       created_at: null,
       date: null,
       notes: null,
+      invoice_id: null,
     },
   ],
   quote_product: [

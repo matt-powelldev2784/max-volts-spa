@@ -64,5 +64,14 @@ export const convertQuoteToInvoice = async (quoteId: number) => {
     throw new Error('Failed to add invoice products to database. Invoice creation rolled back.');
   }
 
+  // add related invoice id to quote
+  const { error: updateQuoteError } = await supabase.from('quote').update({ invoice_id: invoiceId }).eq('id', quoteId);
+  if (updateQuoteError) {
+    // rollback invoice and invoice products creation if quote update fails
+    await supabase.from('invoice_product').delete().eq('invoice_id', invoiceId);
+    await supabase.from('invoice').delete().eq('id', invoiceId);
+    throw new Error('Failed to link invoice to quote. Invoice creation rolled back.');
+  }
+
   return { invoiceId, clientId: invoice.client_id, invoiceProductCount: invoiceProductsPayload.length };
 };
