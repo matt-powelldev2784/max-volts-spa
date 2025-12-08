@@ -342,7 +342,6 @@ type QuoteRowProps = {
 };
 
 export const QuoteRow = ({ invoiceProduct, index }: QuoteRowProps) => {
-  console.log('invoiceProduct', invoiceProduct);
   const { quantity, name, description, vat_rate, total_value, markup } = invoiceProduct;
   const priceForEach = (invoiceProduct.value * markup) / 100 + invoiceProduct.value;
   const backgroundColor = index % 2 === 0 ? '#ffffff' : '#dedede';
