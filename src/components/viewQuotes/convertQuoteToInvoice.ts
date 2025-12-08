@@ -24,7 +24,7 @@ export const convertQuoteToInvoice = async (quoteId: number) => {
     client_id: quote.client_id,
     user_id: quote.user_id,
     user_email: quote.user_email,
-    status: 'new',
+    status: 'invoiced',
     notes: quote.notes,
     total_value: quote.total_value,
     total_vat: quote.total_vat,

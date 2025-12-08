@@ -19,10 +19,7 @@ export const menuItems = [
   },
   {
     name: 'Invoice',
-    items: [
-      { name: 'View Invoices', href: '/view-invoices', icon: FileSpreadsheet },
-      { name: 'Add Invoice', href: '/add-invoice', icon: FilePlus },
-    ],
+    items: [{ name: 'View Invoices', href: '/view-invoices', icon: FileSpreadsheet }],
   },
   {
     name: 'Client',

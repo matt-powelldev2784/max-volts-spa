@@ -78,7 +78,11 @@ const DownloadInvoiceMenuItem = ({ invoiceId }: DownloadInvoiceMenuItemProps) =>
   if (invoicePdf.blob) {
     const blobUrl = URL.createObjectURL(invoicePdf.blob);
     return (
-      <a href={blobUrl} download={`quote_${invoiceId}.pdf`} className="flex items-center gap-5 px-4 py-2 w-full">
+      <a
+        href={blobUrl}
+        download={`quote_${invoiceId}.pdf`}
+        className="flex items-center gap-5 px-4 py-2 hover:bg-gray-100 rounded w-full"
+      >
         <Download className="size-6 text-green-500" />
         <span className="text-xl text-green-500 mr-2">Download PDF</span>
       </a>
@@ -86,7 +90,7 @@ const DownloadInvoiceMenuItem = ({ invoiceId }: DownloadInvoiceMenuItemProps) =>
   }
 
   return (
-    <button className="flex items-center gap-5 px-4 py-2 w-full" onClick={() => refetch()}>
+    <button className="flex items-center gap-5 px-4 py-2 hover:bg-gray-100 rounded w-full" onClick={() => refetch()}>
       <Download className="size-6 text-mv-orange" />
       <span className="text-xl mr-2">Generate PDF</span>
     </button>
