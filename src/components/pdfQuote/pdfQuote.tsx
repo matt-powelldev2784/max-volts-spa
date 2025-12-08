@@ -74,7 +74,11 @@ const DownloadQuoteMenuItem = ({ quoteId }: DownloadQuoteMenuItemProps) => {
   if (quotePDF.blob) {
     const blobUrl = URL.createObjectURL(quotePDF.blob);
     return (
-      <a href={blobUrl} download={`quote_${quoteId}.pdf`} className="flex items-center gap-5 px-4 py-2 w-full">
+      <a
+        href={blobUrl}
+        download={`quote_${quoteId}.pdf`}
+        className="flex items-center gap-5 px-4 py-2 w-full hover:bg-gray-100 rounded"
+      >
         <Download className="size-6 text-green-500" />
         <span className="text-xl text-green-500 mr-2">Download PDF</span>
       </a>
