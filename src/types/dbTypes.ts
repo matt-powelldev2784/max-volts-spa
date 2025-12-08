@@ -25,6 +25,7 @@ export type QuoteProductWithQuoteId = Omit<QuoteProductInsertAllFields, 'created
 
 type InvoiceInsertAllFields = Database['public']['Tables']['invoice']['Insert'];
 export type InvoiceInsert = Omit<InvoiceInsertAllFields, 'id' | 'created_at' | 'updated_at'>;
+export type InvoiceInsertWithId = Omit<InvoiceInsertAllFields, 'created_at' | 'updated_at'>;
 
 type InvoiceProductInsertAllFields = Database['public']['Tables']['invoice_product']['Insert'];
 export type InvoiceProductInsert = Omit<InvoiceProductInsertAllFields, 'invoice_id' | 'created_at'>;

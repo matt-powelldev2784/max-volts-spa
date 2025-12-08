@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import {
   ArrowRight,
@@ -18,6 +18,7 @@ import LoadingSpinner from '@/ui/LoadingSpinner';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
 import { useNavigate } from 'react-router';
 import DownloadInvoiceMenuItem from '../pdfInvoice/pdfInvoice';
+import { INVOICE_STATUS_OPTIONS, type InvoiceInsertWithId, type InvoiceStatus } from '@/types/dbTypes';
 
 const invoiceStatusStyle = {
   new: 'bg-blue-500 text-white',
@@ -256,11 +257,7 @@ const ViewInvoices = () => {
               </TableCell>
 
               <TableCell>
-                <span
-                  className={`px-2 py-1 rounded text-xs font-bold ${invoiceStatusStyle[invoice.status] || 'bg-gray-200 text-gray-800'}`}
-                >
-                  {invoice.status?.toUpperCase()}
-                </span>
+                <StatusDropDownMenu invoice={invoice} />
               </TableCell>
 
               <TableCell className="truncate">£{invoice.total_value?.toFixed(2) ?? '0.00'}</TableCell>
@@ -295,7 +292,7 @@ const DropDownMenu = ({ invoiceId, clientId }: DropDownMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="rounded-full" aria-label="Invoice Actions" data-testid="edit-invoice-action-button">
+        <button aria-label="Invoice Actions" data-testid="edit-invoice-action-button">
           <ArrowRight strokeWidth={3} className="bg-mv-orange rounded text-white p-1" />
         </button>
       </DropdownMenuTrigger>
@@ -313,6 +310,76 @@ const DropDownMenu = ({ invoiceId, clientId }: DropDownMenuProps) => {
 
           <DownloadInvoiceMenuItem invoiceId={invoiceId} />
         </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+type UpdateInvoiceStatusParams = {
+  invoiceId: number;
+  status: InvoiceStatus;
+};
+
+const updateInvoiceStatus = async ({ invoiceId, status }: UpdateInvoiceStatusParams) => {
+  const { data, error } = await supabase.from('invoice').update({ status: status }).eq('id', invoiceId);
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+type StatusDropDownMenuProps = {
+  invoice: InvoiceInsertWithId;
+};
+
+const StatusDropDownMenu = ({ invoice }: StatusDropDownMenuProps) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: updateInvoiceStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invoice'] });
+    },
+    onError: () => {
+      queryClient.invalidateQueries({ queryKey: ['invoice'] });
+      mutation.reset();
+    },
+  });
+
+  const onStatusChange = (status: InvoiceStatus) => {
+    if (!invoice.id) return;
+    mutation.mutate({ invoiceId: invoice.id, status });
+  };
+
+  const invoiceStatusOptions = INVOICE_STATUS_OPTIONS;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger disabled={mutation.isError} asChild>
+        <button
+          className="flex items-start w-28"
+          aria-label="Invoice Status Actions"
+          data-testid="edit-invoice-status-action-button"
+        >
+          <span
+            className={`min-w-28 px-2 py-1.5 rounded text-xs font-bold ${invoiceStatusStyle[invoice.status] || 'bg-gray-200 text-gray-800'}`}
+          >
+            {invoice.status?.toUpperCase()}
+          </span>
+        </button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent side="bottom" align="start" className="p-1 min-w-[120px]">
+        {invoiceStatusOptions.map((statusOption) => (
+          <DropdownMenuItem
+            key={statusOption.value}
+            data-testid={`set-invoice-status-${statusOption.value}-button`}
+            className="flex items-center gap-5 px-4 py-2"
+            onClick={() => {
+              onStatusChange(statusOption.value);
+            }}
+          >
+            <span className="text-xl mr-2"> {statusOption.label}</span>
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
