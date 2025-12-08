@@ -46,13 +46,15 @@ const updateInvoice = async ({ invoiceInsert, invoiceProductsInsert }: UpdateInv
   const { error: deleteError } = await supabase.from('invoice_product').delete().eq('invoice_id', invoiceInsert.id);
   if (deleteError) throw new Error(`Error deleting existing invoice products: ${deleteError.message}`);
 
-  const invoiceProductsPayload = invoiceProductsInsert.map((product) => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const invoiceProductsPayload = invoiceProductsInsert.map(({ id, ...product }) => ({
     ...product,
     invoice_id: invoiceInsert.id,
   }));
 
   // insert updated invoice products
   const { error: addError } = await supabase.from('invoice_product').insert(invoiceProductsPayload);
+  console.log('addError', addError);
   if (addError) throw new Error(`Error updating invoice products: ${addError.message}`);
 };
 
