@@ -1,5 +1,7 @@
+// may be added in the future
+
 const AddInvoice = () => {
-  return <div>AddInvoice</div>;
+  return <div></div>;
 };
 
 export default AddInvoice;
