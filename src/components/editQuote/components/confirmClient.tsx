@@ -21,12 +21,12 @@ const formSchema = z.object({
   client_id: z.number('Client is required').refine((val) => val > 0, { message: 'Client is required' }),
 });
 
-type AddClientProps = {
+type ConfirmClientProps = {
   clientId: number;
   dispatch: Dispatch<EditQuoteAction>;
 };
 
-const AddClient = ({ clientId, dispatch }: AddClientProps) => {
+const ConfirmClient = ({ clientId, dispatch }: ConfirmClientProps) => {
   const {
     data: clients,
     isLoading: clientsLoading,
@@ -131,4 +131,4 @@ const AddClient = ({ clientId, dispatch }: AddClientProps) => {
   );
 };
 
-export default AddClient;
+export default ConfirmClient;

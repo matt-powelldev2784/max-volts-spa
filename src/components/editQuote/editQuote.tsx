@@ -4,13 +4,13 @@ import ErrorCard from '@/lib/errorCard';
 import { useReducer, useEffect } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
 import StepIndicator from '../addQuote/components/stepIndicator';
-import AddClient from './components/addClient';
 import EditQuoteSummary from './components/editQuoteSummary';
 import { editQuoteInitialState, editQuoteReducer } from './reducer/editQuoteReducer';
 import { useLocation } from 'react-router';
 import AddProducts from './components/addProducts';
 import AddProductModal from './components/addProductModal';
 import EditProductModal from './components/editProductModal';
+import ConfirmClient from './components/confirmClient';
 
 const getQuoteWithProducts = async (quoteId: number) => {
   const { data: quote, error: quoteError } = await supabase.from('quote').select('*').eq('id', quoteId).single();
@@ -83,7 +83,7 @@ const EditQuote = () => {
     <section className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && clientId && <AddClient clientId={clientId} dispatch={dispatch} />}
+      {step === 'AddClient' && clientId && <ConfirmClient clientId={clientId} dispatch={dispatch} />}
 
       {step === 'AddProducts' && <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />}
 
