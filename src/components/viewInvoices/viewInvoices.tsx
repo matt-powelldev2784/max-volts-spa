@@ -11,7 +11,7 @@ import {
   Pencil,
 } from 'lucide-react';
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/ui/table';
-import { Button, LinkButton } from '@/ui/button';
+import { Button } from '@/ui/button';
 import ErrorCard from '@/lib/errorCard';
 import { useRef, useState } from 'react';
 import LoadingSpinner from '@/ui/LoadingSpinner';
@@ -138,7 +138,7 @@ const ViewInvoices = () => {
             </Button>
           </form>
 
-          <div className="flex flex-row-reverse md:flex-row justify-between gap-8 w-full">
+          <div className="flex justify-end gap-8 w-full">
             <div className="flex gap-4">
               <Button
                 variant={page > 0 ? 'iconGhost' : 'iconPrimary'}
@@ -162,10 +162,6 @@ const ViewInvoices = () => {
                 <ChevronRight className="h-6 w-6" />
               </Button>
             </div>
-
-            <LinkButton to="/add-invoice" variant="default" size="sm" className="text-sm h-[34px]">
-              Add Invoice
-            </LinkButton>
           </div>
         </div>
       </div>
