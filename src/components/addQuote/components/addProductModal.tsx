@@ -47,13 +47,8 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
     },
   });
 
-  const [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, watchedTotalValue] = form.watch([
-    'product_id',
-    'quantity',
-    'markup',
-    'vat_rate',
-    'total_value',
-  ]);
+  const [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, watchedTotalValue] =
+    form.watch(['product_id', 'quantity', 'value', 'markup', 'vat_rate', 'total_value']);
 
   // Set default form values when a product is selected
   useEffect(() => {
@@ -71,21 +66,21 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
   useEffect(() => {
     const total_value = getTotalProductValue({
       quantity: watchedQuantity,
-      value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
+      value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
     const total_vat = getTotalProductVat({
       quantity: watchedQuantity,
-      value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
+      value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
     form.setValue('total_value', total_value);
     form.setValue('total_vat', total_vat);
-  }, [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, form, products]);
+  }, [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, form, products]);
 
   const handleClose = () => {
     form.reset();
@@ -93,11 +88,8 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
-    const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
-
     const quoteProductInsert = {
       ...values,
-      value: value,
     };
 
     dispatch({
@@ -187,8 +179,8 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
                         {...field}
                         type="number"
                         id="cost-input"
-                        disabled
-                        className="bg-gray-100 text-black pl-6"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="text-black pl-6"
                       />
                     </div>
                   </FormControl>

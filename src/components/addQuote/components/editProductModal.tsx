@@ -69,8 +69,8 @@ const EditProductModal = ({
     }
   }, [selectedQuoteProductIndex, form, quoteProducts]);
 
-  const [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, watchedValue, watchedTotalValue] =
-    form.watch(['product_id', 'quantity', 'markup', 'vat_rate', 'value', 'total_value']);
+  const [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, watchedTotalValue] =
+    form.watch(['product_id', 'quantity', 'value', 'markup', 'vat_rate', 'total_value']);
 
   // Recalculate total value and total VAT when the related product values change
   useEffect(() => {
@@ -83,7 +83,7 @@ const EditProductModal = ({
 
     const total_vat = getTotalProductVat({
       quantity: watchedQuantity,
-      value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
+      value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
@@ -98,12 +98,8 @@ const EditProductModal = ({
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
-    const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
-
     const updatedQuoteProduct = {
       ...values,
-      value: value,
-
     };
 
     const updatedQuoteProducts = quoteProducts.map((quoteProduct, index) =>
@@ -177,13 +173,19 @@ const EditProductModal = ({
               name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor='cost-input'>Cost</FormLabel>
+                  <FormLabel htmlFor="cost-input">Cost</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-[12.75px] text-gray-700 pointer-events-none">
                         £
                       </span>
-                      <Input {...field} type="number" id="cost-input" disabled className="bg-gray-100 text-black pl-6" />
+                      <Input
+                        {...field}
+                        type="number"
+                        id="cost-input"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="text-black pl-6"
+                      />
                     </div>
                   </FormControl>
                   <FormMessage />
