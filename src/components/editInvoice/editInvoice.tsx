@@ -82,12 +82,13 @@ const EditInvoice = () => {
   if (isLoadingInvoice || isLoadingProducts) return <LoadingSpinner />;
   if (isInvoiceError || !invoiceData) return <ErrorCard message={'Failed to load quote.'} />;
   if (isProductsError || !productsData) return <ErrorCard message={'Failed to load products.'} />;
+  if (!clientId) return <ErrorCard message={'Failed to load client details'} />;
 
   return (
     <section className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
-      {step === 'ConfirmClient' && <ConfirmClient clientId={clientId} dispatch={dispatch} />}
+      {step === 'ConfirmClient' && clientId && <ConfirmClient clientId={clientId} dispatch={dispatch} />}
 
       {step === 'EditProducts' && <EditProducts invoiceProducts={invoiceProducts} dispatch={dispatch} />}
 
