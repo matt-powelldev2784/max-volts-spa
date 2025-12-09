@@ -11,6 +11,7 @@ import type { Product, QuoteProductInsert } from '@/types/dbTypes';
 import { StretchHorizontal } from 'lucide-react';
 import type { AddQuoteAction } from '../reducer/addQuoteReducer';
 import { getTotalProductValue, getTotalProductVat } from '@/lib/quoteCalculator';
+import { cn } from '@/lib/utils';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -124,7 +125,10 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
                       }}
                     >
                       <SelectTrigger
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
+                        className={cn(
+                          'w-full rounded-md border border-gray-300 px-3 py-2 bg-white',
+                          `${!watchedProductId ? 'border-mv-orange' : ''}`
+                        )}
                         aria-invalid={form.formState.errors.product_id ? true : false}
                         id="product"
                       >
@@ -157,6 +161,7 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
                       type="number"
                       min={1}
                       onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={!watchedProductId}
                     />
                   </FormControl>
                   <FormMessage />
@@ -180,6 +185,7 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
                         type="number"
                         id="cost-input"
                         onChange={(e) => field.onChange(Number(e.target.value))}
+                        disabled={!watchedProductId}
                         className="text-black pl-6"
                       />
                     </div>
@@ -197,11 +203,12 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
                   <FormLabel htmlFor="description">Description</FormLabel>
                   <FormControl>
                     <textarea
-                      className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
+                      {...field}
                       id="description"
                       placeholder="Description"
                       rows={3}
-                      {...field}
+                      disabled={!watchedProductId}
+                      className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -221,6 +228,7 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
                       type="number"
                       id="markup"
                       min={0}
+                      disabled={!watchedProductId}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   </FormControl>
@@ -241,6 +249,7 @@ const AddProductModal = ({ isModalOpen, products, quoteProducts, dispatch }: Add
                       id="vat"
                       type="number"
                       min={0}
+                      disabled={!watchedProductId}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   </FormControl>

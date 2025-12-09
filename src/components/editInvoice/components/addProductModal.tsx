@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { EditInvoiceAction } from '../reducer/editInvoiceReducer';
 import type { InvoiceProductForEditInvoice, Product } from '@/types/dbTypes';
 import { getTotalProductValue, getTotalProductVat } from '@/lib/quoteCalculator';
+import { cn } from '@/lib/utils';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -119,10 +120,15 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                   <FormControl>
                     <Select
                       value={field.value ? String(field.value) : ''}
-                      onValueChange={(val) => field.onChange(Number(val))}
+                      onValueChange={(val) => {
+                        field.onChange(Number(val));
+                      }}
                     >
                       <SelectTrigger
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
+                        className={cn(
+                          'w-full rounded-md border border-gray-300 px-3 py-2 bg-white',
+                          `${!watchedProductId ? 'border-mv-orange' : ''}`
+                        )}
                         aria-invalid={Boolean(form.formState.errors.product_id)}
                       >
                         <SelectValue placeholder="Select a product" />
@@ -149,7 +155,13 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                 <FormItem>
                   <FormLabel>Quantity</FormLabel>
                   <FormControl>
-                    <Input type="number" min={1} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={1}
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={!watchedProductId}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -171,6 +183,7 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                         {...field}
                         type="number"
                         onChange={(e) => field.onChange(Number(e.target.value))}
+                        disabled={!watchedProductId}
                         className="text-black pl-6"
                       />
                     </div>
@@ -188,10 +201,11 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <textarea
-                      className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
+                      {...field}
                       placeholder="Description"
                       rows={3}
-                      {...field}
+                      disabled={!watchedProductId}
+                      className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -206,7 +220,13 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                 <FormItem>
                   <FormLabel>Markup (%)</FormLabel>
                   <FormControl>
-                    <Input type="number" min={0} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={!watchedProductId}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -220,7 +240,13 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                 <FormItem>
                   <FormLabel>VAT Rate (%)</FormLabel>
                   <FormControl>
-                    <Input type="number" min={0} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={!watchedProductId}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
