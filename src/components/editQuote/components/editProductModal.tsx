@@ -83,7 +83,7 @@ const EditProductModal = ({
 
     const total_vat = getTotalProductVat({
       quantity: watchedQuantity,
-      value: products.find((product) => product.id === Number(watchedProductId))?.value || 0,
+      value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
@@ -98,11 +98,8 @@ const EditProductModal = ({
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
-    const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
-
     const updatedQuoteProduct = {
       ...values,
-      value: value,
     };
 
     const updatedQuoteProducts = quoteProducts.map((quoteProduct, index) =>
@@ -182,7 +179,12 @@ const EditProductModal = ({
                       <span className="absolute left-3 top-1/2 -translate-y-[12.75px] text-gray-700 pointer-events-none">
                         £
                       </span>
-                      <Input {...field} type="number" disabled className="bg-gray-100 text-black pl-6" />
+                      <Input
+                        {...field}
+                        type="number"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="text-black pl-6"
+                      />
                     </div>
                   </FormControl>
                   <FormMessage />
