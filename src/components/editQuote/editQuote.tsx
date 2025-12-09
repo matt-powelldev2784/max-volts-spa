@@ -83,7 +83,7 @@ const EditQuote = () => {
     <section className="md:bg-gray-50">
       <StepIndicator activeStep={step} />
 
-      {step === 'AddClient' && <AddClient clientId={clientId} dispatch={dispatch} />}
+      {step === 'AddClient' && clientId && <AddClient clientId={clientId} dispatch={dispatch} />}
 
       {step === 'AddProducts' && <AddProducts quoteProducts={quoteProducts} dispatch={dispatch} />}
 
