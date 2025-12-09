@@ -1,10 +1,10 @@
 import type { Steps } from '../components/stepIndicator';
 import { getQuoteTotalValue, getQuoteTotalVat } from '@/lib/quoteCalculator';
-import type { Invoice, InvoiceProductInsert } from '@/types/dbTypes';
+import type { Invoice, InvoiceProductForEditInvoice } from '@/types/dbTypes';
 
 type EditInvoiceState = {
   clientId: number;
-  invoiceProducts: InvoiceProductInsert[];
+  invoiceProducts: InvoiceProductForEditInvoice[];
   selectedInvoiceProductIndex: number | null;
   editInvoiceData: Invoice;
   step: Steps;
@@ -29,7 +29,7 @@ type SetClientIdAction = {
 
 type SetInvoiceProductsAction = {
   type: 'SET_INVOICE_PRODUCTS';
-  invoiceProducts: InvoiceProductInsert[];
+  invoiceProducts: InvoiceProductForEditInvoice[];
 };
 
 type OpenEditProductModalAction = {

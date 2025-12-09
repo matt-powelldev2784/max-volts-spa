@@ -2,12 +2,12 @@ import { type Dispatch } from 'react';
 import { Button } from '@/ui/button';
 import { EllipsisVertical } from 'lucide-react';
 import { Card, CardContent } from '@/ui/card';
-import type { InvoiceProductInsert } from '@/types/dbTypes';
+import type { InvoiceProductForEditInvoice } from '@/types/dbTypes';
 import type { EditInvoiceAction } from '../reducer/editInvoiceReducer';
 import { InvoiceProductCard } from './invoiceProductCard';
 
 type EditProductsProps = {
-  invoiceProducts: InvoiceProductInsert[];
+  invoiceProducts: InvoiceProductForEditInvoice[];
   dispatch: Dispatch<EditInvoiceAction>;
 };
 

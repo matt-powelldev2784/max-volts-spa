@@ -1,9 +1,9 @@
-import type { QuoteProductInsert } from '@/types/dbTypes';
+import type { InvoiceProductForEditInvoice } from '@/types/dbTypes';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/ui/dropdown-menu';
 import { EllipsisVertical, Pencil, Trash } from 'lucide-react';
 
 type InvoiceProductCardProps = {
-  product: QuoteProductInsert;
+  product: InvoiceProductForEditInvoice;
   onEditProduct: () => void;
   onRemoveProduct: () => void;
   disabled?: boolean;

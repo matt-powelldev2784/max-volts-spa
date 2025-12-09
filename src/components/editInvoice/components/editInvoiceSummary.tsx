@@ -19,6 +19,7 @@ import {
   INVOICE_STATUS_OPTIONS,
   type Client,
   type Invoice,
+  type InvoiceProductForEditInvoice,
   type InvoiceProductInsert,
   type InvoiceStatus,
 } from '@/types/dbTypes';
@@ -34,7 +35,7 @@ const notesSchema = z.object({
 
 type UpdateInvoiceProps = {
   invoiceInsert: Invoice;
-  invoiceProductsInsert: InvoiceProductInsert[];
+  invoiceProductsInsert: InvoiceProductForEditInvoice[];
 };
 
 const updateInvoice = async ({ invoiceInsert, invoiceProductsInsert }: UpdateInvoiceProps) => {

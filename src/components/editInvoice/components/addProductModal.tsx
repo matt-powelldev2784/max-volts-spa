@@ -3,14 +3,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { StretchHorizontal } from 'lucide-react';
-
 import { Button } from '@/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/ui/form';
 import { Input } from '@/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { EditInvoiceAction } from '../reducer/editInvoiceReducer';
-import type { InvoiceProductInsert, Product } from '@/types/dbTypes';
+import type { InvoiceProductForEditInvoice, Product } from '@/types/dbTypes';
 import { getTotalProductValue, getTotalProductVat } from '@/lib/quoteCalculator';
 
 const addProductSchema = z.object({
@@ -28,7 +27,7 @@ const addProductSchema = z.object({
 type AddProductModalProps = {
   isModalOpen: boolean;
   products: Product[];
-  invoiceProducts: InvoiceProductInsert[];
+  invoiceProducts: InvoiceProductForEditInvoice[];
   dispatch: Dispatch<EditInvoiceAction>;
 };
 
@@ -99,7 +98,7 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
     const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
 
-    const invoiceProductInsert: InvoiceProductInsert = {
+    const invoiceProductInsert: InvoiceProductForEditInvoice = {
       ...values,
       value: value,
     };
