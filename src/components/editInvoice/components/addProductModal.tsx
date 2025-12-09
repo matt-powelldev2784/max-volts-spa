@@ -49,13 +49,8 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
     },
   });
 
-  const [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, watchedTotalValue] = form.watch([
-    'product_id',
-    'quantity',
-    'markup',
-    'vat_rate',
-    'total_value',
-  ]);
+  const [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, watchedTotalValue] =
+    form.watch(['product_id', 'value', 'quantity', 'markup', 'vat_rate', 'total_value']);
 
   useEffect(() => {
     const selectedProduct = products.find((product) => product.id === Number(watchedProductId));
@@ -69,26 +64,23 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
   }, [watchedProductId, products, form]);
 
   useEffect(() => {
-    const selectedProduct = products.find((product) => product.id === Number(watchedProductId));
-    const value = selectedProduct?.value ?? 0;
-
     const totalValue = getTotalProductValue({
       quantity: watchedQuantity,
-      value,
+      value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
     const totalVat = getTotalProductVat({
       quantity: watchedQuantity,
-      value,
+      value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
     form.setValue('total_value', totalValue);
     form.setValue('total_vat', totalVat);
-  }, [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, form, products]);
+  }, [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, form, products]);
 
   const handleClose = () => {
     form.reset();
@@ -96,11 +88,8 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
-    const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
-
     const invoiceProductInsert: InvoiceProductForEditInvoice = {
       ...values,
-      value: value,
     };
 
     dispatch({
@@ -178,7 +167,12 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                       <span className="absolute left-3 top-1/2 -translate-y-[12.75px] text-gray-700 pointer-events-none">
                         £
                       </span>
-                      <Input type="number" disabled className="bg-gray-100 text-black pl-6" {...field} />
+                      <Input
+                        {...field}
+                        type="number"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="text-black pl-6"
+                      />
                     </div>
                   </FormControl>
                   <FormMessage />

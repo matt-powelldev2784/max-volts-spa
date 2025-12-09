@@ -71,7 +71,6 @@ const EditProductModal = ({
   }, [selectedInvoiceProductIndex, invoiceProducts, form]);
 
   const [watchedQuantity, watchedMarkup, watchedVatRate, watchedValue, watchedTotalValue] = form.watch([
-    'product_id',
     'quantity',
     'markup',
     'vat_rate',
@@ -104,10 +103,8 @@ const EditProductModal = ({
   };
 
   const onSubmit = (values: z.infer<typeof editProductSchema>) => {
-    const selectedProduct = products.find((product) => product.id === Number(values.product_id));
     const updatedInvoiceProduct: InvoiceProductForEditInvoice = {
       ...values,
-      value: selectedProduct?.value ?? values.value,
     };
 
     const updatedInvoiceProducts = invoiceProducts.map((product, index) =>
@@ -188,7 +185,12 @@ const EditProductModal = ({
                       <span className="absolute left-3 top-1/2 -translate-y-[12.75px] text-gray-700 pointer-events-none">
                         £
                       </span>
-                      <Input type="number" disabled className="bg-gray-100 text-black pl-6" {...field} />
+                      <Input
+                        {...field}
+                        type="number"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="text-black pl-6"
+                      />
                     </div>
                   </FormControl>
                   <FormMessage />
