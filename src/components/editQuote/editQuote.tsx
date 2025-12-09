@@ -78,6 +78,7 @@ const EditQuote = () => {
   if (isLoadingQuote || isLoadingProducts) return <LoadingSpinner />;
   if (isQuoteError || !quoteData) return <ErrorCard message={'Failed to load quote.'} />;
   if (isProductsError || !productsData) return <ErrorCard message={'Failed to load products.'} />;
+  if (!clientId) return <ErrorCard message={'Failed to load client details'} />;
 
   return (
     <section className="md:bg-gray-50">
