@@ -30,6 +30,7 @@ export type InvoiceInsertWithId = Omit<InvoiceInsertAllFields, 'created_at' | 'u
 type InvoiceProductInsertAllFields = Database['public']['Tables']['invoice_product']['Insert'];
 export type InvoiceProductInsert = Omit<InvoiceProductInsertAllFields, 'invoice_id' | 'created_at'>;
 export type InvoiceProductWithInvoiceId = Omit<InvoiceProductInsertAllFields, 'created_at'>;
+export type InvoiceProductForEditInvoice = InvoiceProductInsert | InvoiceProductWithInvoiceId;
 
 // Quote status enum type and options
 export type QuoteStatus = Database['public']['Enums']['quote_status_enum'];

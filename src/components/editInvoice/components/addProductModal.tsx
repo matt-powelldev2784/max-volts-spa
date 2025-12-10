@@ -3,15 +3,15 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { StretchHorizontal } from 'lucide-react';
-
 import { Button } from '@/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/ui/form';
 import { Input } from '@/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import type { EditInvoiceAction } from '../reducer/editInvoiceReducer';
-import type { InvoiceProductInsert, Product } from '@/types/dbTypes';
+import type { InvoiceProductForEditInvoice, Product } from '@/types/dbTypes';
 import { getTotalProductValue, getTotalProductVat } from '@/lib/quoteCalculator';
+import { cn } from '@/lib/utils';
 
 const addProductSchema = z.object({
   product_id: z.number().refine((val) => val > 0, { message: 'Product is required' }),
@@ -28,7 +28,7 @@ const addProductSchema = z.object({
 type AddProductModalProps = {
   isModalOpen: boolean;
   products: Product[];
-  invoiceProducts: InvoiceProductInsert[];
+  invoiceProducts: InvoiceProductForEditInvoice[];
   dispatch: Dispatch<EditInvoiceAction>;
 };
 
@@ -50,13 +50,8 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
     },
   });
 
-  const [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, watchedTotalValue] = form.watch([
-    'product_id',
-    'quantity',
-    'markup',
-    'vat_rate',
-    'total_value',
-  ]);
+  const [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, watchedTotalValue] =
+    form.watch(['product_id', 'value', 'quantity', 'markup', 'vat_rate', 'total_value']);
 
   useEffect(() => {
     const selectedProduct = products.find((product) => product.id === Number(watchedProductId));
@@ -70,26 +65,23 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
   }, [watchedProductId, products, form]);
 
   useEffect(() => {
-    const selectedProduct = products.find((product) => product.id === Number(watchedProductId));
-    const value = selectedProduct?.value ?? 0;
-
     const totalValue = getTotalProductValue({
       quantity: watchedQuantity,
-      value,
+      value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
     const totalVat = getTotalProductVat({
       quantity: watchedQuantity,
-      value,
+      value: watchedValue,
       markup: watchedMarkup,
       vat_rate: watchedVatRate,
     });
 
     form.setValue('total_value', totalValue);
     form.setValue('total_vat', totalVat);
-  }, [watchedProductId, watchedQuantity, watchedMarkup, watchedVatRate, form, products]);
+  }, [watchedProductId, watchedQuantity, watchedValue, watchedMarkup, watchedVatRate, form, products]);
 
   const handleClose = () => {
     form.reset();
@@ -97,11 +89,8 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
   };
 
   const onSubmit = (values: z.infer<typeof addProductSchema>) => {
-    const value = products.find((product) => product.id === Number(values.product_id))?.value || 0;
-
-    const invoiceProductInsert: InvoiceProductInsert = {
+    const invoiceProductInsert: InvoiceProductForEditInvoice = {
       ...values,
-      value: value,
     };
 
     dispatch({
@@ -131,10 +120,15 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                   <FormControl>
                     <Select
                       value={field.value ? String(field.value) : ''}
-                      onValueChange={(val) => field.onChange(Number(val))}
+                      onValueChange={(val) => {
+                        field.onChange(Number(val));
+                      }}
                     >
                       <SelectTrigger
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white"
+                        className={cn(
+                          'w-full rounded-md border border-gray-300 px-3 py-2 bg-white',
+                          `${!watchedProductId ? 'border-mv-orange' : ''}`
+                        )}
                         aria-invalid={Boolean(form.formState.errors.product_id)}
                       >
                         <SelectValue placeholder="Select a product" />
@@ -161,7 +155,13 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                 <FormItem>
                   <FormLabel>Quantity</FormLabel>
                   <FormControl>
-                    <Input type="number" min={1} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={1}
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={!watchedProductId}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -179,7 +179,13 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                       <span className="absolute left-3 top-1/2 -translate-y-[12.75px] text-gray-700 pointer-events-none">
                         £
                       </span>
-                      <Input type="number" disabled className="bg-gray-100 text-black pl-6" {...field} />
+                      <Input
+                        {...field}
+                        type="number"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        disabled={!watchedProductId}
+                        className="text-black pl-6"
+                      />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -195,10 +201,11 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <textarea
-                      className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
+                      {...field}
                       placeholder="Description"
                       rows={3}
-                      {...field}
+                      disabled={!watchedProductId}
+                      className="block w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition focus:border-2 focus:outline-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -213,7 +220,13 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                 <FormItem>
                   <FormLabel>Markup (%)</FormLabel>
                   <FormControl>
-                    <Input type="number" min={0} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={!watchedProductId}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -227,7 +240,13 @@ const AddProductModal = ({ isModalOpen, products, invoiceProducts, dispatch }: A
                 <FormItem>
                   <FormLabel>VAT Rate (%)</FormLabel>
                   <FormControl>
-                    <Input type="number" min={0} {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={0}
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={!watchedProductId}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

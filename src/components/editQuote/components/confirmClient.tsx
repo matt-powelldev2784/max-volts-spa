@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardHeader } from '@/ui/card';
 import ErrorCard from '@/lib/errorCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
-import { useEffect, type Dispatch } from 'react';
+import { type Dispatch } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { EditQuoteAction } from '../reducer/editQuoteReducer';
 
@@ -21,12 +21,12 @@ const formSchema = z.object({
   client_id: z.number('Client is required').refine((val) => val > 0, { message: 'Client is required' }),
 });
 
-type AddClientProps = {
+type ConfirmClientProps = {
   clientId: number;
   dispatch: Dispatch<EditQuoteAction>;
 };
 
-const AddClient = ({ clientId, dispatch }: AddClientProps) => {
+const ConfirmClient = ({ clientId, dispatch }: ConfirmClientProps) => {
   const {
     data: clients,
     isLoading: clientsLoading,
@@ -42,11 +42,6 @@ const AddClient = ({ clientId, dispatch }: AddClientProps) => {
       client_id: clientId || 0,
     },
   });
-
-  useEffect(() => {
-    if (clientId === 0) return;
-    form.reset({ client_id: clientId });
-  }, [clientId, clients, form]);
 
   const watchedClientId = form.watch('client_id');
   const isFormInvalid = !!form.formState.errors.client_id || watchedClientId === 0;
@@ -136,4 +131,4 @@ const AddClient = ({ clientId, dispatch }: AddClientProps) => {
   );
 };
 
-export default AddClient;
+export default ConfirmClient;

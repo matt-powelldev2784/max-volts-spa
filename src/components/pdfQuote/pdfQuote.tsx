@@ -206,7 +206,7 @@ type PdfLayoutProps = {
 
 export const PdfLayout = ({ quoteData }: PdfLayoutProps) => {
   const { quote, quoteProducts, client } = quoteData;
-  const createdAt = quote.created_at ? new Date(quote.created_at) : new Date();
+  const quoteDate = quote.created_at ? new Date(quote.created_at) : new Date();
 
   const QuoteRowsJsx = quoteProducts.map((quoteProduct, index) => {
     return <QuoteRow key={quoteProduct.id} quoteProduct={quoteProduct} index={index} />;
@@ -239,7 +239,7 @@ export const PdfLayout = ({ quoteData }: PdfLayoutProps) => {
 
               <View style={pdfStyles.logoSection}>
                 <Text>Quote Number: {quote.id}</Text>
-                <Text>Date: {format(createdAt, 'd MMMM yyyy')}</Text>
+                <Text>Date: {format(quoteDate, 'd MMMM yyyy')}</Text>
               </View>
             </View>
           </View>

@@ -3,14 +3,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { StretchHorizontal } from 'lucide-react';
-
 import { Button } from '@/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/ui/form';
 import { Input } from '@/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import { getTotalProductValue, getTotalProductVat } from '@/lib/quoteCalculator';
-import type { Product, InvoiceProductInsert } from '@/types/dbTypes';
+import type { InvoiceProductForEditInvoice, Product } from '@/types/dbTypes';
 import type { EditInvoiceAction } from '../reducer/editInvoiceReducer';
 
 const editProductSchema = z.object({
@@ -28,7 +27,7 @@ const editProductSchema = z.object({
 type EditProductModalProps = {
   isModalOpen: boolean;
   products: Product[];
-  invoiceProducts: InvoiceProductInsert[];
+  invoiceProducts: InvoiceProductForEditInvoice[];
   selectedInvoiceProductIndex: number | null;
   dispatch: Dispatch<EditInvoiceAction>;
 };
@@ -72,7 +71,6 @@ const EditProductModal = ({
   }, [selectedInvoiceProductIndex, invoiceProducts, form]);
 
   const [watchedQuantity, watchedMarkup, watchedVatRate, watchedValue, watchedTotalValue] = form.watch([
-    'product_id',
     'quantity',
     'markup',
     'vat_rate',
@@ -105,10 +103,8 @@ const EditProductModal = ({
   };
 
   const onSubmit = (values: z.infer<typeof editProductSchema>) => {
-    const selectedProduct = products.find((product) => product.id === Number(values.product_id));
-    const updatedInvoiceProduct: InvoiceProductInsert = {
+    const updatedInvoiceProduct: InvoiceProductForEditInvoice = {
       ...values,
-      value: selectedProduct?.value ?? values.value,
     };
 
     const updatedInvoiceProducts = invoiceProducts.map((product, index) =>
@@ -189,7 +185,12 @@ const EditProductModal = ({
                       <span className="absolute left-3 top-1/2 -translate-y-[12.75px] text-gray-700 pointer-events-none">
                         £
                       </span>
-                      <Input type="number" disabled className="bg-gray-100 text-black pl-6" {...field} />
+                      <Input
+                        {...field}
+                        type="number"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="text-black pl-6"
+                      />
                     </div>
                   </FormControl>
                   <FormMessage />

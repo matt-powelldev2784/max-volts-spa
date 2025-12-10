@@ -19,6 +19,7 @@ import {
   INVOICE_STATUS_OPTIONS,
   type Client,
   type Invoice,
+  type InvoiceProductForEditInvoice,
   type InvoiceProductInsert,
   type InvoiceStatus,
 } from '@/types/dbTypes';
@@ -34,7 +35,7 @@ const notesSchema = z.object({
 
 type UpdateInvoiceProps = {
   invoiceInsert: Invoice;
-  invoiceProductsInsert: InvoiceProductInsert[];
+  invoiceProductsInsert: InvoiceProductForEditInvoice[];
 };
 
 const updateInvoice = async ({ invoiceInsert, invoiceProductsInsert }: UpdateInvoiceProps) => {
@@ -46,13 +47,15 @@ const updateInvoice = async ({ invoiceInsert, invoiceProductsInsert }: UpdateInv
   const { error: deleteError } = await supabase.from('invoice_product').delete().eq('invoice_id', invoiceInsert.id);
   if (deleteError) throw new Error(`Error deleting existing invoice products: ${deleteError.message}`);
 
-  const invoiceProductsPayload = invoiceProductsInsert.map((product) => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const invoiceProductsPayload = invoiceProductsInsert.map(({ id, ...product }) => ({
     ...product,
     invoice_id: invoiceInsert.id,
   }));
 
   // insert updated invoice products
   const { error: addError } = await supabase.from('invoice_product').insert(invoiceProductsPayload);
+  console.log('addError', addError);
   if (addError) throw new Error(`Error updating invoice products: ${addError.message}`);
 };
 
@@ -127,6 +130,7 @@ const EditInvoiceSummary = ({ invoiceProducts, invoiceData, clientId, dispatch }
     mutation.mutate({
       invoiceInsert: {
         ...invoiceData,
+        created_at: new Date().toISOString(),
         user_id: user.id,
         user_email: userEmail,
         client_id: clientId,
