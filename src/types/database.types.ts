@@ -25,6 +25,7 @@ export type Database = {
           email: string | null
           id: number
           is_visible_to_user: boolean
+          legacy_id: string | null
           name: string
           post_code: string | null
           telephone: string | null
@@ -39,6 +40,7 @@ export type Database = {
           email?: string | null
           id?: number
           is_visible_to_user?: boolean
+          legacy_id?: string | null
           name: string
           post_code?: string | null
           telephone?: string | null
@@ -53,6 +55,7 @@ export type Database = {
           email?: string | null
           id?: number
           is_visible_to_user?: boolean
+          legacy_id?: string | null
           name?: string
           post_code?: string | null
           telephone?: string | null
@@ -65,6 +68,7 @@ export type Database = {
           created_at: string | null
           date: string | null
           id: number
+          legacy_id: string | null
           notes: string | null
           quote_id: number
           status: Database["public"]["Enums"]["invoice_status_enum"]
@@ -78,6 +82,7 @@ export type Database = {
           created_at?: string | null
           date?: string | null
           id?: number
+          legacy_id?: string | null
           notes?: string | null
           quote_id: number
           status: Database["public"]["Enums"]["invoice_status_enum"]
@@ -91,6 +96,7 @@ export type Database = {
           created_at?: string | null
           date?: string | null
           id?: number
+          legacy_id?: string | null
           notes?: string | null
           quote_id?: number
           status?: Database["public"]["Enums"]["invoice_status_enum"]
@@ -107,13 +113,6 @@ export type Database = {
             referencedRelation: "client"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "invoice_quote_id_fkey"
-            columns: ["quote_id"]
-            isOneToOne: false
-            referencedRelation: "quote"
-            referencedColumns: ["id"]
-          },
         ]
       }
       invoice_product: {
@@ -122,6 +121,9 @@ export type Database = {
           description: string | null
           id: number
           invoice_id: number
+          legacy_id: string | null
+          legacy_invoice_id: string | null
+          legacy_product_id: string | null
           markup: number
           name: string
           product_id: number
@@ -136,6 +138,9 @@ export type Database = {
           description?: string | null
           id?: number
           invoice_id: number
+          legacy_id?: string | null
+          legacy_invoice_id?: string | null
+          legacy_product_id?: string | null
           markup: number
           name: string
           product_id: number
@@ -150,6 +155,9 @@ export type Database = {
           description?: string | null
           id?: number
           invoice_id?: number
+          legacy_id?: string | null
+          legacy_invoice_id?: string | null
+          legacy_product_id?: string | null
           markup?: number
           name?: string
           product_id?: number
@@ -182,6 +190,7 @@ export type Database = {
           description: string | null
           id: number
           is_visible_to_user: boolean
+          legacy_id: string | null
           markup: number
           name: string
           value: number
@@ -192,6 +201,7 @@ export type Database = {
           description?: string | null
           id?: number
           is_visible_to_user?: boolean
+          legacy_id?: string | null
           markup?: number
           name: string
           value: number
@@ -202,6 +212,7 @@ export type Database = {
           description?: string | null
           id?: number
           is_visible_to_user?: boolean
+          legacy_id?: string | null
           markup?: number
           name?: string
           value?: number
@@ -216,6 +227,7 @@ export type Database = {
           date: string | null
           id: number
           invoice_id: number | null
+          legacy_id: string | null
           notes: string | null
           status: Database["public"]["Enums"]["quote_status_enum"]
           total_value: number
@@ -229,6 +241,7 @@ export type Database = {
           date?: string | null
           id?: number
           invoice_id?: number | null
+          legacy_id?: string | null
           notes?: string | null
           status: Database["public"]["Enums"]["quote_status_enum"]
           total_value?: number
@@ -242,6 +255,7 @@ export type Database = {
           date?: string | null
           id?: number
           invoice_id?: number | null
+          legacy_id?: string | null
           notes?: string | null
           status?: Database["public"]["Enums"]["quote_status_enum"]
           total_value?: number
@@ -257,13 +271,6 @@ export type Database = {
             referencedRelation: "client"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "quote_invoice_id_fkey"
-            columns: ["invoice_id"]
-            isOneToOne: false
-            referencedRelation: "invoice"
-            referencedColumns: ["id"]
-          },
         ]
       }
       quote_product: {
@@ -271,6 +278,9 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: number
+          legacy_id: string | null
+          legacy_product_id: string | null
+          legacy_quote_id: string | null
           markup: number
           name: string
           product_id: number
@@ -285,6 +295,9 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: number
+          legacy_id?: string | null
+          legacy_product_id?: string | null
+          legacy_quote_id?: string | null
           markup: number
           name: string
           product_id: number
@@ -299,6 +312,9 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: number
+          legacy_id?: string | null
+          legacy_product_id?: string | null
+          legacy_quote_id?: string | null
           markup?: number
           name?: string
           product_id?: number
