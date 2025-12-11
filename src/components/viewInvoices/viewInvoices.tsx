@@ -25,6 +25,7 @@ const invoiceStatusStyle = {
   invoiced: 'bg-orange-500 text-white',
   paid: 'bg-mv-green text-white',
   query: 'bg-destructive text-white',
+  legacy: 'bg-gray-500 text-white',
 };
 
 type SortField = 'id' | 'created_at';

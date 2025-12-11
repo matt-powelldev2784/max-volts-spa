@@ -18,9 +18,6 @@ const sourceDb = new PgClient({
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-const statusFromLegacy = (): 'paid' | 'invoiced' | 'query' | 'new' => {
-  return 'invoiced';
-};
 
 const migrateInvoices = async () => {
   await sourceDb.connect();
@@ -62,7 +59,7 @@ const migrateInvoices = async () => {
           legacy_id: row.id,
           client_id: clientId,
           quote_id: 0,
-          status: statusFromLegacy(),
+          status: 'legacy',
           total_value: Number(row.total_amount ?? 0),
           total_vat: 0,
           notes: null,

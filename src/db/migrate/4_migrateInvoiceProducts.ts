@@ -50,10 +50,9 @@ const migrateInvoiceProducts = async () => {
     const productMap = new Map((products ?? []).map((row) => [row.legacy_id, row.id]));
 
     const payload = legacyRows.map((row) => {
-      const quantity = row.quantity ?? 1;
-      const value = row.buy_price ?? 0;
-      const sellPrice = row.sell_price ?? value;
-      const markup = value > 0 ? Number((((sellPrice - value) / value) * 100).toFixed(2)) : 0;
+      const quantity = row.quantity;
+      const value = row.sell_price;
+      const markup = 0;
       const vatRate = row.vat_rate ?? 0;
       const totalValue = getTotalProductValue({ quantity, value, vat_rate: vatRate, markup });
       const totalVat = getTotalProductVat({ quantity, value, vat_rate: vatRate, markup });
