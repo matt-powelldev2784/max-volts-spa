@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { convertPostgrestClientsToSupabaseClients } from '../1_migrateClients';
 
 describe('convertPostgrestClientsToSupabaseClients', () => {
-  it('maps legacy clients to Supabase payload', () => {
+  test('maps legacy clients to Supabase payload', () => {
     const createdAt = new Date('2024-01-01T10:30:00Z');
     const result = convertPostgrestClientsToSupabaseClients([
       {
