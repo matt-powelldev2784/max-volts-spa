@@ -1,28 +1,55 @@
 import { Client as PgClient } from 'pg';
 import { createClient } from '@supabase/supabase-js';
+import { getEnvironmentVariables } from './getEnvironmentVariables.ts';
 
 // run with: node -r dotenv/config src/db//migrate/1_migrateClients.ts
 
-const RAILWAY_DATABASE_URL = process.env.RAILWAY_DATABASE_URL ?? process.env.VITE_RAILWAY_DATABASE_URL;
-const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+type LegacyClient = {
+  id: number;
+  name: string;
+  company_name: string | null;
+  email: string | null;
+  address1: string | null;
+  address2: string | null;
+  postcode: string | null;
+  tel: string | null;
+  is_hidden: boolean;
+  created_at: Date;
+};
 
-if (!RAILWAY_DATABASE_URL || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error('Missing env vars: RAILWAY_DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY');
-}
+export const convertPostgrestClientsToSupabaseClients = (clients: LegacyClient[]) => {
+  const supabaseClients = clients.map((client) => ({
+    legacy_id: client.id,
+    name: client.name,
+    company: client.company_name ?? null,
+    email: client.email ?? null,
+    address1: client.address1 ?? null,
+    address2: client.address2 ?? null,
+    city: null,
+    county: null,
+    post_code: client.postcode ?? null,
+    telephone: client.tel ?? null,
+    created_at: client.created_at.toISOString(),
+    is_visible_to_user: !client.is_hidden,
+  }));
 
-const sourceDb = new PgClient({
-  connectionString: RAILWAY_DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-});
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  return supabaseClients;
+};
 
 const migrateClients = async () => {
+  const { RAILWAY_DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = getEnvironmentVariables();
+
+  const sourceDb = new PgClient({
+    connectionString: RAILWAY_DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
   await sourceDb.connect();
 
   try {
-    const { rows } = await sourceDb.query(`
+    const { rows: legacyClients } = await sourceDb.query<LegacyClient>(`
       select
         id,
         name,
@@ -37,31 +64,30 @@ const migrateClients = async () => {
       from "Client"
     `);
 
-    const payload = rows.map((row) => ({
-      legacy_id: row.id,
-      name: row.name,
-      company: row.company_name ?? null,
-      email: row.email ?? null,
-      address1: row.address1 ?? null,
-      address2: row.address2 ?? null,
-      city: null,
-      county: null,
-      post_code: row.postcode ?? null,
-      telephone: row.tel ?? null,
-      created_at: row.created_at.toISOString(),
-      is_visible_to_user: !row.is_hidden,
-    }));
+    const supabaseClients = convertPostgrestClientsToSupabaseClients(legacyClients);
 
-    const { error } = await supabase.from('client').insert(payload);
+    if (supabaseClients.length === 0) {
+      throw new Error('No clients found to migrate.');
+    }
+
+    const { error } = await supabase.from('client').insert(supabaseClients);
     if (error) throw error;
 
-    console.log(`Migrated ${payload.length} clients.`);
+    console.log(`Migrated ${supabaseClients.length} clients.`);
   } finally {
     await sourceDb.end();
   }
 };
 
-migrateClients().catch((err) => {
-  console.error('Client migration failed:', err);
-  process.exit(1);
-});
+const runMigration = async () => {
+  try {
+    await migrateClients();
+  } catch (err) {
+    console.error('Client migration failed:', err);
+    process.exit(1);
+  }
+};
+
+if (process.env.NODE_ENV !== 'test') {
+  runMigration();
+}
