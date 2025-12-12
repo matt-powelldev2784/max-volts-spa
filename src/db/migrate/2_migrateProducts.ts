@@ -1,33 +1,60 @@
 import { Client as PgClient } from 'pg';
 import { createClient } from '@supabase/supabase-js';
+import { getEnvironmentVariables } from './getEnvironmentVariables.ts';
 
 // run with: node -r dotenv/config src/db/migrate/2_migrateProducts.ts
 
-const railwayUrl = process.env.RAILWAY_DATABASE_URL ?? process.env.VITE_RAILWAY_DATABASE_URL;
-const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+type LegacyProduct = {
+  id: number;
+  name: string;
+  description: string;
+  buy_price: number;
+  sell_price: number;
+  vat: number;
+  is_hidden: boolean;
+  created_at: Date;
+};
 
-if (!railwayUrl || !supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing env vars: RAILWAY_DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY');
-}
+export const convertPostgresProductsToSupabaseProducts = (products: LegacyProduct[]) => {
+  const supabaseProducts = products.map((product) => {
+    const value = product.buy_price;
+    const sellPrice = product.sell_price;
+    const markup = value > 0 ? Number((((sellPrice - value) / value) * 100).toFixed(2)) : 0;
 
-const sourceDb = new PgClient({
-  connectionString: railwayUrl,
-  ssl: { rejectUnauthorized: false },
-});
+    return {
+      legacy_id: product.id,
+      name: product.name,
+      description: product.description ?? null,
+      value,
+      markup,
+      vat: product.vat,
+      created_at: product.created_at.toISOString(),
+      is_visible_to_user: !product.is_hidden,
+    };
+  });
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  return supabaseProducts;
+};
 
 const migrateProducts = async () => {
+  const { RAILWAY_DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = getEnvironmentVariables();
+
+  const sourceDb = new PgClient({
+    connectionString: RAILWAY_DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
   await sourceDb.connect();
 
   try {
-    const { rows } = await sourceDb.query(`
+    const { rows: legacyProducts } = await sourceDb.query<LegacyProduct>(`
       select
         id,
         name,
-        "buyPrice" as buy_price,
         description,
+        "buyPrice" as buy_price,
         "sellPrice" as sell_price,
         "VAT" as vat,
         "isHidden" as is_hidden,
@@ -35,38 +62,33 @@ const migrateProducts = async () => {
       from "Product"
     `);
 
-    const payload = rows.map((row) => {
-      const value = row.buy_price ?? 0;
-      const sellPrice = row.sell_price ?? value;
-      const markup = value > 0 ? Number((((sellPrice - value) / value) * 100).toFixed(2)) : 0;
+    const supabaseProducts = convertPostgresProductsToSupabaseProducts(legacyProducts);
 
-      return {
-        legacy_id: row.id,
-        name: row.name,
-        description: row.description ?? null,
-        value,
-        markup,
-        vat: row.vat ?? 20,
-        created_at: row.created_at.toISOString(),
-        is_visible_to_user: !row.is_hidden,
-      };
-    });
-
-    if (payload.length === 0) {
+    if (supabaseProducts.length === 0) {
       console.log('No products found to migrate.');
       return;
     }
 
-    const { error } = await supabase.from('product').insert(payload);
+    const { error } = await supabase.from('product').insert(supabaseProducts);
     if (error) throw error;
 
-    console.log(`Migrated ${payload.length} products.`);
+    console.log(`Migrated ${supabaseProducts.length} products.`);
   } finally {
     await sourceDb.end();
   }
 };
 
-migrateProducts().catch((err) => {
-  console.error('Product migration failed:', err);
-  process.exit(1);
-});
+const runMigration = async () => {
+  try {
+    await migrateProducts();
+  } catch (err) {
+    console.error('Product migration failed:', err);
+    process.exit(1);
+  }
+};
+
+if (process.env.NODE_ENV !== 'test') {
+  runMigration();
+}
+
+
