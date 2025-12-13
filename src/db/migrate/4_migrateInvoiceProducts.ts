@@ -1,31 +1,91 @@
 import { Client as PgClient } from 'pg';
 import { createClient } from '@supabase/supabase-js';
 import { getTotalProductValue, getTotalProductVat } from '../../lib/quoteCalculator.ts';
+import { getEnvironmentVariables } from './getEnvironmentVariables.ts';
 
 // run with: node -r dotenv/config src/db/migrate/4_migrateInvoiceProducts.ts
 
-const railwayUrl = process.env.RAILWAY_DATABASE_URL ?? process.env.VITE_RAILWAY_DATABASE_URL;
-const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+type LegacyInvoiceProduct = {
+  id: string;
+  invoice_id_legacy: string;
+  product_id_legacy: string;
+  quantity: number;
+  name: string;
+  description: string;
+  vat_rate: number;
+  buy_price: number;
+  sell_price: number;
+  total_price: number;
+};
 
-if (!railwayUrl || !supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing env vars: RAILWAY_DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY');
-}
+type ConvertInvoiceProductsProps = {
+  invoiceProducts: LegacyInvoiceProduct[];
+  invoiceMap: Map<string, number>;
+  productMap: Map<string, number>;
+};
 
-const sourceDb = new PgClient({
-  connectionString: railwayUrl,
-  ssl: { rejectUnauthorized: false },
-});
+export const covertPostgresInvoiceProductsToSupabaseInvoiceProducts = ({
+  invoiceProducts,
+  invoiceMap,
+  productMap,
+}: ConvertInvoiceProductsProps) => {
+  const supabaseInvoiceProducts = invoiceProducts.map((invoiceProduct) => {
+    const quantity = invoiceProduct.quantity;
+    const value = invoiceProduct.sell_price;
+    const markup = 0;
+    const vatRate = invoiceProduct.vat_rate;
+    const totalValue = getTotalProductValue({ quantity, value, vat_rate: vatRate, markup });
+    const totalVat = getTotalProductVat({ quantity, value, vat_rate: vatRate, markup });
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const invoiceId = invoiceMap.get(invoiceProduct.invoice_id_legacy);
+    const productId = productMap.get(invoiceProduct.product_id_legacy);
+
+    if (!invoiceId) {
+      throw new Error(
+        `Invoice product ${invoiceProduct.id} missing invoice mapping : ${invoiceProduct.invoice_id_legacy})`
+      );
+    }
+
+    if (!productId) {
+      throw new Error(
+        `Invoice product ${invoiceProduct.id} missing product mapping ${invoiceProduct.product_id_legacy})`
+      );
+    }
+
+    return {
+      legacy_id: invoiceProduct.id,
+      legacy_invoice_id: invoiceProduct.invoice_id_legacy,
+      legacy_product_id: invoiceProduct.product_id_legacy,
+      invoice_id: invoiceId,
+      product_id: productId,
+      quantity,
+      name: invoiceProduct.name,
+      description: invoiceProduct.description ?? null,
+      value,
+      markup,
+      vat_rate: vatRate,
+      total_value: totalValue,
+      total_vat: totalVat,
+    };
+  });
+
+  return supabaseInvoiceProducts;
+};
 
 const migrateInvoiceProducts = async () => {
+  const { RAILWAY_DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = getEnvironmentVariables();
+
+  const sourceDb = new PgClient({
+    connectionString: RAILWAY_DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
+
   await sourceDb.connect();
 
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
   try {
-    const [{ rows: legacyRows }, { data: invoices, error: invoicesError }, { data: products, error: productsError }] =
-      await Promise.all([
-        sourceDb.query(`
+    const { rows: legacyInvoiceRows } = await sourceDb.query(`
           select
             id,
             "invoiceId" as invoice_id_legacy,
@@ -38,66 +98,52 @@ const migrateInvoiceProducts = async () => {
             "sellPrice" as sell_price,
             "totalPrice" as total_price
           from "InvoiceRow"
-        `),
-        supabase.from('invoice').select('id, legacy_id'),
-        supabase.from('product').select('id, legacy_id'),
-      ]);
+        `);
+
+    const { data: invoices, error: invoicesError } = await supabase.from('invoice').select('id, legacy_id');
+    const { data: products, error: productsError } = await supabase.from('product').select('id, legacy_id');
 
     if (invoicesError) throw invoicesError;
+    if (invoices.length === 0) {
+      throw new Error('No invoices found in Supabase, invoice migration not possible without invoice mapping.');
+    }
     if (productsError) throw productsError;
+    if (products.length === 0) {
+      throw new Error('No products found in Supabase, invoice migration not possible without products mapping.');
+    }
 
-    const invoiceMap = new Map((invoices ?? []).map((row) => [row.legacy_id, row.id]));
-    const productMap = new Map((products ?? []).map((row) => [row.legacy_id, row.id]));
+    const invoiceMap = new Map(invoices.map((row) => [row.legacy_id, row.id]));
+    const productMap = new Map(products.map((row) => [row.legacy_id, row.id]));
 
-    const payload = legacyRows.map((row) => {
-      const quantity = row.quantity;
-      const value = row.sell_price;
-      const markup = 0;
-      const vatRate = row.vat_rate ?? 0;
-      const totalValue = getTotalProductValue({ quantity, value, vat_rate: vatRate, markup });
-      const totalVat = getTotalProductVat({ quantity, value, vat_rate: vatRate, markup });
-
-      const invoiceId = invoiceMap.get(row.invoice_id_legacy) ?? null;
-      const productId = productMap.get(row.product_id_legacy) ?? null;
-
-      if (!invoiceId || !productId) {
-        console.warn(
-          `InvoiceRow ${row.id} missing mapping (invoice: ${row.invoice_id_legacy}, product: ${row.product_id_legacy})`
-        );
-      }
-
-      return {
-        legacy_id: row.id,
-        legacy_invoice_id: row.invoice_id_legacy,
-        legacy_product_id: row.product_id_legacy,
-        invoice_id: invoiceId,
-        product_id: productId,
-        quantity,
-        name: row.name,
-        description: row.description ?? null,
-        value,
-        markup,
-        vat_rate: vatRate,
-        total_value: totalValue,
-        total_vat: totalVat,
-      };
+    const updatedInvoiceProducts = covertPostgresInvoiceProductsToSupabaseInvoiceProducts({
+      invoiceProducts: legacyInvoiceRows,
+      invoiceMap,
+      productMap,
     });
 
-    if (payload.length === 0) {
+    if (updatedInvoiceProducts.length === 0) {
       console.log('No invoice rows ready for migration.');
       return;
     }
 
-    const { error } = await supabase.from('invoice_product').insert(payload);
+    const { error } = await supabase.from('invoice_product').insert(updatedInvoiceProducts);
     if (error) throw error;
 
-    console.log(`Migrated ${payload.length} invoice products.`);
+    console.log(`Migrated ${updatedInvoiceProducts.length} invoice products.`);
   } finally {
     await sourceDb.end();
   }
 };
 
-migrateInvoiceProducts().catch((err) => {
-  console.error('Invoice product migration failed:', err);
-  process.exit(1);
-});
+const runMigration = async () => {
+  try {
+    await migrateInvoiceProducts();
+  } catch (err) {
+    console.error('Invoice migration failed:', err);
+    process.exit(1);
+  }
+};
+
+if (process.env.NODE_ENV !== 'test') {
+  runMigration();
+}
