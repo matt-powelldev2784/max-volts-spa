@@ -74,6 +74,7 @@ export type Database = {
           status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value: number
           total_vat: number
+          updated_at: string | null
           user_email: string
           user_id: string
         }
@@ -88,6 +89,7 @@ export type Database = {
           status: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat: number
+          updated_at?: string | null
           user_email?: string
           user_id: string
         }
@@ -102,6 +104,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["invoice_status_enum"]
           total_value?: number
           total_vat?: number
+          updated_at?: string | null
           user_email?: string
           user_id?: string
         }
@@ -232,6 +235,7 @@ export type Database = {
           status: Database["public"]["Enums"]["quote_status_enum"]
           total_value: number
           total_vat: number
+          updated_at: string | null
           user_email: string
           user_id: string
         }
@@ -246,6 +250,7 @@ export type Database = {
           status: Database["public"]["Enums"]["quote_status_enum"]
           total_value?: number
           total_vat: number
+          updated_at?: string | null
           user_email?: string
           user_id: string
         }
@@ -260,6 +265,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["quote_status_enum"]
           total_value?: number
           total_vat?: number
+          updated_at?: string | null
           user_email?: string
           user_id?: string
         }

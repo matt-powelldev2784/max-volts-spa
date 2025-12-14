@@ -36,6 +36,7 @@ describe('convertPostgresInvoiceToSupabaseInvoice', () => {
         date: createdAt.toISOString(),
         user_id: 'ed59a09b-69de-4b4a-90d3-92e246875960',
         user_email: 'legacyimport@email.com',
+        updated_at: expect.any(String),
       },
     ]);
   });
