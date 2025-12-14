@@ -134,6 +134,7 @@ const EditInvoiceSummary = ({ invoiceProducts, invoiceData, clientId, dispatch }
         user_id: user.id,
         user_email: userEmail,
         client_id: clientId,
+        total_vat: invoiceProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0),
       },
       invoiceProductsInsert: invoiceProducts,
     });
@@ -282,6 +283,8 @@ type ProductListProps = {
 };
 
 const ProductList = ({ invoiceProducts, invoiceData, dispatch }: ProductListProps) => {
+  const totalVat = invoiceProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
+
   const onEditProduct = (index: number) => {
     dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', index });
   };
@@ -314,7 +317,7 @@ const ProductList = ({ invoiceProducts, invoiceData, dispatch }: ProductListProp
           <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end gap-4">
             <div className="flex flex-col items-end">
               <span className="text-black text-sm font-medium">VAT Total</span>
-              <span className="text-2xl font-bold text-mv-orange">{`£ ${invoiceData.total_vat.toFixed(2)}`}</span>
+              <span className="text-2xl font-bold text-mv-orange">{`£ ${totalVat.toFixed(2)}`}</span>
             </div>
 
             <div className="flex flex-col items-end">
