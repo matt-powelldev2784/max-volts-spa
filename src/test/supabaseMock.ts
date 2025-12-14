@@ -20,6 +20,7 @@ export const defaultRecords: TableDataMap = {
       email: null,
       post_code: null,
       telephone: null,
+      legacy_id: '0',
     },
     {
       id: 2,
@@ -34,6 +35,7 @@ export const defaultRecords: TableDataMap = {
       email: null,
       post_code: null,
       telephone: null,
+      legacy_id: '0',
     },
   ],
   product: [
@@ -46,6 +48,7 @@ export const defaultRecords: TableDataMap = {
       is_visible_to_user: true,
       created_at: null,
       description: null,
+      legacy_id: '0',
     },
     {
       id: 2,
@@ -56,6 +59,7 @@ export const defaultRecords: TableDataMap = {
       is_visible_to_user: true,
       created_at: null,
       description: null,
+      legacy_id: '0',
     },
   ],
   quote: [
@@ -71,6 +75,7 @@ export const defaultRecords: TableDataMap = {
       date: null,
       notes: null,
       invoice_id: null,
+      legacy_id: '0',
     },
     {
       id: 2,
@@ -84,6 +89,7 @@ export const defaultRecords: TableDataMap = {
       date: null,
       notes: null,
       invoice_id: null,
+      legacy_id: '0',
     },
   ],
   quote_product: [
@@ -100,6 +106,9 @@ export const defaultRecords: TableDataMap = {
       quantity: 1,
       description: 'Description for test product',
       created_at: null,
+      legacy_id: '0',
+      legacy_product_id: '0',
+      legacy_quote_id: '0',
     },
     {
       id: 2,
@@ -114,6 +123,9 @@ export const defaultRecords: TableDataMap = {
       quantity: 2,
       description: null,
       created_at: null,
+      legacy_id: '0',
+      legacy_product_id: '0',
+      legacy_quote_id: '0',
     },
   ],
   invoice: [
@@ -129,6 +141,7 @@ export const defaultRecords: TableDataMap = {
       date: null,
       notes: null,
       quote_id: 1,
+      legacy_id: '0',
     },
     {
       id: 2,
@@ -142,6 +155,7 @@ export const defaultRecords: TableDataMap = {
       date: null,
       notes: null,
       quote_id: 2,
+      legacy_id: '0',
     },
   ],
   invoice_product: [
@@ -158,6 +172,9 @@ export const defaultRecords: TableDataMap = {
       quantity: 1,
       description: 'Description for invoice product 1',
       created_at: null,
+      legacy_id: '0',
+      legacy_invoice_id: '0',
+      legacy_product_id: '0',
     },
     {
       id: 2,
@@ -172,6 +189,9 @@ export const defaultRecords: TableDataMap = {
       quantity: 2,
       description: 'Description for invoice product 2',
       created_at: null,
+      legacy_id: '0',
+      legacy_invoice_id: '0',
+      legacy_product_id: '0',
     },
   ],
 };

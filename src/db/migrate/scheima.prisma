@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// cleint model -----------------------------------------
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  companyName String?
+  add1        String?
+  add2        String?
+  postcode    String?
+  tel         String?
+  email       String?
+  isHidden      Boolean  @default(false)
+  Invoice     Invoice[]
+  Quote       Quote[] 
+}
+
+// product model -----------------------------------------
+model Product {
+  id            String @id @default(cuid())
+  name          String
+  buyPrice      Float
+  description   String
+  sellPrice     Float
+  VAT           Float @default(20)
+  isHidden      Boolean  @default(false)
+  InvoiceRow    InvoiceRow[]
+  QuoteRow      QuoteRow[]  
+}
+
+// invoice models -----------------------------------------
+model InvoiceRow {
+  id        String   @id @default(cuid())
+  invoiceId String
+  productId String
+  quantity  Int
+  name      String
+  description  String
+  VAT       Float
+  buyPrice     Float
+  sellPrice     Float
+  totalPrice Float
+  Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+  Product   Product? @relation(fields: [productId], references: [id])
+}
+
+model Invoice {
+  id          String      @id @default(cuid())
+  invoiceNum  Int         @default(autoincrement())
+  quoteNum    Int?   
+  invoiceDate DateTime    @default(now())
+  clientId    String
+  totalAmount Float       @default(0)
+  paid        Boolean     @default(false)
+  isActive    Boolean     @default(false)
+  Client      Client?     @relation(fields: [clientId], references: [id])
+  InvoiceRow  InvoiceRow[]
+}
+
+// quote models -----------------------------------------
+model Quote {
+  id          String      @id @default(cuid())
+  quoteNum    Int         @default(autoincrement())
+  quoteDate   DateTime    @default(now())
+  clientId    String
+  totalAmount Float       @default(0)
+  isActive    Boolean     @default(false)
+  Client      Client?     @relation(fields: [clientId], references: [id])
+  QuoteRow    QuoteRow[]
+}
+
+model QuoteRow {
+  id        String   @id @default(cuid())
+  quoteId   String
+  productId String
+  quantity  Int
+  name      String
+  description  String
+  VAT       Float
+  buyPrice     Float
+  sellPrice     Float
+  totalPrice Float
+  Quote     Quote?   @relation(fields: [quoteId], references: [id])
+  Product   Product? @relation(fields: [productId], references: [id])
+}
+
+// user models -----------------------------------------
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  isAdmin       Boolean  @default(false)
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
