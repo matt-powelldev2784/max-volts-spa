@@ -210,7 +210,7 @@ type PdfLayoutProps = {
 
 export const PdfLayout = ({ invoiceData }: PdfLayoutProps) => {
   const { invoice, invoiceProducts, client } = invoiceData;
-  const invoiceDate = invoice.created_at ? new Date(invoice.created_at) : new Date();
+  const invoiceDate = invoice.updated_at;
 
   const QuoteRowsJsx = invoiceProducts.map((invoiceProduct, index) => {
     return <QuoteRow key={invoiceProduct.id} invoiceProduct={invoiceProduct} index={index} />;

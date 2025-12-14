@@ -126,7 +126,6 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, clientId, dispatch }: Edit
     mutation.mutate({
       quoteInsert: {
         ...quoteData,
-        created_at: new Date().toISOString(),
         user_id: user.id,
         user_email: userEmail,
         client_id: clientId,

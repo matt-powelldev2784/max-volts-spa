@@ -206,7 +206,7 @@ type PdfLayoutProps = {
 
 export const PdfLayout = ({ quoteData }: PdfLayoutProps) => {
   const { quote, quoteProducts, client } = quoteData;
-  const quoteDate = quote.created_at ? new Date(quote.created_at) : new Date();
+  const quoteDate = quote.updated_at;
 
   const QuoteRowsJsx = quoteProducts.map((quoteProduct, index) => {
     return <QuoteRow key={quoteProduct.id} quoteProduct={quoteProduct} index={index} />;

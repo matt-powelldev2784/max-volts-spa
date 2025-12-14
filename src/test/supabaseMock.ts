@@ -72,10 +72,11 @@ export const defaultRecords: TableDataMap = {
       user_id: 'user1',
       user_email: 'user1@test.com',
       created_at: null,
-      date: null,
+      date: new Date().toISOString(),
       notes: null,
       invoice_id: null,
       legacy_id: '0',
+      updated_at: new Date().toISOString(),
     },
     {
       id: 2,
@@ -86,10 +87,11 @@ export const defaultRecords: TableDataMap = {
       user_id: 'user2',
       user_email: 'user2@test.com',
       created_at: null,
-      date: null,
+      date: new Date().toISOString(),
       notes: null,
       invoice_id: null,
       legacy_id: '0',
+      updated_at: new Date().toISOString(),
     },
   ],
   quote_product: [
@@ -142,6 +144,7 @@ export const defaultRecords: TableDataMap = {
       notes: null,
       quote_id: 1,
       legacy_id: '0',
+      updated_at: new Date().toISOString(),
     },
     {
       id: 2,
@@ -156,6 +159,7 @@ export const defaultRecords: TableDataMap = {
       notes: null,
       quote_id: 2,
       legacy_id: '0',
+      updated_at: new Date().toISOString(),
     },
   ],
   invoice_product: [

@@ -68,7 +68,7 @@ const getInvoices = async (sortBy: SortField, sortOrder: SortOrder, page: number
 };
 
 const ViewInvoices = () => {
-  const [sortBy, setSortBy] = useState<SortField>('created_at');
+  const [sortBy, setSortBy] = useState<SortField>('id');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
