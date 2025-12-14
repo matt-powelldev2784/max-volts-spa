@@ -1,31 +1,86 @@
 import { Client as PgClient } from 'pg';
 import { createClient } from '@supabase/supabase-js';
 import { getTotalProductValue, getTotalProductVat } from '../../lib/quoteCalculator.ts';
+import { getEnvironmentVariables } from './getEnvironmentVariables.ts';
 
 // run with: node -r dotenv/config src/db/migrate/6_migrateQuoteProducts.ts
 
-const railwayUrl = process.env.RAILWAY_DATABASE_URL ?? process.env.VITE_RAILWAY_DATABASE_URL;
-const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+type LegacyQuoteProduct = {
+  id: string;
+  quote_id_legacy: string;
+  product_id_legacy: string;
+  quantity: number;
+  name: string;
+  description: string;
+  vat_rate: number;
+  buy_price: number;
+  sell_price: number;
+  total_price: number;
+};
 
-if (!railwayUrl || !supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing env vars: RAILWAY_DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY');
-}
+type ConvertQuoteProductsProps = {
+  quoteProducts: LegacyQuoteProduct[];
+  quoteMap: Map<string, number>;
+  productMap: Map<string, number>;
+};
 
-const sourceDb = new PgClient({
-  connectionString: railwayUrl,
-  ssl: { rejectUnauthorized: false },
-});
+export const convertPostgresQuoteProductsToSupabaseQuoteProducts = ({
+  quoteProducts,
+  quoteMap,
+  productMap,
+}: ConvertQuoteProductsProps) => {
+  const supabaseQuoteProducts = quoteProducts.map((quoteProduct) => {
+    const quantity = quoteProduct.quantity;
+    const value = quoteProduct.sell_price;
+    const markup = 0;
+    const vatRate = quoteProduct.vat_rate;
+    const totalValue = getTotalProductValue({ quantity, value, vat_rate: vatRate, markup });
+    const totalVat = getTotalProductVat({ quantity, value, vat_rate: vatRate, markup });
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const quoteId = quoteMap.get(quoteProduct.quote_id_legacy);
+    const productId = productMap.get(quoteProduct.product_id_legacy);
+
+    if (!quoteId) {
+      throw new Error(`Quote product ${quoteProduct.id} missing quote mapping : ${quoteProduct.quote_id_legacy})`);
+    }
+
+    if (!productId) {
+      throw new Error(`Quote product ${quoteProduct.id} missing product mapping ${quoteProduct.product_id_legacy})`);
+    }
+
+    return {
+      legacy_id: quoteProduct.id,
+      legacy_quote_id: quoteProduct.quote_id_legacy,
+      legacy_product_id: quoteProduct.product_id_legacy,
+      quote_id: quoteId,
+      product_id: productId,
+      quantity,
+      name: quoteProduct.name,
+      description: quoteProduct.description ?? '',
+      value,
+      markup,
+      vat_rate: vatRate,
+      total_value: totalValue,
+      total_vat: totalVat,
+    };
+  });
+
+  return supabaseQuoteProducts;
+};
 
 const migrateQuoteProducts = async () => {
+  const { RAILWAY_DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = getEnvironmentVariables();
+
+  const sourceDb = new PgClient({
+    connectionString: RAILWAY_DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
+
   await sourceDb.connect();
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   try {
-    const [{ rows: legacyRows }, { data: quotes, error: quotesError }, { data: products, error: productsError }] =
-      await Promise.all([
-        sourceDb.query(`
+    const { rows: legacyRows } = await sourceDb.query(`
           select
             id,
             "quoteId"   as quote_id_legacy,
@@ -38,78 +93,52 @@ const migrateQuoteProducts = async () => {
             "sellPrice" as sell_price,
             "totalPrice" as total_price
           from "QuoteRow"
-        `),
-        supabase.from('quote').select('id, legacy_id'),
-        supabase.from('product').select('id, legacy_id'),
-      ]);
+        `);
 
+    const { data: quotes, error: quotesError } = await supabase.from('quote').select('id, legacy_id');
     if (quotesError) throw quotesError;
-    if (productsError) throw productsError;
-
-    const quoteMap = new Map((quotes ?? []).map((row) => [row.legacy_id, row.id]));
-    const productMap = new Map((products ?? []).map((row) => [row.legacy_id, row.id]));
-
-    let missingMappings = 0;
-
-    const payload = legacyRows.map((row) => {
-      const quantity = row.quantity ?? 1;
-      const value = row.buy_price ?? 0;
-      const sellPrice = row.sell_price ?? value;
-      const markup = value > 0 ? Number((((sellPrice - value) / value) * 100).toFixed(2)) : 0;
-      const vatRate = row.vat_rate ?? 0;
-      const totalValue = getTotalProductValue({ quantity, value, vat_rate: vatRate, markup });
-      const totalVat = getTotalProductVat({ quantity, value, vat_rate: vatRate, markup });
-
-      const quoteId = quoteMap.get(row.quote_id_legacy) ?? null;
-      const productId = productMap.get(row.product_id_legacy) ?? null;
-
-      if (!quoteId || !productId) {
-        missingMappings += 1;
-        console.warn(
-          `QuoteRow ${row.id} missing mapping (quote: ${row.quote_id_legacy}, product: ${row.product_id_legacy})`
-        );
-      }
-
-      return {
-        legacy_id: row.id,
-        legacy_quote_id: row.quote_id_legacy,
-        legacy_product_id: row.product_id_legacy,
-        quote_id: quoteId,
-        product_id: productId,
-        quantity,
-        name: row.name,
-        description: row.description ?? null,
-        value,
-        markup,
-        vat_rate: vatRate,
-        total_value: totalValue,
-        total_vat: totalVat,
-      };
-    });
-
-    if (missingMappings > 0) {
-      throw new Error(`Aborting: ${missingMappings} quote rows are missing quote/product mappings.`);
+    if (quotes.length === 0) {
+      throw new Error('No quotes found in Supabase, quote product migration not possible without quote mapping.');
     }
 
-    if (payload.length === 0) {
+    const { data: products, error: productsError } = await supabase.from('product').select('id, legacy_id');
+    if (productsError) throw productsError;
+    if (products.length === 0) {
+      throw new Error('No products found in Supabase, quote product migration not possible without products mapping.');
+    }
+
+    const quoteMap = new Map(quotes.map((quote) => [quote.legacy_id, quote.id]));
+    const productMap = new Map(products.map((product) => [product.legacy_id, product.id]));
+
+    const updatedQuotes = convertPostgresQuoteProductsToSupabaseQuoteProducts({
+      quoteProducts: legacyRows,
+      quoteMap,
+      productMap,
+    });
+
+    if (updatedQuotes.length === 0) {
       console.log('No quote rows ready for migration.');
       return;
     }
 
-    const { data, error } = await supabase.from('quote_product').insert(payload).select('id');
+    const { error } = await supabase.from('quote_product').insert(updatedQuotes).select('id');
     if (error) throw error;
 
-    if ((data?.length ?? 0) !== payload.length) {
-      throw new Error(`Inserted ${data?.length ?? 0} quote rows, expected ${payload.length}. Migration cancelled.`);
-    }
-
-    console.log(`Migrated ${payload.length} quote products.`);
+    console.log(`Migrated ${updatedQuotes.length} quote products.`);
   } finally {
     await sourceDb.end();
   }
 };
 
-migrateQuoteProducts().catch((err) => {
-  console.error('Quote product migration failed:', err);
-  process.exit(1);
-});
+const runMigration = async () => {
+  try {
+    await migrateQuoteProducts();
+  } catch (err) {
+    console.error('Quote product migration failed:', err);
+    process.exit(1);
+  }
+};
+
+if (process.env.NODE_ENV !== 'test') {
+  runMigration();
+}

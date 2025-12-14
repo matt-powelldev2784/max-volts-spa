@@ -27,7 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const notesSchema = z.object({
   notes: z.string().max(1000, 'Notes must be less than 1000 characters'),
-  status: z.enum(['new', 'quoted', 'accepted', 'rejected', 'invoiced'], {
+  status: z.enum(['new', 'quoted', 'accepted', 'rejected', 'invoiced', 'legacy'], {
     error: 'Status is required',
   }),
 });
@@ -130,6 +130,7 @@ const EditQuoteSummary = ({ quoteProducts, quoteData, clientId, dispatch }: Edit
         user_id: user.id,
         user_email: userEmail,
         client_id: clientId,
+        total_vat: quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0),
       },
       quoteProductsInsert: quoteProducts.map((product) => ({
         ...product,
@@ -282,6 +283,8 @@ type ProductListProps = {
 };
 
 const ProductList = ({ quoteProducts, quoteData, dispatch }: ProductListProps) => {
+  const totalVat = quoteProducts.reduce((acc, curr) => acc + (curr.total_vat || 0), 0);
+
   const onEditProduct = (index: number) => {
     dispatch({ type: 'OPEN_EDIT_PRODUCT_MODAL', index });
   };
@@ -311,7 +314,7 @@ const ProductList = ({ quoteProducts, quoteData, dispatch }: ProductListProps) =
           <div className="bg-mv-orange/10 rounded-xl mt-4 px-6 py-4 mb-4 w-full md:w-[308px] flex flex-col items-end gap-4">
             <div className="flex flex-col items-end">
               <span className="text-black text-sm font-medium">VAT Total</span>
-              <span className="text-2xl font-bold text-mv-orange">{`£ ${quoteData.total_vat.toFixed(2)}`}</span>
+              <span className="text-2xl font-bold text-mv-orange">{`£ ${totalVat.toFixed(2)}`}</span>
             </div>
 
             <div className="flex flex-col items-end">

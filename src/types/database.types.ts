@@ -351,7 +351,13 @@ export type Database = {
     }
     Enums: {
       invoice_status_enum: "new" | "invoiced" | "query" | "paid" | "legacy"
-      quote_status_enum: "new" | "quoted" | "accepted" | "rejected" | "invoiced"
+      quote_status_enum:
+        | "new"
+        | "quoted"
+        | "accepted"
+        | "rejected"
+        | "invoiced"
+        | "legacy"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -480,7 +486,14 @@ export const Constants = {
   public: {
     Enums: {
       invoice_status_enum: ["new", "invoiced", "query", "paid", "legacy"],
-      quote_status_enum: ["new", "quoted", "accepted", "rejected", "invoiced"],
+      quote_status_enum: [
+        "new",
+        "quoted",
+        "accepted",
+        "rejected",
+        "invoiced",
+        "legacy",
+      ],
     },
   },
 } as const
