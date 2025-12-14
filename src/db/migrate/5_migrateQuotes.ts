@@ -39,7 +39,6 @@ export const convertPostgresQuotesToSupabaseQuotes = ({ quotes, clientMap }: Con
       total_vat: 0,
       invoice_id: null,
       legacy_id: quote.id,
-      updated_at: new Date().toISOString(),
     };
   });
 
