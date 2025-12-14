@@ -130,7 +130,6 @@ const EditInvoiceSummary = ({ invoiceProducts, invoiceData, clientId, dispatch }
     mutation.mutate({
       invoiceInsert: {
         ...invoiceData,
-        created_at: new Date().toISOString(),
         user_id: user.id,
         user_email: userEmail,
         client_id: clientId,
