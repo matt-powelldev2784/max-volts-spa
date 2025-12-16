@@ -65,7 +65,7 @@ const MainView = ({ setCurrentView }: MainViewProps) => {
         <CardTitle className="text-center text-2xl">Sign In</CardTitle>
       </CardHeader>
 
-      <CardDescription className="px-4 text-center">Welcome to Max Volts Quotation System</CardDescription>
+      <CardDescription className="px-4 text-center">Welcome to Max Volts Dashboard</CardDescription>
 
       <p className="px-6 pt-4 text-center text-gray-600">
         To demo this project, click the <span className="font-bold text-mv-orange cursor-pointer">Demo Sign In</span>{' '}
