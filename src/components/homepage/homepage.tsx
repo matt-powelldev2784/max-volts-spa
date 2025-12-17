@@ -27,6 +27,7 @@ import formEmailIcon from '@/assets/email_lightgrey.svg';
 import formPersonIcon from '@/assets/person.svg';
 import formTelephoneIcon from '@/assets/tel.svg';
 import { useState } from 'react';
+import dashboardIcon from '@/assets/dashboard.svg';
 
 const Homepage = () => {
   return (
@@ -35,12 +36,15 @@ const Homepage = () => {
       <Hero />
       <About />
       <Services />
+
       <section className="bg-dark-black w-screen py-8 pb-16 lg:pt-24 md:py-16 md:px-8 lg:pb-32" id="contact">
         <div className="flex flex-col lg:flex-row gap-12 min-w-[320px] items-center lg:items-start justify-center">
           <ContactForm />
           <ContactDetails />
         </div>
       </section>
+
+      <Footer />
     </>
   );
 };
@@ -389,5 +393,89 @@ const ContactDetails = () => (
     </div>
   </div>
 );
+
+export const Footer = () => {
+  return (
+    <footer className="relative w-screen bg-neutral-700 pb-10 min-w-[320px]">
+      <div className="flex flex-col gap-8 text-lg text-white md:flex-row">
+        <div className="min-w-[320px] grow pt-4 text-center md:pl-8 md:text-left">
+          <p className="pb-2 text-lg font-bold md:pb-4">Links</p>
+          <div className="flex flex-row items-center justify-center gap-4 md:justify-start">
+            <a href="https://www.facebook.com/MaxVoltsElectricalServices" target="_blank" rel="noopener noreferrer">
+              <img
+                src={facebookIcon}
+                alt="Facebook Logo"
+                width={40}
+                height={40}
+                className="h-[30px] md:h-[40px]"
+                draggable={false}
+              />
+            </a>
+            <a
+              href="https://www.instagram.com/max.volts.electricalservices/?hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src={instaIcon}
+                alt="Instagram Logo"
+                width={40}
+                height={40}
+                className="h-[30px] md:h-[40px]"
+                draggable={false}
+              />
+            </a>
+            <a href="mailto:maxvoltselectricalservices@gmail.com">
+              <img
+                src={emailIcon}
+                alt="Email Logo"
+                width={40}
+                height={40}
+                className="h-[30px] md:h-[40px]"
+                draggable={false}
+              />
+            </a>
+            <a href="tel:07877695996">
+              <img
+                src={telIcon}
+                alt="Telephone Logo"
+                width={40}
+                height={40}
+                className="h-[30px] md:h-[40px]"
+                draggable={false}
+              />
+            </a>
+          </div>
+
+          <div className="min-w-[320px] mt-8 gap-2 flex flex-col items-center md:gap-4 md:items-start md:justify-start">
+            <p className="text-lg font-bold">Employee Dashboard</p>
+            <Link to="/login">
+              <img
+                src={dashboardIcon}
+                alt="Dashboard Icon"
+                width={40}
+                height={40}
+                className="h-[28px] md:h-[38px]"
+                draggable={false}
+              />
+            </Link>
+          </div>
+        </div>
+
+        <div className="grow text-center md:pr-10 md:pt-4 md:text-right">
+          <p className="font-bold">Telephone</p>
+          <a href="tel:07877695996">07877 695 996</a>
+
+          <p className="font-bold mt-8">Email</p>
+          <a href="mailto:maxvoltselectricalservices@gmail.com" className="text-sm md:text-base lg:text-lg">
+            MaxVoltsElectricalServices
+            <br />
+            @gmail.com
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+};
 
 export default Homepage;
