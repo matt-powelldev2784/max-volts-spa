@@ -12,6 +12,21 @@ import toolsFan from '@/assets/tools_fan.png';
 import springSvg from '@/assets/spring.svg';
 import { servicesData } from './servicesData';
 import { LinkButton } from '@/ui/button';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import emailjs from '@emailjs/browser';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/ui/form';
+import { Input } from '@/ui/input';
+import { Textarea } from '@/ui/textarea';
+import telIcon from '@/assets/contact_tel.svg';
+import emailIcon from '@/assets/contact_at.svg';
+import facebookIcon from '@/assets/facebook.svg';
+import instaIcon from '@/assets/insta.svg';
+import formEmailIcon from '@/assets/email_lightgrey.svg';
+import formPersonIcon from '@/assets/person.svg';
+import formTelephoneIcon from '@/assets/tel.svg';
+import { useState } from 'react';
 
 const Homepage = () => {
   return (
@@ -20,6 +35,12 @@ const Homepage = () => {
       <Hero />
       <About />
       <Services />
+      <section className="bg-dark-black w-screen py-8 pb-16 lg:pt-24 md:py-16 md:px-8 lg:pb-32" id="contact">
+        <div className="flex flex-col lg:flex-row gap-12 min-w-[320px] items-center lg:items-start justify-center">
+          <ContactForm />
+          <ContactDetails />
+        </div>
+      </section>
     </>
   );
 };
@@ -34,23 +55,19 @@ export const NavBar = () => {
 
         <div className="w-full md:w-auto gap-0 md:gap-8 flex justify-evenly md:justify-center py-2">
           <a href="https://www.facebook.com/MaxVoltsElectricalServices" target="_blank">
-            <img src={facebookLogo} alt="Facebook Logo" width={40} height={40} className="h-[30px] md:h-[40px]" />
+            <img src={facebookLogo} width={40} height={40} alt="Facebook Logo" className="h-[30px] md:h-[40px]" />
           </a>
 
-          <a
-            href="https://www.instagram.com/max.volts.electricalservices/?hl=en"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={instagramLogo} alt="Instagram Logo" width={40} height={40} className="h-[30px] md:h-[40px]" />
+          <a href="https://www.instagram.com/max.volts.electricalservices/?hl=en" target="_blank">
+            <img src={instagramLogo} width={40} height={40} alt="Instagram Logo" className="h-[30px] md:h-[40px]" />
           </a>
 
           <a href="mailto:maxvoltselectricalservices@gmail.com">
-            <img src={emailLogo} alt="Email Logo" width={40} height={40} className="h-[30px] md:h-[40px]" />
+            <img src={emailLogo} width={40} height={40} alt="Email Logo" />
           </a>
 
           <a href="tel:07877695996">
-            <img src={telLogo} alt="Telephone Logo" width={40} height={40} className="h-[30px] md:h-[40px]" />
+            <img src={telLogo} width={40} height={40} alt="Telephone Logo" className="h-[30px] md:h-[40px]" />
           </a>
         </div>
       </nav>
@@ -85,12 +102,9 @@ export const Hero = () => (
               {text}
             </p>
 
-            {/* <a
-              href="#contact"
-              className="text-white bg-mv-orange flex flex-col items-center justify-center w-[265px] md:w-[300px] sm:max-h-[40px] max-h-[45px] mt-4 md:mt-0 rounded-xl font-bold"
-            > */}
-            <Button className="py-4 md:py-6 px-6 md:px-8 rounded-sm font-bold">GET A FREE QUOTE TODAY</Button>
-            {/* </a> */}
+            <LinkButton className="py-4 md:py-6 px-6 md:px-8 font-bold rounded-xl" to="#contact" size="formButton">
+              GET A FREE QUOTE TODAY
+            </LinkButton>
           </div>
         </div>
       ))}
@@ -151,7 +165,7 @@ const CardItem = ({ title, text, image }: CardItemProps) => (
 
         <p className="grow text-justify text-white md:text-center lg:text-justify my-4">{text}</p>
 
-        <LinkButton to="/contact" size="formButton">
+        <LinkButton to="#contact" size="formButton">
           MORE INFO
         </LinkButton>
       </div>
@@ -173,5 +187,207 @@ export const Services = () => {
     </section>
   );
 };
+
+const formSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.email('Valid email is required'),
+  tel: z
+    .string()
+    .min(7, 'Valid telephone number is required')
+    .refine((val) => /^\d+$/.test(val), {
+      message: 'Telephone number must be numeric',
+    }),
+  message: z.string().min(1, 'Message is required'),
+});
+type FormValues = z.infer<typeof formSchema>;
+
+export const ContactForm = () => {
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      tel: '',
+      message: '',
+    },
+  });
+
+  const {
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = form;
+
+  const onSubmit = async (values: FormValues) => {
+    const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    setSuccessMessage('');
+    setErrorMessage('');
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, values, {
+        publicKey: EMAILJS_PUBLIC_KEY,
+      });
+      reset();
+      setSuccessMessage('Thank you for your enquiry, we will be in contact soon.');
+    } catch (error) {
+      setErrorMessage('Sorry, something went wrong. Please try again later.');
+      console.error('EmailJS error:', error);
+    }
+  };
+
+  return (
+    <div className="w-full lg:w-[800px] lg:ml-8">
+      <h1 className="w-full text-center lg:text-left text-2xl md:text-2xl lg:text-3xl font-bold text-mv-orange mb-4 md:mb-4">
+        ENQUIRY FORM
+      </h1>
+
+      <p className="text-white mb-4 text-center lg:text-left ml-0.5 px-8 md:px-0">
+        Leave your details below and we will contact you:
+      </p>
+
+      <Form {...form}>
+        <form className="flex flex-col items-center lg:items-start w-full" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <div className="w-full px-6 lg:px-0 flex flex-col gap-4 md:max-w-[800px] md:w-full">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white data-[error=true]:text-white">
+                    Name <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Name" variant="homepage" iconSrc={formPersonIcon} />
+                  </FormControl>
+                  <FormMessage className="text-white text-xs -translate-0.75 font-extralight" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white data-[error=true]:text-white">
+                    Email <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="Email"
+                      autoComplete="email"
+                      variant="homepage"
+                      iconSrc={formEmailIcon}
+                      iconAlt="Email icon"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-white text-xs -translate-0.75 font-extralight" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="tel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white data-[error=true]:text-white">
+                    Telephone Number <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="tel"
+                      placeholder="Telephone Number"
+                      autoComplete="tel"
+                      variant="homepage"
+                      iconSrc={formTelephoneIcon}
+                      iconAlt="Telephone icon"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-white text-xs -translate-0.75 font-extralight" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white data-[error=true]:text-white">
+                    Message <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea {...field} placeholder="Message" variant="homepage" />
+                  </FormControl>
+                  <FormMessage className="text-white text-xs -translate-0.75 font-extralight" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            size="formButton"
+            className={`text-white bg-mv-orange h-[45px] mt-6 rounded-xl font-bold lg:w-fit px-8 ${
+              isSubmitting ? 'bg-mv-orange/50' : 'bg-mv-orange'
+            }`}
+            disabled={isSubmitting}
+            isLoading={isSubmitting}
+          >
+            SEND MESSAGE
+          </Button>
+
+          {successMessage && (
+            <p className="text-mv-green text-sm md:text-lg m-4 mx-6 lg:mx-0 text-center lg:text-left">
+              {successMessage}
+            </p>
+          )}
+
+          {errorMessage && (
+            <p className="text-red-400 text-sm md:text-lg m-4 mx-6 lg:mx-0 text-center lg:text-left">{errorMessage}</p>
+          )}
+        </form>
+      </Form>
+    </div>
+  );
+};
+
+const ContactDetails = () => (
+  <div className="hidden lg:flex flex-col gap-16 w-[250px] min-w-[250px] text-light-grey lg:mx-8">
+    <div className="flex flex-col items-center gap-2">
+      <img src={telIcon} alt="Telephone Icon" className="w-[80px]" />
+      <p className="text-lg">PHONE:</p>
+      <a className="text-lg" href="tel:07877695996">
+        07877 695 996
+      </a>
+    </div>
+    <div className="flex flex-col items-center gap-2">
+      <img src={emailIcon} alt="Email Icon" className="w-[80px]" />
+      <p className="text-lg">EMAIL:</p>
+      <a className="text-lg text-center" href="mailto:max.volts.electricalservices@gmail.com">
+        MaxVoltsElectricalServices
+        <br />
+        @gmail.com
+      </a>
+    </div>
+    <div className="flex flex-row items-center justify-center gap-8">
+      <a href="https://www.facebook.com/MaxVoltsElectricalServices" target="_blank">
+        <img src={facebookIcon} alt="Facebook Icon" className="w-[50px]" />
+      </a>
+      <a href="https://www.instagram.com/max.volts.electricalservices/?hl=en" target="_blank">
+        <img src={instaIcon} alt="Instagram Icon" className="w-[50px]" />
+      </a>
+    </div>
+  </div>
+);
 
 export default Homepage;
