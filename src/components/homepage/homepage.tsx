@@ -67,7 +67,7 @@ export const NavBar = () => {
           </a>
 
           <a href="mailto:maxvoltselectricalservices@gmail.com">
-            <img src={emailLogo} width={40} height={40} alt="Email Logo" />
+            <img src={emailLogo} width={40} height={40} alt="Email Logo" className="h-[32px] md:h-[40px]" />
           </a>
 
           <a href="tel:07877695996">
