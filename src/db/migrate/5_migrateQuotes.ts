@@ -113,7 +113,7 @@ const runMigration = async () => {
   try {
     await migrateQuotes();
   } catch (err) {
-    console.error('Invoice migration failed:', err);
+    console.error('Quote migration failed:', err);
     process.exit(1);
   }
 };

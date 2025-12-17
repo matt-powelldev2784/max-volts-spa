@@ -57,7 +57,7 @@ export const menuItems = [
     items: [
       {
         name: 'Log Out',
-        href: '/signout',
+        href: '/login',
         icon: LogOut,
       },
     ],

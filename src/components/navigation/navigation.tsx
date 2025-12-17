@@ -160,7 +160,7 @@ const AvatarIcon = () => {
 
   const logout = async () => {
     await supabase.auth.signOut();
-    return navigate('/');
+    return navigate('/login', { replace: true });
   };
 
   if (!user) return null;

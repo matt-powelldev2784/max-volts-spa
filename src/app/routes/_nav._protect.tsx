@@ -1,5 +1,6 @@
+import Login from '@/components/auth/login';
 import useAuth from '@/lib/useAuth';
-import { Navigate, Outlet } from 'react-router';
+import { Outlet } from 'react-router';
 
 const ProtectedLayouts = () => {
   const { user, loading } = useAuth();
@@ -9,7 +10,7 @@ const ProtectedLayouts = () => {
   }
 
   if (!user) {
-    return <Navigate to="/" />;
+    return <Login />;
   }
 
   return <Outlet />;

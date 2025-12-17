@@ -10,11 +10,11 @@
 
 
 @font-face {
-  font-family: 'Roboto Flex';
+  font-family: 'Libre Franklin';
   font-style: normal;
   font-weight: 100 1000;
   font-display: swap;
-  src: url('./assets/fonts/RobotoFlex-VariableFont_GRAD,XOPQ,XTRA,YOPQ,YTAS,YTDE,YTFI,YTLC,YTUC,opsz,slnt,wdth,wght.ttf') format('truetype-variations');
+  src: url('./assets/fonts/LibreFranklin-VariableFont_wght.ttf') format('truetype-variations');
 }
 
 @theme {
@@ -25,8 +25,11 @@
   --color-dark-black: #212121;
   --color-light-black: #414141;
   --color-light-grey: #f5f5f5;
+  --color-dark-black: #212121;
+  --color-light-black: #414141;
+  --color-light-grey: #f5f5f5;
 
-  --font-family-sans: 'Roboto Flex', ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: 'Libre Franklin', ui-sans-serif, system-ui, sans-serif;
   --font-size-base: 1.0625rem;
 
    --breakpoint-md: 900px;

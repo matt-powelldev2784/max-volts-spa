@@ -139,7 +139,7 @@ const runMigration = async () => {
   try {
     await migrateInvoiceProducts();
   } catch (err) {
-    console.error('Invoice migration failed:', err);
+    console.error('Invoice product migration failed:', err);
     process.exit(1);
   }
 };
