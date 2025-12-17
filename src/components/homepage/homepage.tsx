@@ -9,6 +9,9 @@ import 'react-slideshow-image/dist/styles.css';
 import { slideImages } from './slideData';
 import { Button } from '@/ui/button';
 import toolsFan from '@/assets/tools_fan.png';
+import springSvg from '@/assets/spring.svg';
+import { servicesData } from './servicesData';
+import { LinkButton } from '@/ui/button';
 
 const Homepage = () => {
   return (
@@ -16,11 +19,10 @@ const Homepage = () => {
       <NavBar />
       <Hero />
       <About />
+      <Services />
     </>
   );
 };
-
-export default Homepage;
 
 export const NavBar = () => {
   return (
@@ -104,7 +106,7 @@ const About = () => {
       </div>
 
       <div className="w-full md:w-full lg:w-1/2 text-white">
-        <h1 className="text-center text-xl lg:text-left lg:text-2xl font-bold text-mv-orange">
+        <h1 className="text-center text-xl md:text-2xl lg:text-3xl lg:text-left font-bold text-mv-orange">
           MAX VOLTS ELECTRICAL SERVICES
         </h1>
         <h2 className="text-center text-xl lg:text-left lg:text-2xl mb-8 text-mv-green">About Us</h2>
@@ -125,3 +127,51 @@ const About = () => {
   );
 };
 
+interface CardItemProps {
+  title: string;
+  text: string;
+  image: string;
+}
+
+const CardItem = ({ title, text, image }: CardItemProps) => (
+  <article className="w-fit h-auto max-w-[700px] md:max-w-[800px] mx-auto flex flex-col md:flex-row lg:flex-col md:gap-8 overflow-hidden">
+    <div className="relative rounded-3xl overflow-hidden w-full md:max-w-[350px] lg:max-h-[400px] z-20">
+      <img src={image} alt="Electrical image" className="object-cover" />
+    </div>
+
+    <div className="relative w-full h-auto md:h-full z-10 mt-3 md:m-0 flex flex-col justify-between">
+      <div className="absolute -top-[116px] left-1/2 -translate-x-1/2 z-10 hidden lg:block">
+        <img src={springSvg} alt="Electrician tools" className="w-[75px]" />
+      </div>
+
+      <div className="w-full md:max-w-[350px] md:h-full lg:h-[250px] lg:mt-4 flex flex-col justify-between">
+        <h2 className="text-center text-mv-green text-lg font-bold my-2 md:my-0 border-2 border-mv-green rounded-xl p-2">
+          {title}
+        </h2>
+
+        <p className="grow text-justify text-white md:text-center lg:text-justify my-4">{text}</p>
+
+        <LinkButton to="/contact" size="formButton">
+          MORE INFO
+        </LinkButton>
+      </div>
+    </div>
+  </article>
+);
+
+export const Services = () => {
+  return (
+    <section className="bg-dark-black py-8 lg:pt-16 md:py-16 px-8 pb-16">
+      <h1 className="w-full text-center text-xl md:text-2xl lg:text-3xl font-bold text-mv-orange mb-4 md:mb-8">
+        OUR SERVICES
+      </h1>
+      <div className="w-fit mx-auto grid grid-cols-1 lg:grid-cols-3 gap-20 lg:gap-20 place-content-center justify-center">
+        {servicesData.map((service) => (
+          <CardItem key={service.key} image={service.image} title={service.title} text={service.text} />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export default Homepage;
