@@ -8,12 +8,14 @@ import { Fade } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
 import { slideImages } from './slideData';
 import { Button } from '@/ui/button';
+import toolsFan from '@/assets/tools_fan.png';
 
 const Homepage = () => {
   return (
     <>
       <NavBar />
       <Hero />
+      <About />
     </>
   );
 };
@@ -93,3 +95,33 @@ export const Hero = () => (
     </Fade>
   </section>
 );
+
+const About = () => {
+  return (
+    <section className="w-full h-full flex items-center justify-center flex-col lg:flex-row gap-0 lg:gap-30 bg-dark-black p-8 md:p-16">
+      <div className="relative hidden lg:block w-1/2 max-w-[500px] pt-8 pb-8">
+        <img src={toolsFan} alt="Electrician tools" className="object-cover" />
+      </div>
+
+      <div className="w-full md:w-full lg:w-1/2 text-white">
+        <h1 className="text-center text-xl lg:text-left lg:text-2xl font-bold text-mv-orange">
+          MAX VOLTS ELECTRICAL SERVICES
+        </h1>
+        <h2 className="text-center text-xl lg:text-left lg:text-2xl mb-8 text-mv-green">About Us</h2>
+        <p className="text-justify lg:text-left text-md mb-4 text-[17px] md:text-[19px]">
+          Max Volts Electrical Services is a Surrey based electrical contractor serving both commercial and domestic
+          customers in and around the M25 and London.
+        </p>
+        <p className="text-justify lg:text-left mb-4 text-[17px] md:text-[19px]">
+          Max Volts ethos is to provide high-quality workmanship and deliver total satisfaction to all of our clients
+          thus forging long-lasting business relationships.
+        </p>
+        <p className="text-justify lg:text-left text-[17px] md:text-[19px]">
+          We can take a project from design to completion whether it&apos;s for a small commercial outlet, domestic
+          household or a large office refurbishment. So why not call us now on 07877 695 996 to book an engineer.
+        </p>
+      </div>
+    </section>
+  );
+};
+
