@@ -22,7 +22,7 @@ const SignOut = () => {
       return;
     }
 
-    return navigate('/', { replace: true });
+    return navigate('/login', { replace: true });
   };
 
   const handleCancel = () => {
