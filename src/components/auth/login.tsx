@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@//ui/card';
-import { Button } from '@//ui/button';
+import { Button, ButtonWhite } from '@//ui/button';
 import { ArrowLeft, Mail } from 'lucide-react';
 import maxVoltsIcon from '@/assets/max_volts_icon.svg';
 import googleGIcon from '@/assets/google_g_logo.svg';
@@ -84,7 +84,7 @@ const MainView = ({ setCurrentView }: MainViewProps) => {
         </Button>
 
         {/* Email Sign In Button */}
-        <Button
+        <ButtonWhite
           className="w-full border-2 border-gray-300 bg-white text-gray-900 font-semibold"
           size="lg"
           onClick={() => setCurrentView('signInWithEmail')}
@@ -92,10 +92,10 @@ const MainView = ({ setCurrentView }: MainViewProps) => {
         >
           <Mail className="mr-2 h-5 w-5" />
           Sign in with Email
-        </Button>
+        </ButtonWhite>
 
         {/* Google Sign In Button */}
-        <Button
+        <ButtonWhite
           className="w-full border-2 border-gray-300 bg-white text-gray-900 font-semibold"
           size="lg"
           onClick={handleGoogleSignIn}
@@ -103,7 +103,7 @@ const MainView = ({ setCurrentView }: MainViewProps) => {
         >
           <img src={googleGIcon} alt="Google Icon" className="h-6" />
           Sign in with Google
-        </Button>
+        </ButtonWhite>
 
         {/* Create Account Link */}
         <p className="text-center text-sm text-gray-600 pt-4">

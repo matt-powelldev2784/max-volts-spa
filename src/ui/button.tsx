@@ -66,6 +66,27 @@ function Button({ className, variant, size, asChild = false, isLoading, children
   );
 }
 
+function ButtonWhite({ className, variant, size, asChild = false, isLoading, children, ...props }: ButtonProps) {
+  const Comp = asChild ? Slot : 'button';
+
+  return (
+    <Comp
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      disabled={isLoading || props.disabled}
+      {...props}
+    >
+      {isLoading ? (
+        <span className="flex w-full h-full items-center justify-center">
+          <Loader2 className="animate-spin text-mv-orange" />
+        </span>
+      ) : (
+        children
+      )}
+    </Comp>
+  );
+}
+
 type LinkProps = React.ComponentProps<typeof Link> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
@@ -81,4 +102,4 @@ function LinkButton({ className, variant, size, asChild = false, children, ...pr
   );
 }
 
-export { Button, LinkButton };
+export { Button, ButtonWhite, LinkButton };

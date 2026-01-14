@@ -10,6 +10,9 @@ const ProtectedLayouts = () => {
   }
 
   if (!user) {
+    localStorage.clear();
+    sessionStorage.clear();
+
     return <Login />;
   }
 
