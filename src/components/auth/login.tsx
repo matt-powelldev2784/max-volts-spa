@@ -36,9 +36,10 @@ const MainView = ({ setCurrentView }: MainViewProps) => {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
+    const url = import.meta.env.VITE_LOGIN_REDIRECT_URL_LOCAL || import.meta.env.VITE_LOGIN_REDIRECT_URL_NETLIFY;
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/view-quotes` },
+      options: { redirectTo: `${url}/view-quotes` },
     });
   };
 
