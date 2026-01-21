@@ -10,7 +10,6 @@ import {
 } from '@//ui/dropdown-menu';
 import { LogOut, Menu } from 'lucide-react';
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import { menuItems } from './menuItems';
 import { useNavigate } from 'react-router';
 
