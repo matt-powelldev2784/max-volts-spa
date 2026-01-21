@@ -1,6 +1,6 @@
-import carChargeWomen from '@/assets/car_charge_woman.jpg';
-import electricTools from '@/assets/electric_tools.jpg';
-import electricMaintenance from '@/assets/electric_maintenance.jpg';
+import carChargeWomen from '@/assets/car_charge_woman.webp';
+import electricTools from '@/assets/electric_tools.webp';
+import electricMaintenance from '@/assets/electric_maintenance.webp';
 
 export const servicesData = [
   {

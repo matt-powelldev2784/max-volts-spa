@@ -1,6 +1,6 @@
-import lights from '@/assets/slides/lights2.jpg';
-import elecSwitch from '@/assets/slides/elec_switch2.jpg';
-import elecMan from '@/assets/slides/elec_man2.jpg';
+import lights from '@/assets/slides/lights2.webp';
+import elecSwitch from '@/assets/slides/elec_switch2.webp';
+import elecMan from '@/assets/slides/elec_man2.webp';
 
 export const slideImages = [
   {

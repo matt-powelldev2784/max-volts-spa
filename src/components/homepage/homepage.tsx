@@ -8,7 +8,7 @@ import { Fade } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
 import { slideImages } from './slideData';
 import { Button } from '@/ui/button';
-import toolsFan from '@/assets/tools_fan.png';
+import toolsFan from '@/assets/tools_fan.webp';
 import springSvg from '@/assets/spring.svg';
 import { servicesData } from './servicesData';
 import { LinkButton } from '@/ui/button';
